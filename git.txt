@@ -31,12 +31,12 @@ git push -u origin --tags
 
 
 gitee:
-Git 全局设置:
 
+Git 全局设置:
 git config --global user.name "linguiben"
 git config --global user.email "linguiben@163.com"
-创建 git 仓库:
 
+创建 git 仓库:
 mkdir world-peace
 cd world-peace
 git init
@@ -45,8 +45,8 @@ git add README.md
 git commit -m "first commit"
 git remote add origin https://gitee.com/linguiben/world-peace.git
 git push -u origin master
-已有仓库?
 
+已有仓库?
 cd existing_git_repo
 git remote add origin https://gitee.com/linguiben/world-peace.git
 git push -u origin master
