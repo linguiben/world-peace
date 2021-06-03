@@ -1,0 +1,52 @@
+#1.Git 全局设置
+git config --global user.name "林桂本"
+git config --global user.email "jupiter.gb.lin@citicpru.com.cn"
+ssh-keygen -t rsa -C "jupiter.gb.lin@citicpru.com.cn"
+cat ~/.ssh/id_rsa.pub  #拷贝到gitlab - 个人 - 设置 - SSH密钥 - 添加密钥
+ssh -T git@10.100.4.13 #测试
+ssh -T git@1.gitlab.gitlab.csphere.local
+
+#2.创建新版本库
+git clone http://10.100.4.13/JupiterLin/mcp-messagecenter-docs.git  #从服务器新建到本地
+cd mcp-messagecenter-docs
+git add README.md  #add到本地仓库
+git commit -m "add README" #提交到本地仓库
+git push -u origin master #提交到服务器
+
+#3.已存在的文件夹
+cd existing_folder
+git init
+git remote add origin http://1.gitlab.gitlab.csphere.local/JupiterLin/mcp-messagecenter-docs.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
+
+#4.已存在的 Git 版本库
+cd existing_repo
+git remote rename origin old-origin
+git remote add origin http://1.gitlab.gitlab.csphere.local/JupiterLin/mcp-messagecenter-docs.git
+git push -u origin --all
+git push -u origin --tags
+
+
+
+gitee:
+Git 全局设置:
+
+git config --global user.name "linguiben"
+git config --global user.email "linguiben@163.com"
+创建 git 仓库:
+
+mkdir world-peace
+cd world-peace
+git init
+touch README.md
+git add README.md
+git commit -m "first commit"
+git remote add origin https://gitee.com/linguiben/world-peace.git
+git push -u origin master
+已有仓库?
+
+cd existing_git_repo
+git remote add origin https://gitee.com/linguiben/world-peace.git
+git push -u origin master
