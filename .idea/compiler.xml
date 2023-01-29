@@ -11,8 +11,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="com.jupiter.admin" />
         <module name="test01" />
-        <module name="com.jupiter.service" />
         <module name="com.jupiter.api" />
+        <module name="com.jupiter.service" />
       </profile>
     </annotationProcessing>
   </component>
@@ -22,7 +22,7 @@
       <module name="com.jupiter.api" options="-parameters" />
       <module name="com.jupiter.service" options="-parameters" />
       <module name="test01" options="" />
-      <module name="worldpeace" options="" />
+      <module name="worldpeace" options="-parameters" />
     </option>
   </component>
 </project>

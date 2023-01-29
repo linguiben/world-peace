@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="com.jupiter.admin:war">
+    <output-path>$PROJECT_DIR$/com.jupiter.admin/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>com.jupiter.admin</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="com.jupiter.admin-1.0.war">
+      <element id="artifact" artifact-name="com.jupiter.admin:war exploded" />
+    </root>
+  </artifact>
+</component>
