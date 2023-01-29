@@ -35,5 +35,6 @@
     <module>com.jupiter.service</module>
     <module>com.jupiter.admin</module>
     <module>com.jupiter.api</module>
+<!--      <module>test01</module>-->
   </modules>
 </project>
