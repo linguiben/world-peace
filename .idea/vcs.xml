@@ -2,5 +2,8 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/world-peace-common" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/world-peace-common/world-peace-common-base" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/world-peace-common/world-peace-common-util" vcs="Git" />
   </component>
 </project>

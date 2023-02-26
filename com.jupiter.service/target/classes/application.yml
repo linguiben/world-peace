@@ -1,4 +1,0 @@
-server:
-  port: 80   #服务端口
-  servlet: 
-    context-path: / #项目部署路径

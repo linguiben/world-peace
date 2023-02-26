@@ -2,13 +2,16 @@
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
-    <file type="web" url="file://$PROJECT_DIR$/com.jupiter.admin" />
+    <file type="web" url="file://$PROJECT_DIR$/world-peace-admin" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/test01/pom.xml" />
+        <option value="$PROJECT_DIR$/com.jupiter.worldpeace-common/pom.xml" />
+        <option value="$PROJECT_DIR$/com.jupiter.wdpc-common/pom.xml" />
+        <option value="$PROJECT_DIR$/world-peace-common/world-peace-common-util/pom.xml" />
       </list>
     </option>
   </component>
