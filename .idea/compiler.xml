@@ -30,7 +30,7 @@
       <module name="com.jupiter.wdpc-common" options="-parameters" />
       <module name="com.jupiter.wdpc-service" options="-parameters" />
       <module name="test01" options="" />
-      <module name="world-peace" options="-parameters" />
+      <module name="world-peace" options="" />
       <module name="world-peace-admin" options="-parameters" />
       <module name="world-peace-api" options="-parameters" />
       <module name="world-peace-common" options="" />

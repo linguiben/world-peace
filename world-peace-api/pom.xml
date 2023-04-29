@@ -9,19 +9,40 @@
         <version>1.0</version>
     </parent>
     <artifactId>worldpeace-api</artifactId>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <name>com.jupiter.api</name>
     <version>1.0</version>
-    <url>http://maven.apache.org</url>
+
+    <properties>
+        <!--layout是布局功能扩展-->
+        <!--布局功能的支持，2.0以上版本支持thymeleaf3-->
+        <!--比如：thymeleaf3，layout2以上版本；thymeleaf2，layout1-->
+        <!-- <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+        <thymeleaf-layout-dialect.version>2.0.5</thymeleaf-layout-dialect.version>
+        -->
+    </properties>
     <dependencies>
         <!-- <dependency>
           <groupId>junit</groupId>
           <artifactId>junit</artifactId>
           <scope>test</scope>
         </dependency> -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
+        <!--thymeleaf模板引擎-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
     </dependencies>
     <build>
-        <finalName>com.jupiter.worldpeace-api</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

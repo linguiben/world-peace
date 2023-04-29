@@ -3,6 +3,7 @@
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="FrameworkDetectionExcludesConfiguration">
     <file type="web" url="file://$PROJECT_DIR$/world-peace-admin" />
+    <file type="web" url="file://$PROJECT_DIR$/world-peace-api" />
   </component>
   <component name="MavenProjectsManager">
     <option name="originalFiles">

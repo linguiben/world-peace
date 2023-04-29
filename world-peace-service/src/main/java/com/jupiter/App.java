@@ -1,7 +1,10 @@
 package com.jupiter;
 
+import com.jupiter.server.Server;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
@@ -14,6 +17,9 @@ import org.springframework.context.annotation.ComponentScan;
 @EnableAutoConfiguration
 public class App {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        ApplicationContext applicationContext = SpringApplication.run(App.class, args);
+
+        Server server = applicationContext.getBean(Server.class);
+        server.start();
     }
 }

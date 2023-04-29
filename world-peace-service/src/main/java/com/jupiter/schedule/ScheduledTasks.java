@@ -17,9 +17,9 @@ import java.util.Date;
 
 
 
-@Component
-@Configurable
-@EnableScheduling
+//@Component
+//@Configurable
+//@EnableScheduling
 public class ScheduledTasks {
     //每30秒执行一次
     @Scheduled(fixedRate = 1000 * 30)

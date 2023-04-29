@@ -1,0 +1,16 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<h2>Hello World!</h2>
+
+<a href="hello">hello</a>
+<form th:action="@{/hello}" method="post">
+    <input type="submit" value="test @RequestMapping#method">
+</form>
+<br/>
+<a th:href="@{/params(userName='Jupiter',pwd='*&*',age=18)}">params1</a>
+<br/>
+<a th:href="@{/params?userName=Jupiter&pwd=*&*&age=18}">params</a>
+<br/>
+<a th:href="@{/params/Jupiter/18}">params/Jupiter/18</a>
+</body>
+</html>

@@ -1,7 +1,6 @@
 package com.jupiter.test;
 
-import com.jupiter.test.impl.EmpDaoImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
