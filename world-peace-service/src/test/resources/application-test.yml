@@ -2,6 +2,6 @@ server:
   port: 8080   #服务端口
   servlet: 
     context-path: / #项目部署路径
-
+debug: true
 stockPrice:
-  maps: {001: 12,002: 34}
+  maps: {"0001.HK": 12,"0002.HK": 34}
