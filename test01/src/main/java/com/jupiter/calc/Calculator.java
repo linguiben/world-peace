@@ -40,6 +40,10 @@ public class Calculator {
         return mvSum;
     }
 
+    private int avg(int a, int b){
+        return (a+b)/2;
+    }
+
     public Calculator(String name) {
         this.name = name;
     }

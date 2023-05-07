@@ -33,7 +33,7 @@
       <module name="world-peace" options="" />
       <module name="world-peace-admin" options="-parameters" />
       <module name="world-peace-api" options="-parameters" />
-      <module name="world-peace-common" options="-parameters" />
+      <module name="world-peace-common" options="" />
       <module name="world-peace-common-base" options="-parameters" />
       <module name="world-peace-common-util" options="-parameters" />
       <module name="world-peace-service" options="-parameters" />
