@@ -22,12 +22,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.lmax</groupId>
-            <artifactId>disruptor</artifactId>
-            <version>3.4.2</version>
+            <!-- <scope>test</scope> -->
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -42,7 +37,6 @@
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
 
     <build>
         <finalName>com.jupiter.worldpeace-service</finalName>

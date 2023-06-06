@@ -1,12 +1,13 @@
 package com.jupiter.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.jupiter.service.MapTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
 * @Description:
@@ -35,5 +36,14 @@ public class IndexController {
         String id = request.getParameter("id");
         int id1 = Integer.parseInt(id);
         return id1;
+    }
+
+
+    @Autowired
+    private MapTest mapTest;
+
+    @RequestMapping("/mapTest")
+    public MapTest mapTest(){
+        return this.mapTest;
     }
 }

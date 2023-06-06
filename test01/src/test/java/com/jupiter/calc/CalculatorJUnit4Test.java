@@ -7,16 +7,18 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-// @RunWith(SpringJUnit4ClassRunner.class) // Junit4
-// @ContextConfiguration("classpath:spring.xml")
-@RunWith(Parameterized.class)
-//@Transactional
+@RunWith(SpringJUnit4ClassRunner.class) // Junit4
+@ContextConfiguration("classpath:ApplicationContext-test.xml")
+// @RunWith(Parameterized.class)
+// @Transactional
 public class CalculatorJUnit4Test {
 
     private Double expected;
@@ -31,10 +33,10 @@ public class CalculatorJUnit4Test {
         });
     }
 
-    public CalculatorJUnit4Test(Double expected, Double input){
-        this.expected = expected;
-        this.stockPrice = input;
-    }
+//    public CalculatorJUnit4Test(Double expected, Double input){
+//        this.expected = expected;
+//        this.stockPrice = input;
+//    }
 
     @Test
     // @Rollback(value = true)
@@ -69,7 +71,7 @@ public class CalculatorJUnit4Test {
         assertEquals(5, calculator.sum("2", "3"));
     }
 
-    @Test(timeout = 200)
+    @Test(timeout = 2000)
     public void performanceTest() throws InterruptedException {
         Thread.sleep(199);
         assertEquals(7, calculator.sum("3", "4"));

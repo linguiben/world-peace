@@ -12,16 +12,19 @@ https://www.evosuite.org/documentation/tutorial-part-1/
   $EVOSUITE  
 3. compile your source code  
   mvn compile  
-4. generate unit test code 
+  mvn clean install -Dmaven.test.skip=true  
+4. generate unit test code
+  $EVOSUITE -setup  #create profile
+  $EVOSUITE -class com.jupiter.calc.Say -base_dir $PROJECT_HOME
   $EVOSUITE -class <classFullName> -projectCP <.class file path>  #evosuite-tests  
-  $EVOSUITE -class tutorial.Stack -projectCP target/classes  #evosuite-tests  
+  $EVOSUITE -class com.jupiter.calc.Calculator -projectCP target/classes -base_dir $PROJECT_HOME #evosuite-tests  
 5. prepare to run the test case just generated  
   mvn dependency:copy-dependencies  
-  export CLASSPATH=target/classes:evosuite-standalone-runtime-1.0.6.jar:evosuite-tests:target/dependency/junit-4.12.  
+  export CLASSPATH=target/classes:evosuite-standalone-runtime-1.0.6.jar:evosuite-tests:target/dependency/junit-4.13.2.jar  
 6. compile the test case just generated  
-  javac evosuite-tests/tutorial/*.java  
+  javac evosuite-tests/com/jupiter/calc/*.java  
 7. run test case  
-  java org.junit.runner.JUnitCore tutorial.Stack_ESTest  
+  java org.junit.runner.JUnitCore com.jupiter.calc.Say_ESTest  
 
 ### describe:
 target/classes: This is the root directory which we need for the tutorial.Stack class  

@@ -1,36 +1,21 @@
 package com.jupiter.calc;
 
+import com.jupiter.branch.LargeOrSmall;
+import lombok.*;
+
 import java.math.BigDecimal;
 
+@Data
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+//@RequiredArgsConstructor()
 public class Calculator {
 
     private String name;
     private int mv;
     private BigDecimal indexValue ;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getMv() {
-        return mv;
-    }
-
-    public void setMv(int mv) {
-        this.mv = mv;
-    }
-
-    public BigDecimal getIndexValue() {
-        return indexValue;
-    }
-
-    public void setIndexValue(BigDecimal indexValue) {
-        this.indexValue = indexValue;
-    }
+    private LargeOrSmall largeOrSmall;
 
     public int sum(String ... mv){
         int mvSum = 0;
@@ -44,12 +29,12 @@ public class Calculator {
         return (a+b)/2;
     }
 
+    public String dice(int input){
+        return largeOrSmall.dice(input);
+    }
+
     public Calculator(String name) {
         this.name = name;
     }
-
-    public Calculator() {
-    }
-
 
 }

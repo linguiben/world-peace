@@ -8,7 +8,7 @@
         <version>1.0</version>
     </parent>
     <artifactId>world-peace-common-util</artifactId>
-    <version>1.0</version>
+    <version>${version.world-peace-common-util}</version>
     <name>world-peace-common-util</name>
     <description>world-peace-common-util</description>
     <dependencies>
@@ -41,6 +41,19 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis</artifactId>
+            <version>3.5.9</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.6.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -51,9 +64,10 @@
                 <configuration>
                     <excludes>
                         <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
                         </exclude>
+
                     </excludes>
                 </configuration>
             </plugin>

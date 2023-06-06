@@ -3,5 +3,5 @@ server:
   servlet: 
     context-path: / #项目部署路径
 debug: true
-stockPrice:
-  maps: {"0001.HK": 12,"0002.HK": 34}
+tes:
+  maps: {key1: 12,key2: 34}

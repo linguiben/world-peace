@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 // mvn -f world-peace-service surefire-report:report test
-// mvn test -Dtest=com.jupiter.calc.Test001
+// mvn test -Dtest=com.jupiter.Test001
 // mvn test -Dtest=*Test#add,Test*
 //@SpringJUnitConfig(locations = "classpath:spring.xml")
 @SpringJUnitConfig(locations = "classpath:ApplicationContext-test.xml") // Junit5

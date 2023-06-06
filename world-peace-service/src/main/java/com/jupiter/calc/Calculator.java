@@ -1,10 +1,8 @@
 package com.jupiter.calc;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.Map;
 
 @Component
 public class Calculator {
@@ -13,8 +11,8 @@ public class Calculator {
     private int mv;
     private BigDecimal indexValue ;
 
-    @Autowired
-    private Map<String,Integer> stockPriceMap;
+//    @Autowired
+//    private Map<String,Integer> stockPriceMap;
 
     public String getName() {
         return name;
@@ -61,7 +59,7 @@ public class Calculator {
                 "name='" + name + '\'' +
                 ", mv=" + mv +
                 ", indexValue=" + indexValue +
-                ", stockPriceMap=" + stockPriceMap +
+                ", stockPriceMap=" +
                 '}';
     }
 }

@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Built-By: Jupiter
-Build-Jdk: 10.0.1
-Implementation-Title: com.jupiter.admin
-Implementation-Version: 1.0
-Implementation-Vendor-Id: com.jupiter.admin
-Implementation-URL: http://maven.apache.org
-Created-By: Maven Integration for Eclipse
-
