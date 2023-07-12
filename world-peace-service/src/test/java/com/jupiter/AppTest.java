@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = MapTest.class)
-@SpringBootTest
+@SpringBootTest(classes = MapTest.class)
 @EnableConfigurationProperties(MapTest.class)  //开启MapTest的配置绑定功能，并将其注册到容器中
 public class AppTest {
     @Autowired

@@ -1,0 +1,13 @@
+server:
+  port: 8080   #服务端口
+  servlet: 
+    context-path: / #项目部署路径
+
+debug: true
+
+tes:
+  maps: {key1: 120,key2: 340}
+
+project:
+  name: world-peace #@Value("${project.name}")
+web-url: http://www.world-peace.com

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
 //@Component
-@ConfigurationProperties(prefix = "stock")
+@ConfigurationProperties(prefix = "stock") // 开启配置绑定，绑定配置文件中的值
 public class MarketInfo {
 
     @Value("${stock.market}") // 可省

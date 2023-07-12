@@ -1,6 +1,7 @@
 package com.jupiter;
 
 import com.jupiter.server.Server;
+import com.jupiter.service.MapTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -29,7 +30,7 @@ public class App {
         Arrays.asList(names).stream().forEach(System.out::println);
         Server server = applicationContext.getBean(Server.class);
         server.start();
-//        MapTest mapTest = applicationContext.getBean(MapTest.class);
-//        System.out.println(mapTest);
+        MapTest mapTest = applicationContext.getBean(MapTest.class);
+        System.out.println(mapTest);
     }
 }

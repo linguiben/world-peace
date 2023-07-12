@@ -2,6 +2,7 @@ package com.jupiter.controller;
 
 import com.jupiter.service.MapTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,6 +19,10 @@ import java.util.List;
 @RequestMapping("/jupiter")
 @RestController
 public class IndexController {
+
+    @Value("${project.name}")
+    private String projectName;
+
     // @ResponseBody //以jason格式返回
     @RequestMapping("/index")
     public String index() {
@@ -45,5 +50,10 @@ public class IndexController {
     @RequestMapping("/mapTest")
     public MapTest mapTest(){
         return this.mapTest;
+    }
+
+    @RequestMapping("/project")
+    public String getProjectName(){
+        return this.projectName;
     }
 }

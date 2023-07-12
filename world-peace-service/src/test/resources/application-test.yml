@@ -1,7 +1,0 @@
-server:
-  port: 8080   #服务端口
-  servlet: 
-    context-path: / #项目部署路径
-debug: true
-tes:
-  maps: {key1: 12,key2: 34}

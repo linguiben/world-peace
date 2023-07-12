@@ -10,14 +10,14 @@ public class UDPMulticastSender {
         int mcPort = 12345;
         //DatagramSocket udpSocket = new DatagramSocket();
         MulticastSocket udpSocket = new MulticastSocket();
-        udpSocket.setInterface(InetAddress.getByName("127.0.0.1"));
+        // udpSocket.setInterface(InetAddress.getByName("127.0.0.1"));
         byte[] msg = "Hello".getBytes();
         DatagramPacket packet = new DatagramPacket(msg, msg.length,mcIPAddress,mcPort);
+
         // packet.setAddress(InetAddress.getByName("127.0.0.1"));
         udpSocket.send(packet);
 
-        System.out.println("Sent a  multicast message.");
-        System.out.println("Exiting application");
+        System.out.println("udp msg sent");
         udpSocket.close();
     }
 }
