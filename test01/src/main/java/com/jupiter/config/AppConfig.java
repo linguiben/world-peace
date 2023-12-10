@@ -1,10 +1,11 @@
 package com.jupiter.config;
 
 import com.jupiter.service.OrderService;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,10 +17,11 @@ import org.springframework.stereotype.Component;
 @ComponentScan(value = "com.jupiter.test,com.jupiter.service",includeFilters = @ComponentScan.Filter(type =
         FilterType.ANNOTATION,value = Component.class))
 @PropertySource("classpath:mail.properties")
-@Import(OrderService.class)
+//@Import(OrderService.class)
+@EnableAsync
 public class AppConfig {
 
-//    @Bean
+    @Bean
     public OrderService orderService(){
         return new OrderService();
     }

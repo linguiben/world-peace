@@ -1,5 +1,7 @@
 package com.jupiter;
 
+import com.jupiter.calc.Calculator;
+import com.jupiter.redis.RedisDao;
 import com.jupiter.server.Server;
 import com.jupiter.service.MapTest;
 import org.springframework.boot.SpringApplication;
@@ -18,19 +20,30 @@ import java.util.Arrays;
 */
 //@SpringBootApplication
 @SpringBootConfiguration
-@ComponentScan("com.jupiter")
+@ComponentScan({"com.jupiter.calc", "com.jupiter.service", "com.jupiter.config","com.jupiter.server"
+        ,"com.jupiter.redis","com.jupiter.aop"})
 @EnableAutoConfiguration
 public class App {
     public static void main(String[] args) {
         // 1. 返回IOC容器
-        ApplicationContext applicationContext = SpringApplication.run(App.class, args);
+        ApplicationContext ctx = SpringApplication.run(App.class, args);
 
         // 2. 查看容器内的beans
-        String[] names = applicationContext.getBeanDefinitionNames();
+        String[] names = ctx.getBeanDefinitionNames();
         Arrays.asList(names).stream().forEach(System.out::println);
-        Server server = applicationContext.getBean(Server.class);
+        Server server = ctx.getBean(Server.class);
         server.start();
-        MapTest mapTest = applicationContext.getBean(MapTest.class);
+        MapTest mapTest = ctx.getBean(MapTest.class);
         System.out.println(mapTest);
+
+        // 3. redisDao
+        System.out.println("==============redis test==============");
+        RedisDao redisDao = ctx.getBean(RedisDao.class);
+        redisDao.demo();
+
+        // 4. AOP
+        System.out.println("==============aop test==============");
+        Calculator calculator = ctx.getBean(Calculator.class);
+        System.out.println(calculator.getMv());
     }
 }

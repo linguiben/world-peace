@@ -1,13 +1,23 @@
-server:
-  port: 8080   #服务端口
-  servlet: 
-    context-path: / #项目部署路径
-
 debug: true
 
+server:
+  port: 8080   #服务端口
+  servlet:
+    context-path: / #项目部署路径
+
 tes:
-  maps: {key1: 120,key2: 340}
+  maps: { key1: 120,0011.HK: 340 }
 
 project:
   name: world-peace #@Value("${project.name}")
 web-url: http://www.world-peace.com
+#spring:
+#  redis:
+#    host: localhost
+#    port: 6379
+#    database: 0
+#    password: 123
+
+HSI:
+  lastTradeMv: 10000
+  lastTradIndexValue: 666

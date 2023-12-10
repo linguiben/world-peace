@@ -1,19 +1,19 @@
-#1.Git È«¾ÖÉèÖÃ
-git config --global user.name "ÁÖ¹ğ±¾"
+#1.Git å…¨å±€è®¾ç½®
+git config --global user.name "æ—æ¡‚æœ¬"
 git config --global user.email "jupiter.gb.lin@citicpru.com.cn"
 ssh-keygen -t rsa -C "jupiter.gb.lin@citicpru.com.cn"
-cat ~/.ssh/id_rsa.pub  #¿½±´µ½gitlab - ¸öÈË - ÉèÖÃ - SSHÃÜÔ¿ - Ìí¼ÓÃÜÔ¿
-ssh -T git@10.100.4.13 #²âÊÔ
+cat ~/.ssh/id_rsa.pub  #æ‹·è´åˆ°gitlab - ä¸ªäºº - è®¾ç½® - SSHå¯†é’¥ - æ·»åŠ å¯†é’¥
+ssh -T git@10.100.4.13 #æµ‹è¯•
 ssh -T git@1.gitlab.gitlab.csphere.local
 
-#2.´´½¨ĞÂ°æ±¾¿â
-git clone http://10.100.4.13/JupiterLin/mcp-messagecenter-docs.git  #´Ó·şÎñÆ÷ĞÂ½¨µ½±¾µØ
+#2.åˆ›å»ºæ–°ç‰ˆæœ¬åº“
+git clone http://10.100.4.13/JupiterLin/mcp-messagecenter-docs.git  #ä»æœåŠ¡å™¨æ–°å»ºåˆ°æœ¬åœ°
 cd mcp-messagecenter-docs
-git add README.md  #addµ½±¾µØ²Ö¿â
-git commit -m "add README" #Ìá½»µ½±¾µØ²Ö¿â
-git push -u origin master #Ìá½»µ½·şÎñÆ÷
+git add README.md  #addåˆ°æœ¬åœ°ä»“åº“
+git commit -m "add README" #æäº¤åˆ°æœ¬åœ°ä»“åº“
+git push -u origin master #æäº¤åˆ°æœåŠ¡å™¨
 
-#3.ÒÑ´æÔÚµÄÎÄ¼ş¼Ğ
+#3.å·²å­˜åœ¨çš„æ–‡ä»¶å¤¹
 cd existing_folder
 git init
 git remote add origin http://1.gitlab.gitlab.csphere.local/JupiterLin/mcp-messagecenter-docs.git
@@ -21,7 +21,7 @@ git add .
 git commit -m "Initial commit"
 git push -u origin master
 
-#4.ÒÑ´æÔÚµÄ Git °æ±¾¿â
+#4.å·²å­˜åœ¨çš„ Git ç‰ˆæœ¬åº“
 cd existing_repo
 git remote rename origin old-origin
 git remote add origin http://1.gitlab.gitlab.csphere.local/JupiterLin/mcp-messagecenter-docs.git
@@ -32,11 +32,11 @@ git push -u origin --tags
 
 gitee:
 
-Git È«¾ÖÉèÖÃ:
+Git å…¨å±€è®¾ç½®:
 git config --global user.name "linguiben"
 git config --global user.email "linguiben@163.com"
 
-´´½¨ git ²Ö¿â:
+åˆ›å»º git ä»“åº“:
 mkdir world-peace
 cd world-peace
 git init
@@ -46,7 +46,7 @@ git commit -m "first commit"
 git remote add origin https://gitee.com/linguiben/world-peace.git
 git push -u origin master
 
-ÒÑÓĞ²Ö¿â?
+å·²æœ‰ä»“åº“?
 cd existing_git_repo
 git remote add origin https://gitee.com/linguiben/world-peace.git
 git push -u origin master

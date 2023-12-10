@@ -17,10 +17,10 @@ import java.util.Arrays;
 */
 //@SpringBootApplication
 @SpringBootConfiguration
-@ComponentScan("com.jupiter.calc")
+@ComponentScan({"com.jupiter.calc","com.jupiter.service"})
 @EnableAutoConfiguration
 public class AppConfigTest {
-    public /*static*/ void main(String[] args) {
+    public static void main(String[] args) {
         // 1. 返回IOC容器
         ApplicationContext applicationContext = SpringApplication.run(AppConfigTest.class, args);
 

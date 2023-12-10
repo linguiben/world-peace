@@ -41,19 +41,25 @@
             <artifactId>spring-kafka-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.mybatis/mybatis -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>32.0.1-jre</version>
+            <!-- or, for Android:
+            <version>27.0-android</version> -->
+        </dependency>
         <dependency>
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis</artifactId>
             <version>3.5.9</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+        <!-- https://mvnrepository.com/artifact/org.postgresql/postgresql
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.6.0</version>
         </dependency>
+        -->
     </dependencies>
 
     <build>

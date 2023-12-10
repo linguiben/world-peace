@@ -1,5 +1,6 @@
 package com.jupiter.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
 /**
@@ -9,6 +10,9 @@ import org.springframework.context.annotation.Bean;
  */
 public class OrderService {
 
+    @Autowired
+    private UserService userService;
+
     private String orderId = "abcd9876";
 
     //@PostConstruct
@@ -16,5 +20,10 @@ public class OrderService {
     public DummyService dummyService(){
         System.out.println("abcdefg");
         return new DummyService();
+    }
+
+    //@Async
+    public void test(){
+
     }
 }
