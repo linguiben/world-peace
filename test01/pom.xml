@@ -94,6 +94,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/src/lib/evosuite-standalone-runtime-1.2.0.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>org.evosuite</groupId>
+            <artifactId>evosuite</artifactId>
+            <version>1.2.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/lib/evosuite-1.2.0.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.kafka</groupId>
