@@ -21,7 +21,7 @@ import java.util.Arrays;
 //@SpringBootApplication
 @SpringBootConfiguration
 @ComponentScan({"com.jupiter.calc", "com.jupiter.service", "com.jupiter.config","com.jupiter.server"
-        ,"com.jupiter.redis","com.jupiter.aop"})
+        ,"com.jupiter.redis","com.jupiter.aop","com.jupiter.controller"})
 @EnableAutoConfiguration
 public class App {
     public static void main(String[] args) {

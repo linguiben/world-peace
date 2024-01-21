@@ -6,13 +6,16 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jupiter.world-peace</groupId>
-        <artifactId>world-peace-parent</artifactId>
+        <artifactId>world-peace</artifactId>
         <version>1.0</version>
     </parent>
     <artifactId>worldpeace-service</artifactId>
     <packaging>jar</packaging>
     <name>com.jupiter.service</name>
     <version>1.0</version>
+    <properties>
+        <mybatis.spring.version>2.2.0</mybatis.spring.version>
+    </properties>
 
     <dependencies>
         <dependency>
@@ -27,10 +30,27 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
+        <!-- configuration for DAO -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>${mybatis.spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mchange</groupId>
+            <artifactId>c3p0</artifactId>
+            <version>0.9.5.5</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>com.jupiter.world-peace</groupId>
             <artifactId>world-peace-common-util</artifactId>
@@ -49,6 +69,12 @@
     </dependencies>
 
     <build>
-        <finalName>com.jupiter.worldpeace-service</finalName>
+        <finalName>world-peace-service</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
     </build>
 </project>

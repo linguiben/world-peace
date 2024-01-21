@@ -10,7 +10,7 @@
     </parent>
     <name>World Peace Parent</name>
     <groupId>com.jupiter.world-peace</groupId>
-    <artifactId>world-peace-parent</artifactId>
+    <artifactId>world-peace</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging> <!-- packing mode for parent -->
     <description>I hope peace all round the world!</description>

@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.jupiter.world-peace</groupId>
-        <artifactId>world-peace-parent</artifactId>
+        <artifactId>world-peace</artifactId>
         <version>1.0</version>
     </parent>
     <artifactId>worldpeace-api</artifactId>

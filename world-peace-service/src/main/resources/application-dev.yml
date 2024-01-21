@@ -4,13 +4,27 @@ server:
   port: 8080   #服务端口
   servlet:
     context-path: / #项目部署路径
+web-url: http://www.world-peace.com
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:25432/postgres
+#    username: postgres
+#    password:
+#    driver: org.postgresql.Driver
+    type: com.mchange.v2.c3p0.ComboPooledDataSource #相关配置在c3p0-config.xml
+
+mybatis:
+  #config-location:#MyBatis XML配置文件的路径,参考https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/zh/index.html
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.jupiter.pojo #Mapper中用到的参数或返回的模型
+  configuration:
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl #打印mybatis日志
 
 tes:
   maps: { key1: 120,0011.HK: 340 }
-
 project:
   name: world-peace #@Value("${project.name}")
-web-url: http://www.world-peace.com
 #spring:
 #  redis:
 #    host: localhost
@@ -21,3 +35,4 @@ web-url: http://www.world-peace.com
 HSI:
   lastTradeMv: 10000
   lastTradIndexValue: 666
+

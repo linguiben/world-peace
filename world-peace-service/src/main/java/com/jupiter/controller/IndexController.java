@@ -1,6 +1,9 @@
 package com.jupiter.controller;
 
+import com.jupiter.dao.UserMapper;
+import com.jupiter.pojo.JbioUser;
 import com.jupiter.service.MapTest;
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,4 +59,29 @@ public class IndexController {
     public String getProjectName(){
         return this.projectName;
     }
+
+    /**
+     * 1.引入依赖mybatis-spring-boot-starter
+     * 2.配置文件application-dev.yml中的DataSource及url
+     * 3.配置type-aliases-package（Mapper中用到的参数或返回的模型）和 mapper-locations
+     * 4.使用@Mapper 或者 @MapperScan("<packageName>")
+     * Spring将自动通过DataSource创建SqlSessionFactory -> SqlSessionTemplate
+     * mybatis-spring-boot-autoconfigure:
+     * https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/index.html
+     * mybatis-spring-boot-autoconfigure:
+     * https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/index.html
+     * Scanning for mappers:
+     * https://mybatis.org/spring/mappers.html#scan
+     */
+    @Autowired
+    private SqlSession sqlSession;
+
+    @RequestMapping("/listUser")
+    public String getUserList(){
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<JbioUser> jbioUsers = userMapper.selectAllUser();
+        sqlSession.commit();
+        return jbioUsers.toString();
+    }
+
 }

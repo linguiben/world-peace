@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jupiter.dao.UserMapper"> <!-- namespace一般为接口的全类名 -->
+	<select id="selectUserById" parameterType="Integer" resultType="com.jupiter.pojo.JbioUser">
+		select * from dbo.Jobio_User <!-- where id = #{id} -->
+	</select>
+	<select id="checkUser" parameterType="com.jupiter.pojo.JbioUser" resultType="com.jupiter.pojo.JbioUser">
+		select * from dbo.Jobio_User where password = #{password} and username = #{username} fetch first 1 rows only
+	</select>
+	<select id="selectAllUser" resultType="com.jupiter.pojo.JbioUser">
+		select * from dbo.Jobio_User
+	</select>
+    <insert id="addUser" parameterType="com.jupiter.pojo.JbioUser">
+        insert into user (name,id)
+        values(#{name},#{id})
+    </insert>
+    <update id="updateUserById" parameterType="com.jupiter.pojo.JbioUser">
+        update user 
+        set name = #{name}
+        where id = #{id}
+    </update>
+    <delete id="deleteUserById" parameterType="Integer">
+        delete from dbo.Jobio_User 
+        where id = #{id}
+    </delete>
+</mapper>
