@@ -8,7 +8,7 @@
         <version>2.4.10</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <name>World Peace Parent</name>
+    <name>I Hope World Peace</name>
     <groupId>com.jupiter.world-peace</groupId>
     <artifactId>world-peace</artifactId>
     <version>1.0</version>
