@@ -24,6 +24,8 @@
         <junit.version>4.13.1</junit.version>
         <fastjson.version>1.2.83</fastjson.version>
         <version.world-peace-common-util>1.0</version.world-peace-common-util>
+        <lombok.version>1.18.30</lombok.version>
+        <slf4j.version>1.7.26</slf4j.version>
     </properties>
 
     <modules>
@@ -31,6 +33,7 @@
         <module>world-peace-service</module>
         <module>world-peace-admin</module>
         <module>world-peace-api</module>
+        <module>world-peace-poc</module>
         <!--<module>test01</module>-->
     </modules>
 
@@ -50,6 +53,17 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
