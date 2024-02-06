@@ -1,0 +1,30 @@
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    listener:
+      ack-mode: manual_immediate
+    producer:
+      acks: 1
+      batch-size: 16384
+      buffer-memory: 33554432
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        spring:
+          json:
+            trusted:
+              #配置信任，否则消费时会抛异常 is not in the trusted package
+              packages: com.jupiter.
+        linger:
+          ms: 0
+      retries: 0
+kafka:
+  srcTopic: input-topic
+  dstTopic: output-topic
+logging:
+  level:
+    org:
+      springframework:
+        kafka: WARN
+      apache:
+        kafka: WARN

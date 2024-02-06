@@ -26,7 +26,7 @@ public class KafkaProducerConsumerExample {
 
     public static final Properties producerProps = new Properties();
     private static final String TOPIC_NAME = "input-topic";
-    private static final String BOOTSTRAP_SERVERS = "localhost:9091,localhost:9092";
+    private static final String BOOTSTRAP_SERVERS = "localhost:9092";
     private static final String GROUP_ID = "Jupiter";
     // producer properties
     static {
