@@ -2,7 +2,7 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     listener:
-      ack-mode: manual_immediate
+      ack-mode: MANUAL_IMMEDIATE
     producer:
       acks: 1
       batch-size: 16384

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
 /**
@@ -26,7 +27,17 @@ public class KafkaConsumerDemo {
     private String srcTopic;
 
     @KafkaListener(topics = "input-topic",groupId = "jupiter" )
-    public void consumer(String message) {
+    public void onMessage(String message,Acknowledgment acknowledgment) {
         log.info("Received message: {}" , message);
+        // manually commit
+        acknowledgment.acknowledge();
     }
+
+//    @KafkaListener(topics = "input-topic", groupId = "consumer-group2")
+//    public void onConsum(ConsumerRecord<Integer, String> record, Acknowledgment acknowledgment) {
+//        log.info("[KafkaConsumerDemo consumer-group2][Thread:{} msg:{}:{}]", Thread.currentThread().getId(), record.key(),
+//                record.value());
+//        // manually commit
+//        acknowledgment.acknowledge();
+//    }
 }
