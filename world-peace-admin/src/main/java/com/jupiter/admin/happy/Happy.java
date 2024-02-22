@@ -1,4 +1,4 @@
-package com.jupiter.happy;
+package com.jupiter.admin.happy;
 
 public class Happy {
 

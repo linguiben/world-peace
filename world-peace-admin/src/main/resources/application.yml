@@ -1,0 +1,26 @@
+#--spring.config.location=/dirname/application.properties #程序参数
+#or
+#-Dspring.config.location=/dirname/application.properties #jvm参数
+#or java -jar xxx.jar --server.port=8090
+server:
+  port: 8090
+
+
+food:
+  meat: 烤肉${random.int}
+  rice: 拌饭
+
+jasypt:
+  encryptor:
+    password: 123456@!#
+    algorithm: PBEWithMD5AndDES #2.1.2默认PBEWithMD5AndDES 3.0.5默认PBEWithHMACSHA512AndAES_256
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+info:
+  username: ENC(RXTcvmGZX3n2+krr2fTQkmBX6neZA1dv)
+  password: ENC(T/fw8HMxOLTxxnD6Gj40J/dpxDYStVr7)
+logging:
+  level:
+    root: info
+  file:
+    path:
+    name:

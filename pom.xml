@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.10</version>
+        <version>2.7.18</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <name>I Hope World Peace</name>
@@ -22,10 +22,17 @@
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit.version>4.13.1</junit.version>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <projectlombok.version>1.8.26</projectlombok.version>
+        <mockito.all.version>1.10.19</mockito.all.version>
+        <mockito.version>4.10.0</mockito.version>
         <fastjson.version>1.2.83</fastjson.version>
         <version.world-peace-common-util>1.0</version.world-peace-common-util>
         <lombok.version>1.18.30</lombok.version>
         <slf4j.version>1.7.26</slf4j.version>
+        <spring-boot-dependencies.version>2.7.18</spring-boot-dependencies.version>
+        <springdoc.version>1.6.14</springdoc.version>
+        <spring.kafka.version>2.9.12</spring.kafka.version>
     </properties>
 
     <modules>
@@ -37,8 +44,33 @@
         <!--<module>test01</module>-->
     </modules>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring.kafka.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.kafka</groupId>
+                        <artifactId>kafka-clients</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.xerial.snappy</groupId>
+                        <artifactId>snappy-java</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <!--为子模块引入相关依赖-->
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter</artifactId>-->
+<!--            <version>${spring-boot-dependencies.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
@@ -71,11 +103,12 @@
             <version>4.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency> <!-- 配置绑定提示，方便开发，打包时在maven插件里exclude它 -->
+        <dependency> <!-- 配置绑定处理器，方便开发，打包时在maven插件里exclude它 -->
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
+
     </dependencies>
 
     <build>
@@ -87,6 +120,7 @@
                     <target>11</target>
                 </configuration>
             </plugin>
+            <!--打包成可执行jar-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

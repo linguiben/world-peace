@@ -8,8 +8,10 @@ package com.jupiter.kafka;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.support.Acknowledgment;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +28,10 @@ public class KafkaConsumerDemo {
     @Value("${kafka.srcTopic}")
     private String srcTopic;
 
-    @KafkaListener(topics = "input-topic",groupId = "jupiter" )
+    @Autowired
+    private KafkaListenerEndpointRegistry endpointRegistry;
+
+    @KafkaListener(topics = "${kafka.srcTopic}",groupId = "jupiter" )
     public void onMessage(String message,Acknowledgment acknowledgment) {
         log.info("Received message: {}" , message);
         // manually commit

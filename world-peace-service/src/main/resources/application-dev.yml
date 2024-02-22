@@ -36,3 +36,8 @@ HSI:
   lastTradeMv: 10000
   lastTradIndexValue: 666
 
+kafka:
+  topic:
+    source: input-topic
+    groupId: comsumer-group1
+    target: input-topic
