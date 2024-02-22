@@ -1,4 +1,4 @@
-package com.jupiter.world.peace.poc;
+package com.jupiter.hello;
 
 /**
  * @author Jupiter.Lin
@@ -6,7 +6,7 @@ package com.jupiter.world.peace.poc;
  * @date ${DATE} ${TIME}
  */
 
-public class Main {
+public class Hello {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }

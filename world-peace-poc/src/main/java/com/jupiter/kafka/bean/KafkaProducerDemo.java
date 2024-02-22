@@ -4,7 +4,7 @@
  * @author Jupiter.Lin
  * @date 2024-02-06 01:03
  */
-package com.jupiter.kafka;
+package com.jupiter.kafka.bean;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

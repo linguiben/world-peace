@@ -4,9 +4,9 @@
  * @author Jupiter.Lin
  * @date 2024-02-06 01:32
  */
-package com.jupiter;
+package com.jupiter.kafka;
 
-import com.jupiter.kafka.KafkaProducerDemo;
+import com.jupiter.kafka.bean.KafkaProducerDemo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,10 +20,10 @@ import org.springframework.context.annotation.Bean;
  */
 @SpringBootApplication
 @Slf4j
-public class KafkaDemoTest {
+public class KafkaDemoApp {
 
     public static void main(String[] args) {
-        SpringApplication.run(KafkaDemoTest.class, args);
+        SpringApplication.run(KafkaDemoApp.class, args);
     }
 
     @Bean

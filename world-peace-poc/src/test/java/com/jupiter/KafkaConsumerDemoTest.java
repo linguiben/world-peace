@@ -6,7 +6,8 @@
  */
 package com.jupiter;
 
-import com.jupiter.kafka.KafkaProducerDemo;
+import com.jupiter.kafka.KafkaDemoApp;
+import com.jupiter.kafka.bean.KafkaProducerDemo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,7 +24,7 @@ import org.springframework.context.annotation.Bean;
 public class KafkaConsumerDemoTest {
 
     public static void main(String[] args) {
-        SpringApplication.run(KafkaDemoTest.class, args);
+        SpringApplication.run(KafkaDemoApp.class, args);
     }
 
     @Bean
