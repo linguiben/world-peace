@@ -22,7 +22,6 @@ spring:
       enable-auto-commit: false
       auto-offset-reset: latest
       properties-fetch-max-wait-ms: "5000"
-
 kafka:
   srcTopic: input-topic
   dstTopic: output-topic
@@ -33,3 +32,7 @@ logging:
         kafka: WARN
       apache:
         kafka: WARN
+web-socket:
+  server:
+    ip: wpapi #world-peace-api 容器名
+    port: 8081

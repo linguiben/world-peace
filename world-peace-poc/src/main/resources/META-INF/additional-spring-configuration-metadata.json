@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "web-socket.server.port",
+      "type": "java.lang.String",
+      "description": "Description for web-socket.server.port."
+  }
+] }

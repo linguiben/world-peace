@@ -12,7 +12,8 @@
     <artifactId>world-peace-poc</artifactId>
 
     <properties>
-        <start-class>com.jupiter.netty.bio.BIOServer.main</start-class>
+        <!--<start-class>com.jupiter.netty.bio.BIOServer.main</start-class>-->
+        <start-class>com.jupiter.websocket.WebSocketClientApp</start-class>
     </properties>
 
     <dependencies>

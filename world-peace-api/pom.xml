@@ -8,8 +8,8 @@
         <artifactId>world-peace</artifactId>
         <version>1.0</version>
     </parent>
-    <artifactId>worldpeace-api</artifactId>
-    <packaging>war</packaging>
+    <artifactId>world-peace-api</artifactId>
+    <packaging>jar</packaging>
     <name>com.jupiter.api</name>
     <version>1.0</version>
 

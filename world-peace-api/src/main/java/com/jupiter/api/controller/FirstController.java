@@ -18,5 +18,9 @@ public class FirstController {
         return "世界和平!";
     }
 
+    @RequestMapping("/ws")
+    public String websocket() {
+        return "websocket";
+    }
 
 }

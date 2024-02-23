@@ -30,7 +30,7 @@ public class WebSocketClientController {
         if (!webSocketClient.isOpen()) {
             webSocketClient.connect();
             while (!webSocketClient.isOpen()) {
-                log.info("waiting for connect to websocket server...");
+                log.info("connecting to {}",webSocketClient.getURI());
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {

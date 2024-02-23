@@ -1,0 +1,30 @@
+version: '3.9'
+services:
+  wpapi:
+    image: world-peace-api:1.0
+    container_name: wpapi
+    hostname: wpapi
+    networks:
+      wp_net:
+        aliases:
+          - wpapi
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./logs/api:/logs/api
+  wppoc:
+    image: world-peace-poc:1.0
+    container_name: wppoc
+    hostname: wppoc
+    networks:
+      wp_net:
+        aliases:
+          - wppoc
+    ports:
+      - "18080:8080"
+    volumes:
+      - ./logs/poc:/logs/poc
+
+networks:
+  wp_net:
+    driver: bridge

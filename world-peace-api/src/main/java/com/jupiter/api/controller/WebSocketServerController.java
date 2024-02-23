@@ -41,7 +41,7 @@ public class WebSocketServerController {
         this.name = name;
         System.out.println(this.session.getId());
         webSocketSet.add(this);
-        log.info("Open a websocket. id={}, name={}", id, name);
+        log.info("Open a websocket. userId={}, name={}", id, name);
         sendMessage("hello， this is websocket server!");
     }
 
