@@ -25,7 +25,7 @@ public class MyConfig {
     public WebSocketClient webSocketClient() {
         try {
             MyWebSocketClient webSocketClient = new MyWebSocketClient(new URI("ws://127.0.0.1:8081/api/websocket/12/owner"));
-            webSocketClient.connect();
+            // webSocketClient.connect();
             return webSocketClient;
         } catch (URISyntaxException e) {
             e.printStackTrace();
