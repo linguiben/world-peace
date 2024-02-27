@@ -37,7 +37,7 @@ public class AopAdvice {
     public void withAnnotationMethods() {
     }
 
-    @After("pointCut()")
+    @After("pointCut()")  // 指定为@line28的pointCut().
     public void afterAdvice(){
         System.out.println("After Advice...222");
     }
