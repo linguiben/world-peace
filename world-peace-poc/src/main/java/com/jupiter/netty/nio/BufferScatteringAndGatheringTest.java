@@ -16,7 +16,9 @@ import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 
 /**
- *@desc TODO
+ *@desc Socket buffer size 优化的参数: see in java.nio.channels.SocketChannel
+ * SO_SNDBUF The size of the socket send buffer
+ * SO_RCVBUF The size of the socket receive buffer
  *@author Jupiter.Lin
  *@date 2024-02-04 18:12
  */

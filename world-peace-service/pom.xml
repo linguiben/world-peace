@@ -9,11 +9,12 @@
         <artifactId>world-peace</artifactId>
         <version>1.0</version>
     </parent>
-    <artifactId>worldpeace-service</artifactId>
+    <artifactId>world-peace-service</artifactId>
     <packaging>jar</packaging>
     <name>com.jupiter.service</name>
     <version>1.0</version>
     <properties>
+        <start-class>com.jupiter.lazy.LazyTest</start-class>
         <mybatis.spring.version>2.2.0</mybatis.spring.version>
     </properties>
 
