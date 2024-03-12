@@ -11,13 +11,13 @@ public class UDPMulticastSender {
         //DatagramSocket udpSocket = new DatagramSocket();
         MulticastSocket udpSocket = new MulticastSocket();
         // udpSocket.setInterface(InetAddress.getByName("127.0.0.1"));
-        byte[] msg = "Hello".getBytes();
+        byte[] msg = "Hello Kitty.".getBytes();
         DatagramPacket packet = new DatagramPacket(msg, msg.length,mcIPAddress,mcPort);
 
         // packet.setAddress(InetAddress.getByName("127.0.0.1"));
         udpSocket.send(packet);
 
-        System.out.println("udp msg sent");
+        System.out.println("MulticastSocket sent. packet: "+packet.getAddress()+":"+packet.getPort());
         udpSocket.close();
     }
 }

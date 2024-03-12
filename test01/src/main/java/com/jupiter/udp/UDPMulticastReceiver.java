@@ -19,7 +19,7 @@ public class UDPMulticastReceiver {
         mcSocket.setInterface(InetAddress.getByName("192.168.6.75"));
         System.out.println("Multicast Receiver running at:" + mcSocket.getLocalSocketAddress());
         mcSocket.joinGroup(mcIPAddress);
-        System.out.println("UdpReceiver wait at: "+mcSocket.getInterface() +":"+ mcSocket.getLocalPort() );
+        System.out.println("UdpReceiver joinGroup: " + mcIPAddress + "\t, listen to "+mcSocket.getInterface() +":"+ mcSocket.getLocalPort() );
 
         DatagramPacket packet = new DatagramPacket(new byte[1024], 1024);
         mcSocket.receive(packet);
