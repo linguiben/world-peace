@@ -33,7 +33,7 @@ public class AopAdvice {
      * 指定注解切入
      * @param @annotation(xxx)：xxx是自定义注解的全路径
      */
-    @Pointcut("@annotation(com.jupiter.annotation.myAnnotation)")
+    @Pointcut("@annotation(com.jupiter.annotation.MyAnnotationSample)")
     public void withAnnotationMethods() {
     }
 

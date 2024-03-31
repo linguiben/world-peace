@@ -8,7 +8,7 @@
         <version>1.0</version>
     </parent>
     <artifactId>world-peace-common-util</artifactId>
-    <version>${version.world-peace-common-util}</version>
+    <version>1.0</version>
     <name>world-peace-common-util</name>
     <description>world-peace-common-util</description>
     <dependencies>
@@ -17,8 +17,18 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
+        </dependency><!-- 需手动引入kafka-clients，否则会报ClassNotFound:
+            org.apache.kafka.clients.consumer.ConsumerRebalanceListener -->
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-clients</artifactId>
         </dependency>
 
         <dependency>

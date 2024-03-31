@@ -7,13 +7,14 @@
 package com.jupiter.util;
 
 /**
- *@desc TODO
- *@author Jupiter.Lin
- *@date 2023-12-10 13:55
+ * @author Jupiter.Lin
+ * @desc The Class TextData.
+ * @date 2023-12-10 13:55
  */
-public class TextData implements Data{
+public class TextData implements Data {
 
     private String rawData;
+
     public TextData(String rawData) {
         this.rawData = rawData;
     }

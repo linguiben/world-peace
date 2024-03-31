@@ -25,7 +25,7 @@ public class WorldPeaceCommonUtilApplication {
 
         Car car =new Car(null,"benz","red",400000.0);
         SqlSession sqlSessioin = run.getBean("sqlSession", SqlSession.class);
-        sqlSessioin.insert("save",car);
+        sqlSessioin.insert("save",car); // select * from t_car;
     }
 
 }

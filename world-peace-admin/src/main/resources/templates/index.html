@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8">
+        <title>JupiterSo</title>
+        <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+        <style>
+            body{
+                text-align: center;
+            }
+            .container {
+                text-align: center;
+                display: flex;
+                margin-left: 100px;
+            }
+
+            .item {
+                margin-right: 10px; /* 可选，为了在项目之间创建间隔 */
+            }
+            .box{
+                /*
+                width: 200px;
+                height: 300px;
+                */
+                margin: auto;
+                top: 0;
+                left: 0;
+                right: 0;
+                text-align: left;
+            }
+            .center {
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+            .subfoot .subfoot_zbdw {
+                color: #666;
+                text-align: center;
+                margin-top: -10px;
+                padding-bottom: 35px;
+            }
+        </style>
+    </head>
+<body>
+<h2>Welcome to JupiterSo !</h2>
+<div class="container">
+    <div class="box" style="width: 300px;border: solid">
+        <a href="hello">hello</a>
+        <form th:action="@{/hello}" method="post">
+            <input type="submit" value="test @RequestMapping#method">
+        </form>
+        <br/>
+        <a th:href="@{/params(userName='Jupiter',pwd='*&*',age=18)}">params1</a>
+        <br/>
+        <a th:href="@{/params?userName=Jupiter&pwd=*&*&age=18}">params</a>
+        <br/>
+        <a th:href="@{/params/Jupiter/18}">params/Jupiter/18</a>
+        <br/><br/>
+        <a href="/ws">web socket</a>
+    </div>
+    <div class="box" style="width: 300px;border: solid;border-color: #e4393c">
+        <!--Content-Type: application/x-www-form-urlencouded只能用于上传文本格式的文件-->
+        <!--此段请求的Content-Type: multipart/form-data; boundary=&#45;&#45;&#45;&#45;WebKitFormBoundaryH19JutoXQAKYamdA-->
+        <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+            描述:<input type="text" name="desc"><br/>
+            文件:<input type="file" name="file"><br/>
+            <input type="submit" value="上传">
+        </form>
+    </div>
+    <div class="box" style="width: 300px;text-align: left;border: solid; border-color: #3d3d3f">
+        <p>大文件上传拖拽到此处</p>
+    </div>
+</div>
+<div class="box center">
+    <br/><br/>
+    <a href="http://www.jupiterisland.com" target="_blank">友情链接:Jupiter岛</a>
+    <br/>
+    <img src="/images/banner.jpg" alt="Jupiter岛">
+    <br/><br/>
+    <img width="1200" height="300" th:src="@{/images/Florida-Sunrise-scaled.jpg}" alt="Florida-Sunrise-scaled">
+</div>
+
+    <!-- 主办单位 -->
+    <div class="subfoot_zbdw">
+        <p><a href="http://beian.miit.gov.cn/" target="_blank">工业和信息化部备案管理系统网站 <span th:text="${governmentIssuedNumber}" /></a></p>
+        <p>主办单位：Jupiter.Lin</p>
+        <p>建站只是为了玩玩，若有侵权请联系QQ79499480，即删。</p>
+        <p>JupiterSo.com, jovesi.com</p>
+    </div>
+
+    <!-- 底部logo -->
+    <div class="subfoot_logo">
+        <a href="https://www.piyao.org.cn/">
+            <img src="https://static.ws.126.net/163/f2e/www/index20170701/images/py_logo.jpg"
+                 alt="中国互联网联合辟谣平台">
+        </a>
+        <span>
+            <img src="https://static.ws.126.net/163/f2e/www/index20170701/images/wzalogo.jpg" alt="适老化无障碍服务">
+        </span>
+    </div>
+</body>
+</html>

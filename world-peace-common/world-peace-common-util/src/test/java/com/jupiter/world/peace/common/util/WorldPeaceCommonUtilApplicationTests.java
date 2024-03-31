@@ -8,6 +8,7 @@ class WorldPeaceCommonUtilApplicationTests {
 
     @Test
     void contextLoads() {
+        System.out.println("test run.");
     }
 
 }

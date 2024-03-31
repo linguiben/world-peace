@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.support.Acknowledgment;
-import org.springframework.stereotype.Component;
 
 /**
  *@desc TODO
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Component;
  *@date 2024-02-06 01:11
  */
 @Slf4j
-@Component
+//@Component
 @Getter
 public class KafkaConsumerDemo {
 

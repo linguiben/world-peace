@@ -17,6 +17,7 @@
 package com.jupiter.aop;
 
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.aspectj.lang.reflect.MethodSignature;
@@ -24,11 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.annotation.AliasFor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.lang.annotation.*;
@@ -54,6 +57,13 @@ public class AopDemoApp {
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @interface MyAnnotation {
+    @AliasFor("name")
+    String value() default "";
+
+    @AliasFor("value")
+    String name() default "";
+
+    boolean required() default true;
 }
 
 @Controller
@@ -69,6 +79,14 @@ class MyController {
     public String aopIndex() {
         // return "index";
         return this.myService.showMeTheMoney();
+    }
+
+    @MyAnnotation("insert msg into kafka request-topic")
+    @RequestMapping("/annotationAOP")
+    @ResponseBody
+    public String annotationAOP(@RequestParam(value = "msg", defaultValue = "null") String message){
+        // curl localhost:8080/jupiter/annotationAOP?msg=abcd
+        return "null".equals(message) ? "request format: ?msg=xxx" : "msg="+message;
     }
 }
 
@@ -130,18 +148,18 @@ class AspectAdvice {
 
     /**
      * 环绕增强切入
-     * 以下，表达式和注解方式同时满足才会切入:
+     * 这样写，则表达式和注解方式同时满足才会切入:
      * @Around(value = "expressionPointCut() && annotationPointCut()")
+     *
+     * 满足表达式即可切入：@Around(value = "expressionPointCut()")
      */
     @Around(value = "expressionPointCut()")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         long startTime = System.currentTimeMillis();
 
-        // 此处写方法执行之前动作，等效于@Before
-
+        // 行写方法执行之前动作，等效于@Before
         Object res = point.proceed(); // 执行增强的方法
-
-        // 此处写方法执行之后动作，等效于@After
+        // 行写方法执行之后动作，等效于@After
 
         MethodSignature methodSignature = (MethodSignature) point.getSignature();
         Method method = methodSignature.getMethod();
@@ -149,5 +167,45 @@ class AspectAdvice {
         // log.info("注解中的属性值："+method.getAnnotation(FieldConvert.class).codeType());
         log.info("环绕增强执行耗时(ms): " + (System.currentTimeMillis() - startTime));
         return res;
+    }
+
+    /**
+     * 获取到method上的注解，方法一
+     *  通过切点 -> Method -> 得到注解
+     */
+    @Around("@annotation(com.jupiter.aop.MyAnnotation)")
+    public Object aroundAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
+
+        Object proceed = null; // 定义一个执行后的结果，用于执行增强后的方法的返回
+        // 获取方法上的注解
+        MyAnnotation myAnnotation = method.getAnnotation(MyAnnotation.class);
+        if (myAnnotation != null) {
+            String value = myAnnotation.value(); // 获取注解信息
+            log.info("注解值:"+value); // 执行业务逻辑
+
+            // 在此处写执行前增强(相当于@Before)
+            proceed = joinPoint.proceed(); // 执行被增强的方法，也就是原方法。
+            // 在此处写执行后增强(相当于@After)
+        }
+
+        return proceed; // 必须要将执行后的结果返回给原方法，否则前端请求得不到respond
+    }
+
+    /**
+     * 获取到method上的注解，方法二:
+     * 在增强方法上定义一个类型为目标注解的参数，并将参数名写在@After()中
+     */
+    @After("@annotation(myAnnotation)")
+    public void afterAnnotation(JoinPoint joinPoint,MyAnnotation myAnnotation) {
+        if (myAnnotation == null) {
+            log.warn("注解为空，或没有此注解");
+            throw new RuntimeException("注解为空，或没有此注解");
+        }
+
+        String value = myAnnotation.value();
+        log.info("得到注解MyAnnotation，注解值:"+value);
+
     }
 }

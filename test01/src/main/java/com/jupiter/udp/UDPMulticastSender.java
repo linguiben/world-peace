@@ -10,7 +10,7 @@ public class UDPMulticastSender {
         int mcPort = 12345;
         //DatagramSocket udpSocket = new DatagramSocket();
         MulticastSocket udpSocket = new MulticastSocket();
-        // udpSocket.setInterface(InetAddress.getByName("127.0.0.1"));
+        // udpSocket.setInterface(InetAddress.getByName("192.168.6.0"));
         byte[] msg = "Hello Kitty.".getBytes();
         DatagramPacket packet = new DatagramPacket(msg, msg.length,mcIPAddress,mcPort);
 

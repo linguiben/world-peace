@@ -22,7 +22,11 @@ public class TextDataConsumer implements DataListener<TextData>{
         Thread worker = new Thread(() -> {
             while (true) {
                 try {
-                    log.info("Receive: {}", this.queue.get().getRawData());
+                    TextData data = this.queue.get();
+                    if(data == null){
+                        continue;
+                    }
+                    log.info("Receive: {}", data.getRawData());
                 } catch (InterruptedException e) {
                     log.error("Receive data Error. {}", e);
                     throw new RuntimeException(e);
@@ -36,5 +40,9 @@ public class TextDataConsumer implements DataListener<TextData>{
     @Override
     public void receiveData(TextData data) {
         this.queue.put(data);
+    }
+
+    public void stop(){
+        this.queue.shutdown();
     }
 }

@@ -5,7 +5,7 @@
 server:
   port: 8090
 
-
+governmentIssuedNumber: 粤ICP备2024203563号
 food:
   meat: 烤肉${random.int}
   rice: 拌饭
@@ -21,6 +21,12 @@ info:
 logging:
   level:
     root: info
-  file:
-    path:
-    name:
+
+file-upload-path: data/upload
+# maxFileSize 单个数据大小
+# maxRequestSize 是总数据大小
+spring:
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 50MB

@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @desc The abstract fist in first out queue
  * @author Jupiter.Lin
+ * @desc The abstract fist in first out queue
  * @date 2023-12-10 02:04
  */
-public abstract class FIFOQueue<D> implements Queue<D>{
-
+public abstract class FIFOQueue<D> implements Queue<D>, java.io.Serializable {
     private volatile boolean acceptDataFlag;
     protected List<D> cache;
-    private static final int initializedSize = 16;
+    private static final int initializedSize = 16; // 默认大小
 
     public FIFOQueue() {
         this(initializedSize);
@@ -25,17 +24,19 @@ public abstract class FIFOQueue<D> implements Queue<D>{
 
     /**
      * put data to the queue
+     *
      * @param d
      */
     @Override
     public synchronized void put(D d) {
-        if(this.acceptDataFlag)
+        if (this.acceptDataFlag)
             this.cache.add(d);
         notify(); // 通知在等待数据的线程，只需通知一个即可
     }
 
     /**
      * get data from the queue without timeout
+     *
      * @return
      * @throws InterruptedException
      */
@@ -46,16 +47,17 @@ public abstract class FIFOQueue<D> implements Queue<D>{
 
     /**
      * get data from the queue with timeout defined.
+     *
      * @param timeoutMillis
      * @return
      * @throws InterruptedException
      */
     public synchronized D get(final int timeoutMillis) throws InterruptedException {
-        if(!this.acceptDataFlag)
+        if (!this.acceptDataFlag)
             return null;
-        if(this.cache.isEmpty()){
+        if (this.cache.isEmpty()) {
             wait(timeoutMillis); // 若有数据进来，将被唤醒
-            if(this.cache.size() ==0)
+            if (this.cache.size() == 0)
                 return null;
         }
         D data = this.cache.remove(0);

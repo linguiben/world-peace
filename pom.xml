@@ -2,6 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <!-- TODO: 修改为不继承SpringBoot,而引入dependencies依赖管理模块 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -33,6 +34,7 @@
         <spring-boot-dependencies.version>2.7.18</spring-boot-dependencies.version>
         <springdoc.version>1.6.14</springdoc.version>
         <spring.kafka.version>2.9.12</spring.kafka.version>
+        <spring-ai.version>0.8.1</spring-ai.version>
     </properties>
 
     <modules>
@@ -41,6 +43,8 @@
         <module>world-peace-admin</module>
         <module>world-peace-api</module>
         <module>world-peace-poc</module>
+        <module>world-peace-dependencies</module>
+        <module>world-peace-util</module>
         <!--<module>test01</module>-->
     </modules>
 
@@ -60,6 +64,13 @@
                         <artifactId>snappy-java</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

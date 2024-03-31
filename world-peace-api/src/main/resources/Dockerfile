@@ -6,6 +6,7 @@ EXPOSE 8081
 ENTRYPOINT ["java","-jar","/usr/apps/wp/world-peace-api.jar"]
 MAINTAINER Jupiter
 
+#scp /Users/jupiter/14.idea-workspace/world-peace/world-peace-admin/target/world-peace-admin-1.0.jar root@aliyun:/root/apps
 #cd /Users/jupiter/14.idea-workspace/world-peace/world-peace-api
 #docker build -t world-peace-api:1.0 -f ./target/classes/Dockerfile .
 #docker run -d --name wpapi --hostname wpapi -p 8081:8081 world-peace-api:1.0

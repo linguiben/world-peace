@@ -5,10 +5,10 @@ package com.jupiter.kafka;
  * @desc TODO
  * @date 2023-09-17 01:12
  */
+
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Named;
 
 import java.util.Properties;
 
@@ -25,16 +25,16 @@ public class KafkaStreamSplitExample {
         // Create a KStream from the "input-topic"
         KStream<String, String> inputTopicStream = builder.stream("input-topic");
 
-        // Split the stream based on the key and distribute to different topics
-        KStream<String, String>[] splitStreams = inputTopicStream.split((key, value) -> {
-            String topicName = key + "-topic"; // Append key to topic prefix
-            return new String[]{topicName};
-        }, Named.as("split-stream"));
-
-        // Forward each split stream to the corresponding topic
-        for (int i = 0; i < splitStreams.length; i++) {
-            splitStreams[i].to(splitStreams[i].getOutputTopic());
-        }
+//        // Split the stream based on the key and distribute to different topics
+//        KStream<String, String>[] splitStreams = inputTopicStream.split((key, value) -> {
+//            String topicName = key + "-topic"; // Append key to topic prefix
+//            return new String[]{topicName};
+//        }, Named.as("split-stream"));
+//
+//        // Forward each split stream to the corresponding topic
+//        for (int i = 0; i < splitStreams.length; i++) {
+//            splitStreams[i].to(splitStreams[i].getOutputTopic());
+//        }
 
         // Build the Kafka Streams topology
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
