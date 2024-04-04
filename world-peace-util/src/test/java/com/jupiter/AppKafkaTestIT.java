@@ -6,7 +6,6 @@
  */
 package com.jupiter;
 
-import com.jupiter.util.kafka.annotation.ToKafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -33,14 +32,14 @@ public class AppKafkaTestIT {
 
     @Test
     public void testKafkaDemo() {
-        System.out.println("ok: "+test1);
+        System.out.println("ok: " + test1);
          Assertions.assertEquals("Hello Kafka!",test1.substring(0,12));
     }
 
     @Configuration
     static class MyTestConfig {
         @Bean
-        @ToKafkaTopic({"input-topic", "output-topic"})
+        // @ToKafkaTopic({"input-topic", "output-topic"})
         public String test1() {
             System.out.println("test kafka util.");
             return "Hello Kafka!" + "--" + LocalDateTime.now();

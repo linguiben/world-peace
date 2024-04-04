@@ -4,8 +4,9 @@
  * @author Jupiter.Lin
  * @date 2024-02-06 01:11
  */
-package com.jupiter.util.kafka;
+package com.jupiter.util.kafka.impl;
 
+import com.jupiter.util.kafka.Receiver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import org.springframework.kafka.support.Acknowledgment;
 @Slf4j
 //@Component
 @Getter
-public class KafkaReceiver {
+public class KafkaReceiver implements Receiver {
 
     @Value("${kafka.srcTopic:#{null}}")
     private String srcTopic;
@@ -31,6 +32,8 @@ public class KafkaReceiver {
     private KafkaListenerEndpointRegistry endpointRegistry;
 
     @KafkaListener(topics = "${kafka.srcTopic}",groupId = "jupiter" )
+    //@KafkaListener(topics = "#{'${kafka.topic.ping}'.split(',')}") //从配置文件中获取，并按逗号分割
+    //@KafkaListener(topics = "#{pingProperties.getTopic().split(',')}")//从bean属性中获取，并按逗号分割
     public void onMessage(String message,Acknowledgment acknowledgment) {
         log.info("Received message: {}" , message);
         // manually commit

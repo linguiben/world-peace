@@ -34,8 +34,14 @@ echo "ok."
 
 docker exec -it nginx /bin/bash -c "sed -i 's/java-master:8082/wpadmin:8090/g' /etc/nginx/vhost/template.conf && kill -HUP 1"
 
-root@nginx:/etc/nginx/vhost# nginx -t
+#nginx
+#主配置文件通常位于/etc/nginx/nginx.conf或/usr/local/nginx/conf/nginx.conf
+#其中，include /etc/nginx/nginx.conf
+
+root@nginx:/etc/nginx/vhost# nginx -t #测试ngix配置文件
 nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
 nginx: configuration file /etc/nginx/nginx.conf test is successful
 root@nginx:/etc/nginx/vhost#
-root@nginx:/etc/nginx/vhost# nginx -s reload
+root@nginx:/etc/nginx/vhost# nginx -s reload #刷新配置文件
+sudo service nginx restart
+

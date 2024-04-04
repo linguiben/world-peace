@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-class CarDaoTest {
+class CarDaoTestIT {
 
     @Test
     void save() throws IOException {

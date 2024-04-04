@@ -6,7 +6,9 @@
  */
 package com.jupiter.util.kafka;
 
+import com.jupiter.util.kafka.annotation.FromKafkaTopic;
 import com.jupiter.util.kafka.annotation.ToKafkaTopic;
+import com.jupiter.util.kafka.impl.KafkaSender;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -26,7 +28,7 @@ import java.util.Arrays;
 @Component
 public class kafkaUtil {
 
-    private final KafkaSender kafkaSender;
+    private final Sender kafkaSender;
 
     public kafkaUtil(KafkaSender kafkaSender) {
         this.kafkaSender = kafkaSender;
@@ -51,5 +53,14 @@ public class kafkaUtil {
                     log.debug("msg sent to topic {}", topic);
                 }
         );
+    }
+
+    /**
+     * 方法执行前，从kafka收取message，注入到方法的参数中，需要考虑手动commit？
+     * e.g.: call(@FromKafkaTopic list);
+     */
+    // @Before
+    public void injectKafkaMessag(JoinPoint joinPoint, FromKafkaTopic fromKafkaTopic){
+
     }
 }

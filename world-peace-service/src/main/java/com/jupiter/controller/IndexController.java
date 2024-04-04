@@ -47,7 +47,7 @@ public class IndexController {
     }
 
 
-    @Autowired
+    @Autowired(required = false)
     private MapTest mapTest;
 
     @RequestMapping("/mapTest")

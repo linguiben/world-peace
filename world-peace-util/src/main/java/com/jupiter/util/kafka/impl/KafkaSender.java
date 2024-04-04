@@ -4,8 +4,9 @@
  * @author Jupiter.Lin
  * @date 2024-02-06 01:03
  */
-package com.jupiter.util.kafka;
+package com.jupiter.util.kafka.impl;
 
+import com.jupiter.util.kafka.Sender;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +17,14 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 /**
- *@desc TODO
- *@author Jupiter.Lin
- *@date 2024-02-06 01:03
+ * @author Jupiter.Lin
+ * @desc TODO
+ * @date 2024-02-06 01:03
  */
 @Slf4j
 @Component
 @Getter
-public class KafkaSender {
+public class KafkaSender implements Sender {
 
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
@@ -53,3 +54,4 @@ public class KafkaSender {
         kafkaTemplate.send(dstTopic,key, message);
     }
 }
+

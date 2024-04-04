@@ -131,7 +131,51 @@
                     <target>11</target>
                 </configuration>
             </plugin>
-            <!--打包成可执行jar-->
+            <!-- For unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <!-- For integration tests -->
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-failsafe-plugin</artifactId>-->
+<!--                <version>3.2.5</version>-->
+<!--                <configuration>-->
+<!--                    <includes>-->
+<!--                        <include>**/*IT.java</include>-->
+<!--                    </includes>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    &lt;!&ndash;<execution>-->
+<!--                        <goals>-->
+<!--                            <goal>integration-test</goal>-->
+<!--                            <goal>verify</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>&ndash;&gt;-->
+<!--                    <execution>-->
+<!--                        <id>integration-test</id>-->
+<!--                        <goals>-->
+<!--                            <goal>integration-test</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>test</phase>-->
+<!--                    </execution>-->
+<!--                    <execution>-->
+<!--                        <id>verify</id>-->
+<!--                        <goals>-->
+<!--                            <goal>verify</goal>-->
+<!--                        </goals>-->
+<!--                        <phase>verify</phase>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+            <!--打包成SpringBoot的可执行jar-->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

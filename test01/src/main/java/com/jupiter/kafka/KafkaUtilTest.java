@@ -6,7 +6,6 @@
  */
 package com.jupiter.kafka;
 
-import com.jupiter.util.kafka.annotation.ToKafkaTopic;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -34,7 +33,7 @@ public class KafkaUtilTest {
      * 1. pom.xml引入依赖world-peace-util
      * 2. 在方法上增加@ToKafkaTopic，当方法被调用时，会自动将返回值写入指定的kafka topic。
      */
-    @ToKafkaTopic("input-topic")
+    // @ToKafkaTopic("input-topic")
     public String toKafkaTopic(String message) {
         System.out.println("bean created.");
         return "test toKafkaTopic " + message;

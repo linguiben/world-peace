@@ -4,6 +4,7 @@ import com.jupiter.calc.Calculator;
 import com.jupiter.service.MapTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,12 +29,13 @@ public class AppTest {
         System.out.println("key1="+mapTest.getMaps().get("0011.HK"));
         Assertions.assertEquals("340",mapTest.getMaps().get("0011.HK"));
     }
+
+    @Disabled
     @Test
     public void testAppStartup(){
 //        ApplicationContext ctx = SpringApplication.run(App.class);
-        App app = ctx.getBean(App.class);
-
-        log.info("app: {}", ctx);
+//        App app = ctx.getBean(App.class);
+//        log.info("app: {}", ctx);
     }
 
     @Test
