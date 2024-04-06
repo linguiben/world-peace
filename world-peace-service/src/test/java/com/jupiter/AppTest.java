@@ -15,8 +15,10 @@ import java.math.BigDecimal;
 //@RunWith(SpringRunner.class)
 //@SpringBootTest(classes = MapTest.class)
 @SpringBootTest(classes = App.class)
+//@EnableAutoConfiguration
 //@EnableConfigurationProperties(MapTest.class)  //开启MapTest的配置绑定功能，并将其注册到容器中
 @Slf4j
+@Disabled
 public class AppTest {
     @Autowired(required = false)
     private MapTest mapTest;

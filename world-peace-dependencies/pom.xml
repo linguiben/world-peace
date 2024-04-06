@@ -429,6 +429,55 @@
     </repositories>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.starter.version}</version>
+                    <configuration>
+                        <!--<skip>true</skip>-->
+                        <excludes>
+                            <exclude>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                            </exclude>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>${maven-assembly-plugin.version}</version>
+                    <configuration>
+                        <appendAssemblyId>false</appendAssemblyId>
+                        <descriptors>
+                            <descriptor>${basedir}/src/main/assembly/assembly.xml</descriptor>
+                        </descriptors>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>make</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <!-- for maven compile -->
             <plugin>
@@ -517,55 +566,6 @@
                 </includes>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.springframework.boot</groupId>
-                    <artifactId>spring-boot-maven-plugin</artifactId>
-                    <version>${spring.boot.starter.version}</version>
-                    <configuration>
-                        <!--<skip>true</skip>-->
-                        <excludes>
-                            <exclude>
-                                <groupId>org.springframework.boot</groupId>
-                                <artifactId>spring-boot-configuration-processor</artifactId>
-                            </exclude>
-                            <exclude>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                            </exclude>
-                        </excludes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>repackage</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>${maven-assembly-plugin.version}</version>
-                    <configuration>
-                        <appendAssemblyId>false</appendAssemblyId>
-                        <descriptors>
-                            <descriptor>${basedir}/src/main/assembly/assembly.xml</descriptor>
-                        </descriptors>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>make</id>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>single</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
 
 </project>
