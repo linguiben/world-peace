@@ -1,6 +1,6 @@
 package com.jupiter;
 
-import org.assertj.core.util.Strings;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -30,18 +30,19 @@ public class Test01 {
         System.out.println("i+j=" + (i+j));
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public void main1(String[] args) throws InterruptedException {
         System.out.println(Test02.i);
         Thread.sleep(60_000);
         //Test01 t = new Test01();
         System.out.println("ok");
     }
 
+    @Disabled
     @Test
     public void split(){
         // iiippp:12345/abcde;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("url:");
+        System.out.println("please input url:");
         String url = scanner.nextLine();
         String[] strings = url.split(":",2);
         System.out.println(Arrays.toString(strings));

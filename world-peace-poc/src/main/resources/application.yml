@@ -35,4 +35,4 @@ logging:
 web-socket:
   server:
     ip: wpapi #world-peace-api 容器名
-    port: 8081
+    port: 18081

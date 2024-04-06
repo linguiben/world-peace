@@ -11,6 +11,20 @@
 	<version>1.0</version>
 	<name>world-peace-common-base</name>
 	<description>world-peace-common-base</description>
+	<packaging>jar</packaging>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.jupiter.world-peace</groupId>
+				<artifactId>world-peace-dependencies</artifactId>
+				<version>1.0</version>
+				<type>pom</type>
+				<scope>import</scope> <!-- 用于导入其他项目的依赖管理信息，而不是实际的编译依赖 -->
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -25,6 +39,15 @@
 	</dependencies>
 
 	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>com.jupiter.world-peace</groupId>
+					<artifactId>world-peace-dependencies</artifactId>
+					<version>1.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

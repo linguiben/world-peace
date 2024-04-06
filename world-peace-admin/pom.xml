@@ -7,13 +7,33 @@
         <groupId>com.jupiter.world-peace</groupId>
         <artifactId>world-peace</artifactId>
         <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>world-peace-admin</artifactId>
     <packaging>jar</packaging>
-    <name>com.jupiter.admin</name>
+    <name>world-peace-admin</name>
     <version>1.0</version>
     <url>http://maven.apache.org</url>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.jupiter.world-peace</groupId>
+                <artifactId>world-peace-dependencies</artifactId>
+                <version>1.0</version>
+                <type>pom</type>
+                <scope>import</scope> <!-- 用于导入其他项目的依赖管理信息，而不是实际的编译依赖 -->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
+        <dependency>
+            <groupId>com.jupiter.world-peace</groupId>
+            <artifactId>world-peace-dependencies</artifactId>
+            <type>pom</type>
+            <version>1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -22,7 +42,6 @@
         <dependency>
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
-            <version>3.0.0</version>
         </dependency>
         <!--thymeleaf模板引擎-->
         <dependency>
@@ -33,12 +52,10 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.6</version>
         </dependency>
         <!--<dependency>
             <groupId>org.springframework.ai</groupId>
@@ -54,7 +71,6 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -113,17 +129,19 @@
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.18</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.jupiter.admin.AdminApp</mainClass>
-                        </manifest>
-                    </archive>
+                    <mainClass>com.jupiter.admin.AdminApp</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

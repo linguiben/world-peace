@@ -13,57 +13,72 @@
     <properties>
         <java.version>11</java.version>
         <lombok.version>1.18.30</lombok.version>
-        <maven.plugin.version>3.1</maven.plugin.version>
+        <maven.plugin.version>3.8.1</maven.plugin.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- spring related -->
         <spring.boot.starter.version>2.7.18</spring.boot.starter.version>
         <spring.cloud.version>2020.0.6</spring.cloud.version>
-
         <spring.boot.web.version>2.4.2</spring.boot.web.version>
-
-
-        <swagger.ui.version>2.7.0</swagger.ui.version>
-        <swagger.version>2.7.0</swagger.version>
-        <knife4j.version>2.0.4</knife4j.version>
-        <swagger.bootstrap.ui.version>1.9.6</swagger.bootstrap.ui.version>
         <spring.boot.autoconfigure.version>2.4.2</spring.boot.autoconfigure.version>
-        <spring.boot.redis.version>2.4.2</spring.boot.redis.version>
-        <spring.boot.log4j.version>2.4.2</spring.boot.log4j.version>
+        <spring.aop.version>2.4.2</spring.aop.version>
+        <jasypt.spring.boot.starter.version>3.0.0</jasypt.spring.boot.starter.version>
+        <spring.websocket.version>2.4.2</spring.websocket.version>
+        <springdoc.version>1.6.14</springdoc.version>
+        <spring-ai.version>0.8.1</spring-ai.version>
+        <!-- commons tool -->
+        <commons.fileupload.version>1.4</commons.fileupload.version><!--文件上传下载支持-->
+        <commons.io.version>2.6</commons.io.version>
         <commons.pool.version>2.9.0</commons.pool.version>
+        <commons.lang.version>2.6</commons.lang.version>
+        <commons.lang3.version>3.8</commons.lang3.version>
+        <!-- logging -->
+        <spring.boot.log4j.version>2.4.2</spring.boot.log4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
+        <logback.classic.version>1.4.14</logback.classic.version>
+        <!-- tools -->
+        <guava.version>19.0</guava.version>
+        <gson.version>2.8.6</gson.version>
+        <fastjson.version>1.2.83</fastjson.version>
         <jackson.annotations.version>2.9.0</jackson.annotations.version>
         <jackson.databind.version>2.11.4</jackson.databind.version>
-        <commons.lang.version>2.6</commons.lang.version>
-        <spring.boot.jdbc.version>2.4.2</spring.boot.jdbc.version>
-        <spring.aop.version>2.4.2</spring.aop.version>
-        <spring.boot.druid.version>1.1.21</spring.boot.druid.version>
-        <mysql.connector.version>8.0.22</mysql.connector.version>
-        <spring.boot.mybatis.version>3.4.0</spring.boot.mybatis.version>
-        <disruptor.version>3.4.2</disruptor.version>
+        <disruptor.version>3.4.2</disruptor.version> <!-- performance -->
+        <swagger.ui.version>2.7.0</swagger.ui.version>
+        <swagger.version>2.7.0</swagger.version>
+        <swagger.bootstrap.ui.version>1.9.6</swagger.bootstrap.ui.version>
+        <knife4j.version>2.0.4</knife4j.version>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
-        <gson.version>2.8.6</gson.version>
         <freemarker.version>2.3.30</freemarker.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
-        <guava.version>19.0</guava.version>
-        <fastjson.version>1.2.83</fastjson.version>
-        <spring.websocket.version>2.4.2</spring.websocket.version>
         <http.client.version>5.0.3</http.client.version>
+        <!--单元测试相关-->
         <spring.boot.test.version>2.4.2</spring.boot.test.version>
-        <!--<junit.version>4.13.1</junit.version> upgrade to junit5-->
-        <commons.lang3.version>3.8</commons.lang3.version>
+        <junit.version>4.13.1</junit.version>
+        <junit.jupiter.version>5.8.2</junit.jupiter.version>
+        <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
+        <mockito.all.version>1.10.19</mockito.all.version>
+        <mockito.version>4.10.0</mockito.version>
+        <!-- cron job -->
         <xxl.job.version>2.3.1</xxl.job.version>
         <easyexcel.version>3.1.1</easyexcel.version>
         <poi.version>3.17</poi.version>
-        <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
         <oss.version>3.12.0</oss.version>
-        <hiberante.validator.version>6.2.0.Final</hiberante.validator.version>
         <archunit.version>1.0.0</archunit.version>
+        <!-- email -->
         <javax.mail.version>1.6.2</javax.mail.version>
+        <!-- db related -->
+        <spring.boot.redis.version>2.4.2</spring.boot.redis.version>
+        <spring.boot.jdbc.version>2.4.2</spring.boot.jdbc.version>
+        <spring.boot.druid.version>1.1.21</spring.boot.druid.version>
+        <spring.boot.mybatis.version>3.4.0</spring.boot.mybatis.version>
+        <hiberante.validator.version>6.2.0.Final</hiberante.validator.version>
+        <mysql.connector.version>8.0.22</mysql.connector.version>
         <mongodb.version>2.4.7</mongodb.version>
+        <spring.kafka.version>2.9.12</spring.kafka.version>
         <rocketmq.version>2.2.3</rocketmq.version>
         <rabbitmq.version>3.1.2</rabbitmq.version>
-        <spring-ai.version>0.8.1</spring-ai.version>
     </properties>
 
     <dependencies>
@@ -71,13 +86,17 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
-            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.classic.version}</version>
         </dependency>
     </dependencies>
 
     <dependencyManagement>
         <dependencies>
-            <!-- springboot -->
+            <!-- 引入springboot的依赖管理 -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -128,6 +147,22 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
                 <version>${spring.boot.web.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-fileupload</groupId> <!-- 文件上传下载支持 -->
+                <artifactId>commons-fileupload</artifactId>
+                <version>${commons.fileupload.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons.io.version}</version>
+            </dependency>
+            <!-- 加密解密敏感信息 -->
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${jasypt.spring.boot.starter.version}</version>
             </dependency>
             <!-- swagger -->
             <dependency>
@@ -342,6 +377,37 @@
                 <artifactId>spring-boot-starter-amqp</artifactId>
                 <version>${rabbitmq.version}</version>
             </dependency>
+            <!-- kafka -->
+            <dependency>
+                <groupId>org.springframework.kafka</groupId>
+                <artifactId>spring-kafka</artifactId>
+                <version>${spring.kafka.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.kafka</groupId>
+                        <artifactId>kafka-clients</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.xerial.snappy</groupId>
+                        <artifactId>snappy-java</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <!-- openAI -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- 配置绑定处理器，方便开发，打包时在maven插件里exclude它 -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-configuration-processor</artifactId>
+                <version>2.7.18</version>
+                <optional>true</optional>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -364,6 +430,7 @@
 
     <build>
         <plugins>
+            <!-- for maven compile -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -373,6 +440,50 @@
                     <target>${maven.compiler.target}</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
+            </plugin>
+            <!-- For unit tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <includes>
+                        <include>**/*Test.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <!--For integration tests-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>3.2.5</version>
+                <configuration>
+                    <includes>
+                        <include>**/*IT.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <!--<execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>-->
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <phase>test</phase>
+                    </execution>
+                    <execution>
+                        <id>verify</id>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                        <phase>verify</phase>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -408,6 +519,31 @@
         </resources>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring.boot.starter.version}</version>
+                    <configuration>
+                        <!--<skip>true</skip>-->
+                        <excludes>
+                            <exclude>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                            </exclude>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>

@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>world-peace-common</artifactId>
-    <name>world peace common</name>
+    <name>world-peace-common</name>
     <description>com.jupiter.world-peace-common</description>
 
     <packaging>pom</packaging>

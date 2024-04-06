@@ -9,7 +9,7 @@
 <!--    </parent>-->
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.jupiter.world-peace</groupId>
-    <artifactId>world-peace-util</artifactId>
+    <artifactId>world-peace-util-starter</artifactId>
     <version>1.0</version>
 
     <dependencyManagement>
@@ -26,10 +26,10 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
+            <groupId>com.jupiter.world-peace</groupId>
+            <artifactId>world-peace-dependencies</artifactId>
+            <version>1.0</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

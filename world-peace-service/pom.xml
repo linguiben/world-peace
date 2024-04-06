@@ -11,17 +11,31 @@
     </parent>
     <artifactId>world-peace-service</artifactId>
     <packaging>jar</packaging>
-    <name>com.jupiter.service</name>
+    <name>world-peace-service</name>
     <version>1.0</version>
     <properties>
         <start-class>com.jupiter.lazy.LazyTest</start-class>
         <mybatis.spring.version>2.2.0</mybatis.spring.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.jupiter.world-peace</groupId>
+                <artifactId>world-peace-dependencies</artifactId>
+                <version>1.0</version>
+                <type>pom</type>
+                <scope>import</scope> <!-- 用于导入其他项目的依赖管理信息，而不是实际的编译依赖 -->
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
+            <groupId>com.jupiter.world-peace</groupId>
+            <artifactId>world-peace-dependencies</artifactId>
+            <type>pom</type>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -90,6 +104,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.18</version>
             </plugin>
         </plugins>
     </build>

@@ -121,7 +121,7 @@
 
         <dependency>
             <groupId>com.jupiter.world-peace</groupId>
-            <artifactId>world-peace-util</artifactId>
+            <artifactId>world-peace-util-starter</artifactId>
             <version>1.0</version>
         </dependency>
 
