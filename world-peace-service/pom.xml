@@ -4,19 +4,19 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
-<!--    <parent>-->
-<!--        <groupId>com.jupiter.world-peace</groupId>-->
-<!--        <artifactId>world-peace</artifactId>-->
-<!--        <version>1.0</version>-->
-<!--    </parent>-->
+    <parent>
+        <groupId>com.jupiter.world-peace</groupId>
+        <artifactId>world-peace-dependencies</artifactId>
+        <version>1.0</version>
+        <relativePath/> <!-- lookup parent's pom path -->
+    </parent>
     <groupId>com.jupiter.world-peace</groupId>
     <artifactId>world-peace-service</artifactId>
     <packaging>jar</packaging>
     <name>world-peace-service</name>
     <version>1.0</version>
     <properties>
-        <start-class>com.jupiter.lazy.LazyTest</start-class>
-        <mybatis.spring.version>2.2.0</mybatis.spring.version>
+        <start-class>com.jupiter.AppConfigDemo</start-class>
     </properties>
 
     <dependencyManagement>
@@ -47,7 +47,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
-
+        <!-- AOP -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
@@ -56,7 +56,6 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.kafka</groupId>
@@ -65,7 +64,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>3.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
@@ -77,7 +75,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
         </dependency>
-
+        <!--redis-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -97,42 +95,15 @@
             <artifactId>spring-boot-starter-test</artifactId>
              <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.18</version>
+            <scope>runtime</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>world-peace-service</finalName>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.jupiter.world-peace</groupId>
-                    <artifactId>world-peace-dependencies</artifactId>
-                    <version>1.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.7.18</version>
-            </plugin>
-             <!--For unit tests-->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.12.4</version>
-                <configuration>
-                    <skip>true</skip>
-                    <includes>
-                        <include>**/*Test.java</include>
-                    </includes>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 </project>

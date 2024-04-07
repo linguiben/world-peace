@@ -5,3 +5,5 @@ server:
 
 tes:
   maps: {0001.HK: 12,0002.HK: 34}
+project:
+  name: world-peace-service #@Value("${project.name}")

@@ -19,10 +19,10 @@ import java.util.Arrays;
 @SpringBootConfiguration
 @ComponentScan({"com.jupiter.calc","com.jupiter.aop"})
 @EnableAutoConfiguration
-public class AppAOPTest {
+public class AppAOPDemo {
     public static void main(String[] args) {
         // 1. 返回IOC容器
-        ApplicationContext ctx = SpringApplication.run(AppAOPTest.class, args);
+        ApplicationContext ctx = SpringApplication.run(AppAOPDemo.class, args);
 
         // 2. 查看容器内的beans
         String[] names = ctx.getBeanDefinitionNames();

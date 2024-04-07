@@ -18,10 +18,10 @@ docker run -d --name nginx1 --hostname nginx -p 80:80 -p 443:443 --network=data_
 
 # upload to aliyun ECS
 scp /Users/jupiter/14.idea-workspace/world-peace/world-peace-admin/target/world-peace-admin-1.0.jar root@aliyun:/opt/apps
-# build wpadmin
+# build wpadmin docker container
+cd ~/apps && docker build -t world-peace-admin:1.0 -f ./Dockerfile .
 docker stop wpadmin
 docker rm wpadmin
-cd ~/apps && docker build -t world-peace-admin:1.0 -f ./Dockerfile .
 docker run -d --name wpadmin --hostname wpadmin -p 8090:8090 --network=data_default -v /data/logs/wpadmin:/data/logs/wpadmin -v /data/wpadmin:/usr/apps/wp/data --restart=always world-peace-admin:1.0
 
 

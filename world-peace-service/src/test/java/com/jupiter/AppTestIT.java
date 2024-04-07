@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 //@EnableConfigurationProperties(MapTest.class)  //开启MapTest的配置绑定功能，并将其注册到容器中
 @Slf4j
 @Disabled
-public class AppTest {
+public class AppTestIT {
     @Autowired(required = false)
     private MapTest mapTest;
     @Autowired(required = false)

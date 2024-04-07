@@ -7,9 +7,9 @@
 		<environment id="development">
 			<transactionManager type="JDBC" />
 			<dataSource type="com.jupiter.dao.C3P0DataSourceFactory" />
-			<!-- <dataSource type="POOLED"> <property name="driver" value="com.ibm.db2.jcc.DB2Driver" 
-				/> <property name="url" value="jdbc:db2://centos6:50000/DW:currentSchema=DB2INST1;currentIsolation=CS;" 
-				/> <property name="username" value="db2inst1" /> <property name="password" 
+			<!-- <dataSource type="POOLED"> <property name="driver" value="com.ibm.db2.jcc.DB2Driver"
+				/> <property name="url" value="jdbc:db2://centos6:50000/DW:currentSchema=DB2INST1;currentIsolation=CS;"
+				/> <property name="username" value="db2inst1" /> <property name="password"
 				value="db2inst1" /> </dataSource> -->
 		</environment>
 	</environments>

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest(classes = MapTest.class)
 @EnableConfigurationProperties(MapTest.class)
-public class LzgApplicationTests {
+public class LzgApplicationTest {
 
     @Autowired
     private MapTest mapTest;
