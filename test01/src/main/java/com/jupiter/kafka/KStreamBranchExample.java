@@ -29,7 +29,7 @@ public class KStreamBranchExample {
         props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
 
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, String> stream = builder.stream("input-topic");
+        KStream<String, String> inputStream = builder.stream("input-topic");
 
         // 过滤数据
         // KStream filteredStream = stream.filter((key, value) -> value.contains("filter"));
@@ -51,7 +51,7 @@ public class KStreamBranchExample {
         }
 
         // 分流数据
-        KStream[] branches = stream.branch(predicates);
+        KStream[] branches = inputStream.branch(predicates);
         for (int j = 0; j < branches.length; j++) {
             branches[j].to("index-" + indexList.get(j) + "-topic");
         }
@@ -69,7 +69,7 @@ class KStreamBranchExample2 {
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
 
         StreamsBuilder builder = new StreamsBuilder();
-        KStream<String, String> stream = builder.stream("input-topic");
+        KStream<String, String> inputStream = builder.stream("input-topic");
 
         List<String> indexList = Arrays.asList("00001", "00080", "10068");
 
@@ -77,9 +77,11 @@ class KStreamBranchExample2 {
         Predicate<String, String> predicate2 = (key, value) -> key != null && key.startsWith(indexList.get(1));
         Predicate<String, String> predicate3 = (key, value) -> key != null && key.startsWith(indexList.get(2));
 
-        KStream<String, String> branchStream1 = stream.filter(predicate1);
-        KStream<String, String> branchStream2 = stream.filter(predicate2);
-        KStream<String, String> branchStream3 = stream.filter(predicate3);
+        KStream<String, String> branchStream1 = inputStream.filter(predicate1);
+        KStream<String, String> branchStream2 = inputStream.filter(predicate2);
+        KStream<String, String> branchStream3 = inputStream.mapValues(value ->{
+            return value.toUpperCase();}) // 将值转换为大写
+                .filter(predicate3); // 过滤
 
         branchStream1.to("indexNo" + indexList.get(0) + "-topic");
         branchStream2.to("indexNo" + indexList.get(1) + "-topic");
@@ -87,5 +89,8 @@ class KStreamBranchExample2 {
 
         KafkaStreams streams = new KafkaStreams(builder.build(), props);
         streams.start();
+
+        // 添加关闭钩子以在程序终止时关闭流
+        Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
     }
 }

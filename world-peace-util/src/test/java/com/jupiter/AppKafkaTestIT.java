@@ -33,9 +33,16 @@ public class AppKafkaTestIT {
     @Test
     public void testKafkaDemo() {
         System.out.println("ok: " + test1);
-         Assertions.assertEquals("Hello Kafka!",test1.substring(0,12));
+        Assertions.assertEquals("Hello Kafka!",test1.substring(0,12));
     }
 
+     /**
+      * @Desc 用配置类和@Bean的方式往kafka发送数据
+      * @Params  @param null
+      * @Return  写入kafka的字符串
+      * @Author  Jupiter.Lin
+      * @Date  2024-04-28 09:58
+      */
     @Configuration
     static class MyTestConfig {
         @Bean

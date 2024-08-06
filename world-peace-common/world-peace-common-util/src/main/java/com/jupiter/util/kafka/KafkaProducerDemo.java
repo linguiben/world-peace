@@ -34,6 +34,7 @@ public class KafkaProducerDemo {
     @Value("${spring.kafka.template.default-topic:#{null}}")
     private String dstTopic;
 
+
     @PostConstruct
     public void setProducerListener() {
         kafkaTemplate.setProducerListener(this.producerSendListener);
@@ -42,11 +43,29 @@ public class KafkaProducerDemo {
     public void sendMessage(String message) {
         this.sendMessage(dstTopic, message);
     }
-
+    /**
+     * @Desc TODO
+     * @Params  @param null
+     * @Return
+     * @Author  Jupiter.Lin
+     * @Date  2024-04-12 18:20
+     */
     public void sendMessage(String dstTopic, String message) {
         if (null == dstTopic && this.dstTopic != null) {
             dstTopic = this.dstTopic;
         }
         kafkaTemplate.send(dstTopic, message);
     }
+
+    /**
+     * 发送消息到指定的主题。
+     *
+     * @param dstTopic 目标主题名称，消息将被发送到此主题。
+     * @param key 消息的键，用于分区和检索消息。
+     * @param message 要发送的消息内容。
+     */
+    public void sendMessage(String dstTopic, String key, String message) {
+        kafkaTemplate.send(dstTopic, key, message); // 使用KafkaTemplate发送消息到指定主题
+    }
+
 }
