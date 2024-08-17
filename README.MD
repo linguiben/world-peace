@@ -10,7 +10,7 @@
     2) Cashing // TODO
 
 #### 3. world-peace-common
-    1)
+    1) 配置绑定vegetables.properties, AdminConfig
     2) util
     2.1) mybatis
     2.2) java Queue tools 
@@ -34,9 +34,13 @@
     3) WebSocket Client
     4) netty
     5) FastJson
+    6) MokitoDemo // Mokito常用的方法
 
-#### 7. handnote
+#### 8. handnote
+    1. SpringBoot 学习笔记
 
+#### 7. docker
+    docker-compose, 其中DockerFile在项目目录下
     ## build image using "docker build" based on dockerfile -> create container using "dock run or docker-compose"
     #1. 下载openjdk:11到本地
     docker search openjdk:11

@@ -20,6 +20,7 @@ services:
       - ./logs/api:/logs/api
   wppoc:
     image: world-peace-poc:1.0
+    user: "0:0"
     container_name: wppoc
     hostname: wppoc
     networks:
