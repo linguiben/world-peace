@@ -1,7 +1,13 @@
 version: '3.9'
+
+networks:
+  wp_net:
+    driver: bridge
+
 services:
   wpapi:
     image: world-peace-api:1.0
+    user: "0:0" #run with root user (UID:GID)
     container_name: wpapi
     hostname: wpapi
     networks:
@@ -25,6 +31,3 @@ services:
     volumes:
       - ./logs/poc:/logs/poc
 
-networks:
-  wp_net:
-    driver: bridge

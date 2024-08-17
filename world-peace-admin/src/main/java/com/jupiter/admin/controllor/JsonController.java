@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *@desc TODO
+ *@desc 配置绑定Demo (复杂类)
  *@author Jupiter.Lin
  *@date 2024-02-22 13:47
  */
 @RestController
 public class JsonController {
 
-    @Autowired
+    @Autowired // 从vegetables.properties中读取，并绑定到VegetableConfig
     private VegetableConfig vegetableConfig;
 
     @RequestMapping("/vegetables")

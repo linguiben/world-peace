@@ -6,6 +6,7 @@
  */
 package com.jupiter.admin.controllor;
 
+import com.jupiter.admin.config.AdminConfig;
 import com.jupiter.admin.service.FileSaveService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -63,6 +64,12 @@ public class HelloController {
     @Value("${food.meat}")
     private String meat;
 
+     //@Value("#{${wp-config.admin-config}}") //测试绑定yml中的配置的Map，但没有成功
+     //private Map<String,String> adminConfigMap;
+
+    @Autowired
+    private AdminConfig adminConfig;
+
     @RequestMapping("/json")
     @ResponseBody
     public Food json(){
@@ -88,8 +95,6 @@ public class HelloController {
         return fileSaveService.save(file, desc);
         // return "redirect:/";
     }
-
-
 }
 
 @Data

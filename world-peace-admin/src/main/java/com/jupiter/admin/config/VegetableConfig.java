@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- *@desc TODO
+ *@desc 配置绑定Demo (复杂类)
  *@author Jupiter.Lin
  *@date 2024-02-22 13:37
  */

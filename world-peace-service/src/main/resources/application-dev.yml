@@ -22,7 +22,7 @@ mybatis:
     log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl #打印mybatis日志
 
 tes:
-  maps: { key1: 120,0011.HK: 340 }
+  maps: { key1: 120, 0011.HK: 340 } #测试Map
 project:
   name: world-peace-service #@Value("${project.name}")
 #spring:

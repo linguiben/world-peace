@@ -9,7 +9,10 @@ governmentIssuedNumber: 粤ICP备2024203563号
 food:
   meat: 烤肉${random.int}
   rice: 拌饭
-
+wp-config:
+  admin-config:
+    key1: 120
+    0011.HK: 340
 jasypt:
   encryptor:
     password: 123456@!#

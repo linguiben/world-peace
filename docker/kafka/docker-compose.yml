@@ -1,0 +1,149 @@
+version: "3.9"
+
+networks:
+  wp_net:
+    #driver: bridge
+    external: true
+    name: wp_net
+
+services:
+#  zookeeper:
+#    image: 'bitnami/zookeeper:3.8'
+#    container_name: zookeeper
+#    ports:
+#      - '2181:2181'
+#    environment:
+#      - ALLOW_ANONYMOUS_LOGIN=yes # 匿名登录
+#    volumes:
+#      - "$PWD/data/kafka/zk-data:/bitnami"
+#    networks:
+#      kafka:
+#        aliases:
+#          - zookeeper
+  kafka0:
+    image: 'bitnami/kafka:3.6'
+    user: "0:0" #run with root user (UID:GID)
+    mem_limit: 512m #限制内存使用
+    container_name: kafka0
+    hostname: kafka0
+    ports:
+      - '9090:9092'
+    restart: "no"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_KRAFT_CLUSTER_ID=JNxqOoaAQzaXjBLAbcde19 #启用kraft集群部署时需要指定的集群ID
+      - KAFKA_CFG_NODE_ID=0 #broker id应该是从0开始?
+      #- KAFKA_BROKER_ID=0
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 #定义 Kafka Broker 的 Listener 的配置项，配置外部访问和内部访问
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.6.75:9090  #对外暴漏的IP，填写缩主机
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka0:9093,1@kafka1:9093,2@kafka2:9093 #选举
+      - KAFKA_HEAP_OPTS=-Xms128m -Xmx512m #jvm内存配置
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - TZ=Asia/Shanghai # 时区
+    #depends_on:
+    #  - zookeeper
+    # 挂在到 当前路径下的 data/kafka/kafka-data 中
+    volumes:
+      - "$PWD/kafka0/data:/bitnami"
+      #- "$PWD/kafka0/config:/opt/bitnami/kafka/config"
+    networks:
+      wp_net:
+        aliases:
+          - kafka0
+
+  kafka1:
+    image: 'bitnami/kafka:3.6'
+    user: "0:0"
+    mem_limit: 512m #限制内存使用
+    container_name: kafka1
+    hostname: kafka1
+    ports:
+      - '9091:9092'
+    restart: "no"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=1 #broker id应该是从0开始?
+      - KAFKA_KRAFT_CLUSTER_ID=JNxqOoaAQzaXjBLAbcde19 #启用kraft集群部署时需要指定的集群ID
+      #- KAFKA_BROKER_ID=1
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 #定义 Kafka Broker 的 Listener 的配置项，配置外部访问和内部访问
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.6.75:9091  #对外暴漏的IP，填写缩主机
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka0:9093,1@kafka1:9093,2@kafka2:9093 #选举
+      - KAFKA_HEAP_OPTS=-Xms128m -Xmx512m #jvm内存配置
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - TZ=Asia/Shanghai # 时区
+    #depends_on:
+    #  - zookeeper
+    # 挂在到 当前路径下的 data/kafka/kafka-data 中
+    volumes:
+      - "$PWD/kafka1/data:/bitnami"
+      #- "$PWD/kafka1/config:/opt/bitnami/kafka/config"
+    networks:
+      wp_net:
+        aliases:
+          - kafka1
+
+  kafka2:
+    image: 'bitnami/kafka:3.6'
+    user: "0:0"
+    mem_limit: 512m #限制内存使用
+    container_name: kafka2
+    hostname: kafka2
+    ports:
+      - '9092:9092'
+    restart: "no"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=2 #broker id应该是从0开始?
+      - KAFKA_KRAFT_CLUSTER_ID=JNxqOoaAQzaXjBLAbcde19 #启用kraft集群部署时需要指定的集群ID
+      #- KAFKA_BROKER_ID=2
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 #定义 Kafka Broker 的 Listener 的配置项，配置外部访问和内部访问
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://192.168.6.75:9092  #对外暴漏的IP，填写缩主机
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=0@kafka0:9093,1@kafka1:9093,2@kafka2:9093 #选举
+      - KAFKA_HEAP_OPTS=-Xms128m -Xmx512m #jvm内存配置
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - TZ=Asia/Shanghai # 时区
+    #depends_on:
+    #  - zookeeper
+    # 挂在到 当前路径下的 data/kafka/kafka-data 中
+    volumes:
+      - "$PWD/kafka2/data:/bitnami"
+      #- "$PWD/kafka2/config:/opt/bitnami/kafka/config"
+    networks:
+      wp_net:
+        aliases:
+          - kafka2
+
+  # ui 管理界面
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    mem_limit: 512m #限制内存使用
+    container_name: kafka-ui
+    hostname: kafka-ui
+    ports:
+      - "9999:8080"
+    restart: "no"
+    # 更多环境配置参考 https://github.com/provectus/kafka-ui#-environment-variables
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka0:9092,kafka1:9092,kafka2:9092
+      #- KAFKA_CLUSTERS_0_ZOOKEEPER=zoo:2181
+      - KAFKA_CLUSTERS_0_READONLY=false # 是否以只读模式运行，只读的话，就不能增删改 topic 等
+    depends_on:
+      - kafka0
+      - kafka1
+      - kafka2
+    networks:
+      wp_net:
+        aliases:
+          - kafka-ui
+
+
