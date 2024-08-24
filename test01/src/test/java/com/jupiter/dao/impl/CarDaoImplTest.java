@@ -1,7 +1,8 @@
 package com.jupiter.dao.impl;
 
-import com.jupiter.dao.CarDao;
+import com.jupiter.spring.dao.CarDao;
 import com.jupiter.domain.Car;
+import com.jupiter.spring.dao.impl.CarDaoImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

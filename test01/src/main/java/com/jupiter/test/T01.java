@@ -1,9 +1,9 @@
 package com.jupiter.test;
 
-import com.jupiter.config.AppConfig;
-import com.jupiter.service.DummyService;
-import com.jupiter.service.OrderService;
-import com.jupiter.service.UserService;
+import com.jupiter.spring.config.AppConfig;
+import com.jupiter.spring.service.DummyService;
+import com.jupiter.spring.service.OrderService;
+import com.jupiter.spring.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

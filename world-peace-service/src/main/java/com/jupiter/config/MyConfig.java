@@ -1,9 +1,11 @@
 package com.jupiter.config;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration(proxyBeanMethods = true) // 这是一个SpringBoot配置类 == beans.xml, proxyBeanMethods默认为true (控制bean为单例)
+@ConfigurationProperties(prefix = "my")
 public class MyConfig {
 
     /**

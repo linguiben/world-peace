@@ -9,6 +9,7 @@ package com.jupiter.admin.controllor;
 import com.jupiter.admin.config.AdminConfig;
 import com.jupiter.admin.service.FileSaveService;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,13 +32,14 @@ import java.io.IOException;
  */
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class HelloController {
 
     @Value("${governmentIssuedNumber}")
     private String governmentIssuedNumber;
 
-    @Autowired
-    private FileSaveService fileSaveService;
+    // @Autowired
+    private final FileSaveService fileSaveService;
 
     @RequestMapping("/")
     public String index(Model model){

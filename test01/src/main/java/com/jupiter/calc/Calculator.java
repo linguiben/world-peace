@@ -1,6 +1,6 @@
 package com.jupiter.calc;
 
-import com.jupiter.branch.LargeOrSmall;
+import com.jupiter.basic.branch.SwitchAndIf;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -15,7 +15,7 @@ public class Calculator {
     private String name;
     private int mv;
     private BigDecimal indexValue ;
-    private LargeOrSmall largeOrSmall;
+    private SwitchAndIf largeOrSmall;
 
     public int sum(String ... mv){
         int mvSum = 0;

@@ -2,6 +2,8 @@
 #or
 #-Dspring.config.location=/dirname/application.properties #jvm参数
 #or java -jar xxx.jar --server.port=8090
+env: dev
+spring.profiles.active: ${env}
 server:
   port: 8090
 

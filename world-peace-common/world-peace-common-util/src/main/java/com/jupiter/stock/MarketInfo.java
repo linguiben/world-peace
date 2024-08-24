@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "stock") // 开启配置绑定，绑定配置文件中的值
 public class MarketInfo {
 
-    @Value("${stock.market}") // 可省
+    @Value("${stock.market}") // 加了@ConfigurationProperties后，可省
     private String market;
 
     // @Data 只会生成无参构造器

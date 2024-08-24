@@ -1,6 +1,7 @@
 package com.jupiter.dao.impl;
 
 import com.jupiter.domain.Car;
+import com.jupiter.spring.dao.impl.CarDaoOrmImpl;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

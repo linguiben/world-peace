@@ -1,13 +1,12 @@
 package com.jupiter.kafka;
 
+import com.jupiter.db.kafka.KafkaProducerConsumerExample;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Jupiter.Lin

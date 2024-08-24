@@ -43,6 +43,6 @@
         <entry key="0002.HK" value="34"></entry>
     </util:map>
 
-    <bean id="largeOrSmall" class="com.jupiter.branch.LargeOrSmall" scope="prototype"></bean>
+    <bean id="largeOrSmall" class="com.jupiter.basic.branch.SwitchAndIf" scope="prototype"></bean>
 
 </beans>
