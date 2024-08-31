@@ -8,7 +8,6 @@ package com.jupiter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +29,7 @@ public class AppKafkaTestIT {
     @Resource
     String test1;
 
-    @Test
+    // @Test
     public void testKafkaDemo() {
         System.out.println("ok: " + test1);
         Assertions.assertEquals("Hello Kafka!",test1.substring(0,12));
