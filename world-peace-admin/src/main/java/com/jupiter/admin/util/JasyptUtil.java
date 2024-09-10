@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 public class JasyptUtil {
-
     @Value("${jasypt.encryptor.password}")
     private String salt;
     public void encryDemo(){

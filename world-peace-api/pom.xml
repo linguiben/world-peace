@@ -20,8 +20,10 @@
         <!--布局功能的支持，2.0以上版本支持thymeleaf3-->
         <!--比如：thymeleaf3，layout2以上版本；thymeleaf2，layout1-->
         <!-- <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-        <thymeleaf-layout-dialect.version>2.0.5</thymeleaf-layout-dialect.version>
-        -->
+        <thymeleaf-layout-dialect.version>2.0.5</thymeleaf-layout-dialect.version>-->
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <spring-ai.version>0.8.1</spring-ai.version>
         <start-class>com.jupiter.api.ApiApp</start-class>
     </properties>
 
@@ -60,6 +62,19 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+        <!-- openAI -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-bom</artifactId>
+            <version>${spring-ai.version}</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+        <!--<dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+            <version>0.8.1</version>
+        </dependency>-->
         <!-- test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

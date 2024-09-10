@@ -9,6 +9,7 @@ package com.jupiter.util.kafka.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.support.ProducerListener;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
  * @date 2024-02-06 09:00
  */
 @Component
+@ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
 @Slf4j
 public class ProducerSendListener implements ProducerListener {
     @Override

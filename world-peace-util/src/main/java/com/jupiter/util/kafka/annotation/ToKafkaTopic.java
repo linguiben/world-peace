@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * @desc 标注上此注解，将自动将数据写入到kafka
  * @date 2023-07-16 13:10
  */
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ToKafkaTopic {

@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 // @Transactional
 public class CalculatorJUnit4Test {
 
-    private Double expected;
-    private Double stockPrice;
+    private double expected;
+    private double stockPrice;
 
     @Parameterized.Parameters
     public static Collection<?> data() {

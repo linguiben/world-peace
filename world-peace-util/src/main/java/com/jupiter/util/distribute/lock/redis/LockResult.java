@@ -11,7 +11,7 @@ import lombok.Setter;
 import org.redisson.api.RLock;
 
 /**
- *@desc TODO
+ *@desc LockResult
  *@author Jupiter.Lin
  *@date 2024-04-28 10:39
  */

@@ -2,7 +2,7 @@ spring:
   application:
     name: application-kafka
   kafka:
-    #bootstrap-servers: JupiterSo.com:9090 #这个是kafka的地址,对应你server.properties中配置的
+    bootstrap-servers: JupiterSo.com:9090 #这个是kafka的地址,对应你server.properties中配置的
     producer:
       batch-size: 16384 #批量大小
       acks: -1 #应答级别:多少个分区副本备份完成时向生产者发送ack确认(可选0、1、all/-1)
@@ -38,6 +38,3 @@ spring:
     listener:
       missing-topics-fatal: false # consumer listener topics 不存在时，启动项目就会报错
 #      type: batch
-
-#redis.distribution.lock.enabled: true
-redis.addr: 127.0.0.1:6379

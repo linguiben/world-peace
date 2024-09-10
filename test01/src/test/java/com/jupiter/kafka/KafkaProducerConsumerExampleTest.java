@@ -1,6 +1,7 @@
 package com.jupiter.kafka;
 
 import com.jupiter.db.kafka.KafkaProducerConsumerExample;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,8 @@ class KafkaProducerConsumerExampleTest {
     @BeforeEach
     void setUp() {
         testCase = new KafkaProducerConsumerExample();
+        KafkaProducerConsumerExample.producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"www.JupiterSo.com:9090");
+        KafkaProducerConsumerExample.consumerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"www.JupiterSo.com:9090");
     }
 
     @AfterEach

@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  * @desc 标注上次注解，将从kafka topic中读取数据，并填入到变量或者集合中
  * @date 2023-07-16 13:10
  */
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface FromKafkaTopic {

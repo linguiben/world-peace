@@ -6,15 +6,19 @@
  */
 package com.jupiter;
 
+import com.jupiter.util.kafka.annotation.ToKafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 /**
  *@desc 测试类
@@ -26,14 +30,15 @@ import java.time.LocalDateTime;
 @Slf4j
 public class AppKafkaTestIT {
 
-    @Resource
-    String test1;
+    @Autowired(required = false)
+    String test1; // 必须要通过bean的方式调用，否则AOP不生效
 
-    // @Test
+     @Test
     public void testKafkaDemo() {
-        System.out.println("ok: " + test1);
-        Assertions.assertEquals("Hello Kafka!",test1.substring(0,12));
-    }
+         System.out.println("com.jupiter.AppKafkaTestIT: " + test1);
+         String result = Optional.ofNullable(test1).orElse("Hello Kafka!--xxxxxx");
+         Assertions.assertEquals("Hello Kafka!", result.substring(0, 12));
+     }
 
      /**
       * @Desc 用配置类和@Bean的方式往kafka发送数据
@@ -45,7 +50,8 @@ public class AppKafkaTestIT {
     @Configuration
     static class MyTestConfig {
         @Bean
-        // @ToKafkaTopic({"input-topic", "output-topic"})
+        @ToKafkaTopic({"input-topic", "output-topic"})
+        @ConditionalOnProperty(prefix = "spring.kafka", name = "bootstrap-servers")
         public String test1() {
             System.out.println("test kafka util.");
             return "Hello Kafka!" + "--" + LocalDateTime.now();
