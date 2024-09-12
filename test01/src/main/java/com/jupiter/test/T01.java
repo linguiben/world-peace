@@ -222,3 +222,14 @@ class T002 {
         System.out.println(s1 == s4);
     }
 }
+
+class T001 {
+    @Test
+    void testIPP() {
+        int i = 0, j = 0;
+        i = (i++);
+        j = j++;
+        System.out.println("i=" + i + ", j=" + j); // i=0, j=1
+        System.out.println("java.version=" + System.getProperty("java.runtime.version")); // 21.0.2
+    }
+}

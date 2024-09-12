@@ -40,6 +40,7 @@ public class CarDaoOrmImpl implements CarDao {
         String sql = "insert into t_car(cname,color,price) values(?, ?, ?)";
         stmt = null;
         int rows = 0;
+
         try {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, car.getCname());
