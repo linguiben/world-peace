@@ -57,7 +57,7 @@
         <spring.boot.test.version>2.7.18</spring.boot.test.version>
         <junit.version>4.13.1</junit.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
-        <jacoco.plugin.version>0.8.5</jacoco.plugin.version>
+        <jacoco.plugin.version>0.8.8</jacoco.plugin.version>
         <mockito.all.version>1.10.19</mockito.all.version>
         <mockito.version>4.10.0</mockito.version>
         <!-- cron job -->

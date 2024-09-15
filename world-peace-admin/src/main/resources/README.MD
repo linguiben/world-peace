@@ -8,6 +8,14 @@ JENKINS_WORKSPACE=/root/.jenkins/workspace
 TARGET_PATH=${JENKINS_WORKSPACE}/maven_world_peace/world-peace-admin/target
 DOCKER_FILE=${JENKINS_WORKSPACE}/maven_world_peace/world-peace-admin/src/main/resources/Dockerfile
 cd ${TARGET_PATH} && docker build -t world-peace-admin:1.0 -f ${DOCKER_FILE} .
+
+fyi: 
+# User specific environment and startup programs
+export JAVA_HOME=/opt/jdk/jdk-21.0.4
+export MAVEN_HOME=/opt/mvn/apache-maven-3.9.9
+export MVN_HOME=$MAVEN_HOME
+export PATH=$JAVA_HOME/bin:$MVN_HOME/bin:$PATH
+export GIT_REPO=/opt/git/repo
 ```
 ### 2. delete the exiting and the running docker-container and then rerun
 ```shell
