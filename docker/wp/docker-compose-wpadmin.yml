@@ -1,0 +1,23 @@
+version: '3.9'
+
+networks:
+  wp_net:
+    external: true
+    name: wp_net
+
+services:
+  wpadmin:
+    image: ${REPO_URL}/world-peace-admin:1.0
+    mem_limit: 200m
+    user: "0:0" #run with root user (UID:GID)
+    container_name: wpadmin
+    hostname: wpadmin
+    ports:
+      - "80:8090"
+    volumes:
+      - ${PERSIST_PATH}/wpadmin/logs:/logs/admin
+      - ${PERSIST_PATH}/wpadmin/data:/usr/apps/wp/data
+    networks:
+      wp_net:
+        aliases:
+          - wpadmin

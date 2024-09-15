@@ -5,6 +5,21 @@ networks:
     driver: bridge
 
 services:
+  wpadmin:
+    image: ${REPO_URL}/world-peace-admin:1.0
+    mem_limit: 200m
+    user: "0:0" #run with root user (UID:GID)
+    container_name: wpadmin
+    hostname: wpadmin
+    ports:
+      - "80:8090"
+    volumes:
+      - ${PERSIST_PATH}/wpadmin/logs:/logs/admin
+      - ${PERSIST_PATH}/wpadmin/data:/usr/apps/wp/data
+    networks:
+      wp_net:
+        aliases:
+          - wpadmin
   wpapi:
     image: world-peace-api:1.0
     user: "0:0" #run with root user (UID:GID)
@@ -17,7 +32,7 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./logs/api:/logs/api
+      - ${PERSIST_PATH}/wpapi/logs:/logs/api
   wppoc:
     image: world-peace-poc:1.0
     user: "0:0"
@@ -30,5 +45,5 @@ services:
     ports:
       - "18080:8080"
     volumes:
-      - ./logs/poc:/logs/poc
+      - ${PERSIST_PATH}/wppoc/logs:/logs/poc
 

@@ -4,10 +4,10 @@ networks:
   wp_net:
     #driver: bridge
     external: true
-    name: wp_net
+    name: wp_net # 如果运行报错则手动创建 docker network create wp_net
 
 services:
-#  zookeeper:
+#  zookeeper: #kafka 使用kraft模式不需要zookeeper
 #    image: 'bitnami/zookeeper:3.8'
 #    container_name: zookeeper
 #    ports:
@@ -23,7 +23,13 @@ services:
   kafka0:
     image: 'bitnami/kafka:3.6'
     user: "0:0" #run with root user (UID:GID)
-    mem_limit: 512m #限制内存使用
+    #deploy: #docker-compose version 3.0+
+    #  resources:
+    #    limits:
+    #      cpus: "0.5"
+    #      memory: 512m
+    cpus: '0.5'
+    mem_limit: 512m #限制内存使用, docker-compose version 2.0+
     container_name: kafka0
     hostname: kafka0
     ports:
@@ -48,7 +54,7 @@ services:
     # 挂在到 当前路径下的 data/kafka/kafka-data 中
     volumes:
       - "$PWD/kafka0/data:/bitnami"
-      #- "$PWD/kafka0/config:/opt/bitnami/kafka/config"
+      #- "$PWD/kafka0/config:/opt/bitnami/kafka/config" #报错,先skip
     networks:
       wp_net:
         aliases:
@@ -57,6 +63,7 @@ services:
   kafka1:
     image: 'bitnami/kafka:3.6'
     user: "0:0"
+    cpus: '0.5'
     mem_limit: 512m #限制内存使用
     container_name: kafka1
     hostname: kafka1
@@ -91,6 +98,7 @@ services:
   kafka2:
     image: 'bitnami/kafka:3.6'
     user: "0:0"
+    cpus: '0.5'
     mem_limit: 512m #限制内存使用
     container_name: kafka2
     hostname: kafka2
@@ -125,11 +133,12 @@ services:
   # ui 管理界面
   kafka-ui:
     image: provectuslabs/kafka-ui
+    cpus: '0.5'
     mem_limit: 512m #限制内存使用
     container_name: kafka-ui
     hostname: kafka-ui
     ports:
-      - "9999:8080"
+      - "9094:8080"
     restart: "no"
     # 更多环境配置参考 https://github.com/provectus/kafka-ui#-environment-variables
     environment:
@@ -145,5 +154,3 @@ services:
       wp_net:
         aliases:
           - kafka-ui
-
-

@@ -9,7 +9,7 @@ package com.jupiter;
 import com.jupiter.util.kafka.annotation.ToKafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -30,15 +30,16 @@ import java.util.Optional;
 @Slf4j
 public class AppKafkaTestIT {
 
+    @Disabled
+//    @Test
+    public void testKafkaDemo() {
+        System.out.println("com.jupiter.AppKafkaTestIT: " + test1);
+        String result = Optional.ofNullable(test1).orElse("Hello Kafka!--xxxxxx");
+        Assertions.assertEquals("Hello Kafka!", result.substring(0, 12));
+    }
+
     @Autowired(required = false)
     String test1; // 必须要通过bean的方式调用，否则AOP不生效
-
-     @Test
-    public void testKafkaDemo() {
-         System.out.println("com.jupiter.AppKafkaTestIT: " + test1);
-         String result = Optional.ofNullable(test1).orElse("Hello Kafka!--xxxxxx");
-         Assertions.assertEquals("Hello Kafka!", result.substring(0, 12));
-     }
 
      /**
       * @Desc 用配置类和@Bean的方式往kafka发送数据

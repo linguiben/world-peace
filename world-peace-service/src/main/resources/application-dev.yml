@@ -13,6 +13,11 @@ spring:
 #    password:
     driver: org.postgresql.Driver
 #    type: com.mchange.v2.c3p0.ComboPooledDataSource #相关配置在c3p0-config.xml
+#  redis:
+#    host: localhost
+#    port: 6379
+#    database: 0
+#    password: 123
 
 mybatis:
   #config-location:#MyBatis XML配置文件的路径,参考https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/zh/index.html
@@ -25,12 +30,6 @@ tes:
   maps: { key1: 120, 0011.HK: 340 } #测试Map
 project:
   name: world-peace-service #@Value("${project.name}")
-#spring:
-#  redis:
-#    host: localhost
-#    port: 6379
-#    database: 0
-#    password: 123
 
 HSI:
   lastTradeMv: 10000

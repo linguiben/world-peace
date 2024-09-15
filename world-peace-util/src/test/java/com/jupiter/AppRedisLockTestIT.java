@@ -11,7 +11,7 @@ import com.jupiter.util.distribute.lock.redis.RedissonConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -36,7 +36,8 @@ public class AppRedisLockTestIT {
     @Autowired(required = false)
     String testLock;
 
-    @Test
+    //@Test
+    @Disabled("depend on redis-server")
     public void testLockDemo() {
         System.out.println("com.jupiter.AppRedisLockTestIT: " + testLock);
         String result = Optional.ofNullable(testLock).orElse("Jupiter");

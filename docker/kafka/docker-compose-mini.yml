@@ -1,0 +1,60 @@
+version: "3.9"
+
+networks:
+  wp_net:
+    #driver: bridge
+    external: true
+    name: wp_net # 如果运行报错则手动创建 docker network create wp_net
+
+services:
+  kafka-ui: #ui管理界面
+    image: "${REPO_URL}/kafka-ui:linux-v0.7.2"
+    user: "0:0"
+    cpus: '0.5'
+    mem_limit: 400m #限制内存使用
+    container_name: kafka-ui
+    hostname: kafka-ui
+    ports:
+      - "9094:8080"
+    restart: "no"
+    # 更多环境配置参考 https://github.com/provectus/kafka-ui#-environment-variables
+    environment:
+      - KAFKA_CLUSTERS_0_NAME=local # 集群名称
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka2:9092 # kafka集群地址
+      - KAFKA_CLUSTERS_0_READONLY=false # 是否以只读模式运行，只读的话，就不能增删改 topic 等
+    depends_on:
+      - kafka2
+    networks:
+      wp_net:
+        aliases:
+          - kafka-ui
+  kafka2:
+    image: "${REPO_URL}/kafka:linux-3.6"
+    user: "0:0"
+    cpus: '0.5' #限制cpu使用
+    mem_limit: 512m #限制内存使用
+    container_name: kafka2
+    hostname: kafka2
+    ports:
+      - '9092:9092'
+    restart: "no"
+    environment:
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_NODE_ID=2 #并非KAFKA_BROKER_ID
+      - KAFKA_KRAFT_CLUSTER_ID=JNxqOoaAQzaXjBLAbcde19 #启用kraft集群部署时需要指定的集群ID
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093 #定义 Kafka Broker 的 Listener 的配置项，配置外部访问和内部访问
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://jupiterSo.com:9092  #对外暴漏的IP，填写缩主机
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=2@kafka2:9093 #选举
+      - KAFKA_HEAP_OPTS=-Xms128m -Xmx512m #jvm内存配置
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - TZ=Asia/Shanghai # 时区
+    volumes: # 挂在到 当前路径下的 data/kafka/kafka-data 中
+      - "$PERSIST_PATH/kafka2/data:/bitnami/kafka/data"
+      #- "$PERSIST_PATH/kafka2/config:/opt/bitnami/kafka/config"
+    networks:
+      wp_net:
+        aliases:
+          - kafka2
