@@ -1,0 +1,74 @@
+#version: '2.9'
+
+networks:
+  wp_net:
+    #driver: bridge
+    external: true
+    name: wp_net
+
+services:
+  zoo1:
+    image: zookeeper:3.7-jre-11
+    restart: no #always on servers
+    cpus: '1.0'
+    mem_limit: 128m
+    container_name: zoo1
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    volumes:
+      - "$PERSIST_PATH/zoo1/conf:/conf"
+      - "$PERSIST_PATH/zoo1/data:/data"
+      - "$PERSIST_PATH/zoo1/datalog:/datalog"
+      - "$PERSIST_PATH/zoo1/logs:/logs"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      wp_net:
+        aliases:
+          - zoo1
+
+  zoo2:
+    image: zookeeper:3.7-jre-11
+    restart: no
+    cpus: '0.5'
+    mem_limit: 128m
+    container_name: zoo2
+    hostname: zoo2
+    ports:
+      - 2182:2181
+    volumes:
+      - "$PERSIST_PATH/zoo2/conf:/conf"
+      - "$PERSIST_PATH/zoo2/data:/data"
+      - "$PERSIST_PATH/zoo2/datalog:/datalog"
+      - "$PERSIST_PATH/zoo2/logs:/logs"
+    environment:
+      ZOO_MY_ID: 2
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      wp_net:
+        aliases:
+          - zoo2
+
+  zoo3:
+    image: zookeeper:3.7-jre-11
+    restart: no
+    cpus: '0.5'
+    mem_limit: 128m
+    container_name: zoo3
+    hostname: zoo3
+    ports:
+      - 2183:2181
+    volumes:
+      - "$PERSIST_PATH/zoo3/conf:/conf"
+      - "$PERSIST_PATH/zoo3/data:/data"
+      - "$PERSIST_PATH/zoo3/datalog:/datalog"
+      - "$PERSIST_PATH/zoo3/logs:/logs"
+    environment:
+      ZOO_MY_ID: 3
+      ZOO_SERVERS: server.1=zoo1:2888:3888;2181 server.2=zoo2:2888:3888;2181 server.3=zoo3:2888:3888;2181
+    networks:
+      wp_net:
+        aliases:
+          - zoo3
