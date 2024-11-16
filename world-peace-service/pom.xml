@@ -93,11 +93,18 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-             <!--<scope>test</scope>-->
+            <exclusions>
+                <exclusion> <!-- 避免和 mockito-inline 冲突 -->
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <!--<scope>test</scope>-->
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
+            <artifactId>mockito-inline</artifactId> <!-- mocktio-inline 支持静态方法,final方法 -->
+            <version>4.3.1</version>
             <!--<scope>test</scope>-->
         </dependency>
         <dependency>

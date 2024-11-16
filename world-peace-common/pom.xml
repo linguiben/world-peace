@@ -17,6 +17,8 @@
     <modules>
         <module>world-peace-common-base</module>
         <module>world-peace-common-util</module>
+        <module>world-peace-common-util-kafka-starter</module>
+        <module>world-peace-common-util-redislock-starter</module>
     </modules>
 
 </project>

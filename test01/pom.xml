@@ -150,7 +150,7 @@
 
         <dependency>
             <groupId>com.jupiter.world-peace</groupId>
-            <artifactId>world-peace-util-starter</artifactId>
+            <artifactId>world-peace-common-util-kafka-starter</artifactId>
             <version>1.0</version>
         </dependency>
 

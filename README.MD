@@ -5,7 +5,7 @@
     1) banner
     2) jasypt // 配置加密
 
-#### 2. world-peace-api
+#### 2. world-peace-api (java 8)
     1) WebSocket Server
     2) Cashing // TODO
 
@@ -21,7 +21,7 @@
     2) c3p0 connection pool
     3) dev,prd env
 
-#### 5. test01
+#### 5. test01 (java 21)
     1) evosuite // unit test
     2) email
     3) logback.xml

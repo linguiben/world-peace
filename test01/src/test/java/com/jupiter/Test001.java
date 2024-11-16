@@ -12,6 +12,19 @@ import java.util.Map;
 
 class Test001 {
 
+    public static void main(String[] args) {
+        new Thread(() -> {
+            while(true){
+                System.out.println("hello world " + System.currentTimeMillis());
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, "thread-abcd").start();
+    }
+
     @DisplayName("嵌套测试")
     @Test
     void t01(){

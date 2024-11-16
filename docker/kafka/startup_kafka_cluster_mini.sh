@@ -4,7 +4,7 @@ echo "Starting kafka cluster"
 echo "log path: /opt/docker"
 echo "using env: " && cat ./.env
 
-docker-compose --compatibility -f ./docker-compose.yml $args
+docker-compose --compatibility -f ./docker-compose-mini.yml $args
 
 #Test run kafka
 #docker run -d --name kafka-server --hostname kafka-server \

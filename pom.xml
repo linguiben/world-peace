@@ -12,12 +12,12 @@
 
     <modules>
         <module>world-peace-dependencies</module>
-        <module>world-peace-util</module>
         <module>world-peace-common</module>
         <module>world-peace-poc</module>
         <module>world-peace-api</module>
         <module>world-peace-admin</module>
         <module>world-peace-service</module>
+        <!--<module>world-peace-common/world-peace-common-util-redislock-starter</module>-->
         <!--<module>test01</module>-->
     </modules>
 

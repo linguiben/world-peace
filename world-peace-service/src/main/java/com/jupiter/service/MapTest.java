@@ -15,4 +15,18 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "tes")
 public class MapTest {
     private Map<String, String> maps;
+
+    // 测试
+    public static MapTest getInstance() {
+        return new MapTest();
+    }
+
+    public void test() {
+        int i = 0;
+        int j = 10;
+        while((i=j)<10){
+            System.out.println(i);
+            i--;
+        }
+    }
 }

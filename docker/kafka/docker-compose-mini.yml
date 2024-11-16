@@ -1,9 +1,9 @@
-version: "3.9"
+version: "2"
 
 networks:
   wp_net:
     #driver: bridge
-    external: true
+    external: true # 使用已有的 wp_net 网络
     name: wp_net # 如果运行报错则手动创建 docker network create wp_net
 
 services:
