@@ -29,7 +29,7 @@ Answer:
    - Java 23: The legacy locale data will no longer include in the JDK.
    - For CN, the first day of the week is ***Sunday*** in java 11, and ***Monday*** in java 21. Match the CLDR data.
    - <img src="imgs_soc/fw_java.png" alt="fw_java.png" width="1000" height="570">
-   - <img src="imgs_soc/fw_cldr_xml.png" alt="fw_cldr_xml.png" width="475" height="270"> | <img src="imgs_soc/fw_cldr_json.png" alt="fw_cldr_json.png" width="475" height="270">
+   - <img src="imgs_soc/fw_cldr_xml.png" alt="fw_cldr_xml.png" width="450" height="256"> | <img src="imgs_soc/fw_cldr_json.png" alt="fw_cldr_json.png" width="450" height="256">
 
 ## How the First day of the week uses in Java
 1. [**java.util.Calendar**](https://docs.oracle.com/javase/8/docs/api/java/util/Calendar.html):  
