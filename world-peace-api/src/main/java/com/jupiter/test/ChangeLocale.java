@@ -20,6 +20,7 @@ vmtool --action getInstances --className com.jupiter.test.ChangeLocale #get inst
 public class ChangeLocale {
     static {
         Locale.setDefault(Locale.UK);
+        System.out.println("Default Locale updated to United Kingdom");
     }
 
     public static void main(String[] args) {}

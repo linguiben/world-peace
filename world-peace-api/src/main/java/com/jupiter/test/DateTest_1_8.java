@@ -10,10 +10,9 @@ import java.util.Locale;
  * @date: 2024-11-12
  */
 public class DateTest_1_8 {
+    public static void main(String[] args) throws Exception {
+//        Class<?> clazz = Class.forName(ChangeLocale.class.getName()); // trigger class loading
 
-    public static void main(String[] args) throws InterruptedException {
-
-        //DateTest_1_8 testCase = new DateTest_1_8();
         // 将locale更改为马尔代夫
         //Locale maldivesLocale = Locale.forLanguageTag("en-MV");
         //Locale.setDefault(maldivesLocale);
@@ -23,7 +22,6 @@ public class DateTest_1_8 {
 //            try {
 //                Thread.sleep(3000);
 //            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
 //            }
 //            Locale.setDefault(Locale.UK);
 //        }).start();
@@ -41,7 +39,5 @@ public class DateTest_1_8 {
 
             Thread.sleep(1000);
         }
-
     }
-
 }
