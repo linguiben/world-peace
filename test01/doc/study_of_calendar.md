@@ -29,15 +29,17 @@ Answer:
    - Java 23: The legacy locale data will no longer include in the JDK.
    - For CN, the first day of the week is ***Sunday*** in java 11, and ***Monday*** in java 21. Match the CLDR data.
    - <img src="imgs_soc/fw_java.png" alt="fw_java.png" width="1000" height="570">
-   - <img src="imgs_soc/fw_cldr_xml.png" alt="fw_cldr_xml.png" width="500" height="285"> | <img src="imgs_soc/fw_cldr_json.png" alt="fw_cldr_json.png" width="500" height="285">
+   - <img src="imgs_soc/fw_cldr_xml.png" alt="fw_cldr_xml.png" width="475" height="270"> | <img src="imgs_soc/fw_cldr_json.png" alt="fw_cldr_json.png" width="475" height="270">
 
 ## How the First day of the week uses in Java
 1. [**java.util.Calendar**](https://docs.oracle.com/javase/8/docs/api/java/util/Calendar.html):  
    - [***Source Code***](https://github.com/openjdk/jdk8u/blob/master/jdk/src/share/classes/java/util/Calendar.java#L159) and [***Docs***](https://docs.oracle.com/javase/8/docs/api/java/util/Calendar.html)
 ```java
-// The Calendar class provides methods for converting between a specific instant in time and a set of calendar fields such as YEAR, MONTH, DAY_OF_MONTH, HOUR, and so on.
+// The Calendar class provides methods for converting between a specific instant in time and a set of calendar fields 
+// such as YEAR, MONTH, DAY_OF_MONTH, HOUR, and so on.
 
-// The calendar field values for the currently set time for this calendar. This is an array of FIELD_COUNT integers, with index values ERA through DST_OFFSET.
+// The calendar field values for the currently set time for this calendar. This is an array of FIELD_COUNT integers, 
+// with index values ERA through DST_OFFSET.
 protected int[] fields; // It contains the value for YEAR, MONTH, DAY_OF_MONTH ... 
 
 // The currently set time for this calendar, expressed in milliseconds after January 1, 1970, 0:00:00 GMT.
@@ -50,7 +52,9 @@ set(DAY_OF_WEEK, sunday); // set current day to Sunday
 setTime();
 getTime();
 
-/* If there is any conflict in calendar field values, Calendar gives priorities to calendar fields that have been set more recently. The following are the default combinations of the calendar fields. The most recent combination, as determined by the most recently set single field, will be used.
+/* If there is any conflict in calendar field values, Calendar gives priorities to calendar fields that have been set 
+more recently. The following are the default combinations of the calendar fields. The most recent combination, as 
+determined by the most recently set single field, will be used.
 For the date fields:
 
 YEAR + MONTH + DAY_OF_MONTH
@@ -154,9 +158,7 @@ public class ChangeLocale {
 **References**  
 
 ***Java Agent***
-```java
-Java Agents are powerful tools for modifying and monitoring Java applications at runtime, providing flexibility for developers to enhance application behavior without altering the original source code.
-```
+   - Java Agents are powerful tools for modifying and monitoring Java applications at runtime, providing flexibility for developers to enhance application behavior without altering the original source code.
 
 ***Calendar相关的bug:***  
 https://bugs.java.com/bugdatabase/view_bug.do?bug_id=4655637 // Calendar.set() for DAY_OF_WEEK does not return the right value.  
