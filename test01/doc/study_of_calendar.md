@@ -25,13 +25,13 @@ Answer:
    - JDK 8 was the first Java release to contain CLDR locale data as well as the legacy locale data from the 1990s, though it used the legacy data by default. [JEP 252](https://openjdk.org/jeps/252)
    - JDK 9, [by default, will give priority to the CLDR provider at run time](https://openjdk.org/jeps/252)，并且可以通过以下参数来选择区域数据源的优先级‌。  
      - -Djava.locale.providers=CLDR,JRE,COMPAT ... COMPAT can be used as a synonym for JRE
-   - Java 20 [Supports for CLDR Version 42.0](https://bugs.openjdk.org/browse/JDK-8284840), in [this CLDR version](https://www.unicode.org/cldr/charts/42/supplemental/territory_information.html#CN), [Fix first day of week info for China (CN) to](https://unicode-org.atlassian.net/browse/CLDR-11510) ***Monday***.
+   - Java 20 [Supports for CLDR Version 42.0](https://bugs.openjdk.org/browse/JDK-8284840), in [this CLDR version](https://www.unicode.org/cldr/charts/42/supplemental/territory_information.html#CN), [Fix first day of week info for China (CN)](https://unicode-org.atlassian.net/browse/CLDR-11510) from ***Sunday*** to ***Monday***.
    - Java 23: The legacy locale data will no longer include in the JDK.
    - For CN, the first day of the week is ***Sunday*** in java 11, and ***Monday*** in java 21. Match the CLDR data.
    - <img src="imgs_soc/fw_java.png" alt="fw_java.png" width="1000" height="570">
    - <img src="imgs_soc/fw_cldr_xml.png" alt="fw_cldr_xml.png" width="500" height="285"> | <img src="imgs_soc/fw_cldr_json.png" alt="fw_cldr_json.png" width="500" height="285">
 
-## The First day of the week used in Java
+## How the First day of the week uses in Java
 1. [**java.util.Calendar**](https://docs.oracle.com/javase/8/docs/api/java/util/Calendar.html):  
    - [***Source Code***](https://github.com/openjdk/jdk8u/blob/master/jdk/src/share/classes/java/util/Calendar.java#L159) and [***Docs***](https://docs.oracle.com/javase/8/docs/api/java/util/Calendar.html)
 ```java
