@@ -1,7 +1,7 @@
 
 ## Question:  
 ```java
-What might java use for the "first day of week" by default?
+What might Java use for the "first day of week" by default?
 A: Monday
 B: Sunday
 C: Friday
