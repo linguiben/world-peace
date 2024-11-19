@@ -1,12 +1,12 @@
 
 ## Question:  
 ```java
-What does Java language use for “the first day of the week” by default?
+What might java use for the "first day of week" by default?
 A: Monday
 B: Sunday
 C: Friday
 D: Saturday
-E: Depending on the First day of week setting in the operating system
+E: Depending on the "First day of week" setting in the operating system
 ```
 Answer:  
 
@@ -23,6 +23,21 @@ Answer:
    - Latest Json: [CLDR_weekData.json](https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/weekData.json#L120)
 3. **Java And CLDR**:
    - JDK 8 was the first Java release to contain CLDR locale data as well as the legacy locale data from the 1990s, though it used the legacy data by default. [JEP 252](https://openjdk.org/jeps/252)
+```java
+// jdk 8 (legacy data), in rt.jar
+// sun.util.resources.uk.CalendarData_uk
+    { "firstDayOfWeek", "2" },
+    { "minimalDaysInFirstWeek", "1" }
+// sun.util.resources.cldr.ar.CalendarData_ar_KW
+   final Object[][] data = new Object[][] {
+           { "firstDayOfWeek", "7" },
+           { "minimalDaysInFirstWeek", "1" },
+   };
+
+// jdk 11 
+// sun.util.resources.cldr.CalendarData
+{ "firstDayOfWeek", "1: ... CN ... HK ...;2: 001 AD AI AL ... GB ...;6: MV;7: AE AF BH DJ DZ EG IQ IR JO KW LY MA OM QA SD SY" },
+```
    - JDK 9, [by default, will give priority to the CLDR provider at run time](https://openjdk.org/jeps/252)，并且可以通过以下参数来选择区域数据源的优先级‌。  
      - -Djava.locale.providers=CLDR,JRE,COMPAT ... COMPAT can be used as a synonym for JRE
    - Java 20 [Supports for CLDR Version 42.0](https://bugs.openjdk.org/browse/JDK-8284840), in [this CLDR version](https://www.unicode.org/cldr/charts/42/supplemental/territory_information.html#CN), [Fix first day of week info for China (CN)](https://unicode-org.atlassian.net/browse/CLDR-11510) from ***Sunday*** to ***Monday***.
@@ -141,7 +156,28 @@ JVM ----------------+-------------------> First day of week ---> Calendar.getIns
                     |
            LocaleServiceProvider
 ```
-3. **Cause by the external factors.**
+3. **Cause by the JVM parameters.**
+```java
+java -Duser.language=en -Duser.country=CN xxx.jar // or JAVA_TOOL_OPTIONS
+
+//View the JDK/JRE default display language Settings: 
+java -XshowSettings:locale -version 
+   Locale settings:
+   default locale = English (China)
+   default display locale = English (China)
+   default format locale = English (China)
+```
+
+4. **Cause by the Java Web Container.**
+```java
+// Spring framework:
+// session scope:
+org.springframework.web.servlet.i18n.LocaleChangeInterceptor
+org.springframework.boot.autoconfigure.web.WebProperties.LocaleResolver
+```
+<img src="imgs_soc/http_req_locale.png" alt="fw_cldr_json.png" width="450" height="256">
+
+5. **Cause by the external factors (e.g. Java Agent).**
 ```java
 // This is an external class, which is not belong to our application.
 public class ChangeLocale {
@@ -151,7 +187,7 @@ public class ChangeLocale {
     }
 }
 ```
-| Application (DateTest_1_8)                                                          | External Class (ChangeLocale)                                                       |
+| Application (DateTest_1_8)                                                          | External Application (ChangeLocale)                                                 |
 |-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
 | <img src="imgs_soc/fw_DateTest.png" alt="fw_DateTest.png" width="742" height="795"> | <img src="imgs_soc/fw_external.png" alt="fw_external.png" width="735" height="795"> |
 
