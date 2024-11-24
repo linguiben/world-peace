@@ -23,6 +23,7 @@
         <thymeleaf-layout-dialect.version>2.0.5</thymeleaf-layout-dialect.version>-->
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
         <spring-ai.version>0.8.1</spring-ai.version>
         <start-class>com.jupiter.api.ApiApp</start-class>
     </properties>
@@ -69,16 +70,35 @@
         </dependency>-->
         <!-- test -->
         <dependency>
+            <groupId>com.sun.tools</groupId>
+            <artifactId>tools</artifactId>
+            <version>1.8</version>
+            <!-- 引入本地的jar包 -->
+            <scope>system</scope>
+            <systemPath>/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/lib/tools.jar</systemPath>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--                <version>2.4.10</version>  &lt;!&ndash;版本号同SpringBoot项目&ndash;&gt;-->
+<!--            </plugin>-->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.4.10</version>  <!--版本号同SpringBoot项目-->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <fork>true</fork>
+                    <executable>/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/bin/javac</executable>
+                </configuration>
             </plugin>
         </plugins>
     </build>

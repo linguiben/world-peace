@@ -95,7 +95,7 @@ Together these two values allow a year or month to be divided into weeks.
  */
 ```
 
-## Locale
+## [Locale](https://docs.oracle.com/javase/8/docs/api/java/util/Locale.html)
    - Locale.getDefault() retrieves the default locale of the JVM, that is determined by the JVM at startup and is typically based on the operating system's settings. It can represent the user's ***language, country***, and variant.
    - You can change the default locale for the JVM using  **Locale.setDefault(Locale newLocale)** . However, this change affects only the current JVM instance and does not persist across sessions.
 
@@ -190,10 +190,20 @@ public class ChangeLocale {
 | Application (DateTest_1_8)                                                          | External Application (ChangeLocale)                                                 |
 |-------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
 | <img src="imgs_soc/fw_DateTest.png" alt="fw_DateTest.png" width="742" height="795"> | <img src="imgs_soc/fw_external.png" alt="fw_external.png" width="735" height="795"> |
+  - ![fw_java_agent.png](imgs_soc/fw_java_agent.png)  
 
-**References**  
 
-***Java Agent***
+## Lesson learned
+1. The Class Calendar is a poorly designed API, suggest to use the java.time package in java 8 instead.
+2. Pay attention to Java major version upgrade to avoid data behavior change.
+3. Understand clearly underlying data structure and its principle with the API, such as Calendar, BigDecimal, etc.
+
+## References
+***[java.lang.instrument](https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html)***
+  - Java Instrumentation API provides a mechanism for monitoring and modifying the behavior of Java applications at runtime.
+  - Provides services that allow Java programming language agents to instrument programs running on the JVM. The mechanism for instrumentation is modification of the byte-codes of methods.
+
+***[Java Agent](https://docs.oracle.com/en/java/javase/11/docs/api/jdk.attach/com/sun/tools/attach/VirtualMachine.html)***
    - Java Agents are powerful tools for modifying and monitoring Java applications at runtime, providing flexibility for developers to enhance application behavior without altering the original source code.
 
 ***Calendar相关的bug:***  
