@@ -26,7 +26,19 @@ public class C3P0DataSourceFactory extends UnpooledDataSourceFactory {
     public C3P0DataSourceFactory() {
         this.dataSource = new ComboPooledDataSource();
     }
-    
+
+    /**
+     * 这段代码展示了如何使用 MyBatis 框架进行数据库操作。具体步骤如下：
+     * 1) 初始化 MyBatis 环境：读取配置文件 mybatis-config.xml，创建 SqlSessionFactory 和 SqlSession。
+     * 2) 获取 Mapper 接口实例：通过 SqlSession 获取 UserMapper 接口的代理类实例。
+     * 3) 执行 SQL 查询：调用 UserMapper 的 selectUserById 方法查询用户信息并打印结果。
+     * 4) 提交和关闭会话：自动提交事务并关闭 SqlSession。
+     *
+     * create schema dbo;
+     * create table dbo.Jobio_User(id int, userName varchar(100), password varchar(100), optionTime timestamp, remark varchar(100), version decimal(5,2));
+     * insert into dbo.Jobio_User(id,userName,password) values(1,'Jupiter','Jupiter');
+     * select * from dbo.Jobio_User;
+     */
     public static void main(String[] args) throws IOException {
 
         // SqlSessionFactory -> sqlSession -> mapper(代理类) -> 执行sql
