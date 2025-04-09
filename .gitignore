@@ -8,3 +8,10 @@ logs/*
 *.textClipping
 **/target/
 .aider*
+
+#Ingore the sensitive files
+c3p0-config.xml
+jdbc.properties
+postgresql.properties
+mail.properties
+
