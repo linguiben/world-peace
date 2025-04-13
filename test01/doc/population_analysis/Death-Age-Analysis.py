@@ -9,8 +9,10 @@ except ImportError as e:
     print("pipenv install pandas matplotlib")
     exit(1)
 
+country="cCountry"
+# raw data download: https://population.un.org/wpp/downloads?folder=Standard%20Projections&group=Mortality
 # read data from aCountry.csv，
-data_path = os.path.join(os.path.dirname(__file__), "data", "hCountry.csv")
+data_path = os.path.join(os.path.dirname(__file__), "data", country+".csv")
 # filter the line starts with #
 df = pd.read_csv(data_path, sep="\t",comment="#")
 
@@ -38,12 +40,12 @@ mean_age_female = sum(df["Age"] * df["Female"]) / sum(df["Female"])
 # Plot gender-specific death distributions
 plt.figure(figsize=(10, 6))
 plt.plot(df["Age"], df["SubTotal"], color="green", label="Total Deaths")
-plt.plot(df["Age"], df["Male"], color="blue", label="Male Deaths")
-plt.plot(df["Age"], df["Female"], color="pink", label="Female Deaths")
+# plt.plot(df["Age"], df["Male"], color="blue", label="Male Deaths")
+# plt.plot(df["Age"], df["Female"], color="pink", label="Female Deaths")
 plt.axvline(mean_age, color="green", linestyle="--", label=f"Mean ≈ {mean_age:.1f} yrs")
 plt.axvline(median_age, color="red", linestyle="--", label=f"Median ≈ {median_age:.1f} yrs")
 
-plt.title("Age-at-Death Distribution by Gender")
+plt.title("Age-at-Death Distribution of " + country)
 plt.xlabel("Age (Years)")
 plt.ylabel("Number of Deaths (×10,000)")
 plt.grid(True)
