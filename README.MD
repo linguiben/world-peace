@@ -1,33 +1,43 @@
 #       Wish Peace All Over The World
 
 ### Project Description:
-#### 1. world-peace-admin
+#### 1. world-peace-admin (java 11)
     1) banner
     2) jasypt // 配置加密
+    3) Web Server
 
 #### 2. world-peace-api (java 8)
     1) WebSocket Server
-    2) Cashing // TODO
+    2) Virtual Thread
+    3) Cashing // TODO
+    4) Java Agent
+    5) Java 8 Stream API
 
-#### 3. world-peace-common
+#### 3. world-peace-common (java 11)
     1) 配置绑定vegetables.properties, AdminConfig
     2) util
-    2.1) mybatis
+    2.1) mybatis-config.xml + postgresql.properties
     2.2) java Queue tools 
+    3.1) util-kafka-starter
+    3.2) util-redis-starter
 
-#### 4.world-peace-service
-    1) mybatis
+#### 4.world-peace-service (java 11)
+    1) mybatis-config.xml + connection pool
     https://mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/zh/index.html
-    2) c3p0 connection pool
-    3) dev,prd env
+    2) dev,prd env // application configuration profies
+    3) web.xml
+    4) AOP
 
-#### 5. test01 (java 21)
+#### 5.world-peace-dependencies (pom)
+    1) The common dependencies of the project
+
+#### 6. test01 (java 21)
     1) evosuite // unit test
     2) email
     3) logback.xml
     4) tcp / udp
 
-#### 6. world-peace-poc
+#### 7. world-peace-poc (java 11)
     1) logback.xml
     2) kafka
         docker 安装kafka(未验证): https://doc.bulkall.top/kafka/install-docker-compose/
@@ -39,7 +49,7 @@
 #### 8. handnote
     1. SpringBoot 学习笔记
 
-#### 7. docker
+#### 9. docker
     docker-compose, 其中DockerFile在项目目录下
     ## build image using "docker build" based on dockerfile -> create container using "dock run or docker-compose"
     #1. 下载openjdk:11到本地
