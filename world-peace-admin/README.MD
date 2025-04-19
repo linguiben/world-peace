@@ -65,21 +65,21 @@ sudo service nginx restart
 
 ### git proxies 
 ```shell
-# 1.配置git的代理之前先检查一下: 当前是否已存在git代理
-git config --global --get http.proxy && git config --global --get https.proxy
+# 1.检查是否已存在proxy。 ***: curl, brew等使用环境变量的代理配置(当前session)
+export http_proxy='http://localhost:8086' && export https_proxy=${http_proxy} #若需配置git代理，运行第2步
+git config -l | grep proxy  # or git config --global --get http.proxy && git config --global --get https.proxy
 ```
 ```shell
-# 2.配置curl, brew等使用环境变量的代理配置，只配置成当前terminal生效
-export http_proxy='http://localhost:8086' && export https_proxy=${http_proxy} #若需配置git代理，运行第3步骤
-# 3.配置git的代理，此配置后所有用户均生效，若要取消代理需要运行第4步
+# 2.配置git的代理，所有用户均生效，若要取消代理需要运行第6步
 git config --global http.proxy ${http_proxy} && git config --global https.proxy ${http_proxy}
 ```
 ```shell
-# 4.1 测试能否连接到github(使用代理，或使用环境默认的代理)
-curl 'https://github.com/Homebrew/brew.git/' #测试自动使用环境配置的代理
+# 4.1 测试git连接到github
+git ls-remote https://github.com/linguiben/world-peace.git
 ```
 ```shell
-# 4.2 测试能否连接到github(手动指定代理)
+# 4.2 curl 连接到github
+curl 'https://github.com/Homebrew/brew.git/' #测试自动使用环境配置的代理
 curl -x ${http_proxy} 'https://github.com/Homebrew/brew.git/' #测试手动指定代理
 ```
 ```shell
