@@ -65,13 +65,13 @@ sudo service nginx restart
 
 ### git proxies 
 ```shell
-# 1.检查是否已存在proxy。 ***: curl, brew等使用环境变量的代理配置(当前session)
-export http_proxy='http://localhost:8086' && export https_proxy=${http_proxy} #若需配置git代理，运行第2步
-git config -l | grep proxy  # or git config --global --get http.proxy && git config --global --get https.proxy
+# 1.检查是否已存在proxy, or git config --global --get http.proxy && git config --global --get https.proxy
+GIT_PROXY=`git config -l|grep proxy`;if [ -z "${GIT_PROXY}" ];then echo "git proxy not exists.";else echo ${GIT_PROXY};fi
 ```
 ```shell
-# 2.配置git的代理，所有用户均生效，若要取消代理需要运行第6步
-git config --global http.proxy ${http_proxy} && git config --global https.proxy ${http_proxy}
+# 2.配置git的代理，所有用户均生效，若要取消代理需要运行第6步, ***: curl, brew等使用环境变量的代理配置(当前session)
+export http_proxy='http://localhost:8086' && export https_proxy=${http_proxy} #若需配置git代理，运行第2步
+git config --global http.proxy ${http_proxy} && git config --global https.proxy ${http_proxy};
 ```
 ```shell
 # 4.1 测试git连接到github
