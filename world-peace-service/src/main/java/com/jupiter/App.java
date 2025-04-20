@@ -2,8 +2,8 @@ package com.jupiter;
 
 import com.jupiter.calc.Calculator;
 import com.jupiter.redis.RedisDao;
-import com.jupiter.server.Server;
-import com.jupiter.service.MapTest;
+import com.jupiter.io.bio.server.Server;
+import com.jupiter.mvc.service.MapTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;

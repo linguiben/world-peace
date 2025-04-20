@@ -1,6 +1,6 @@
 package com.jupiter;
 
-import com.jupiter.service.MapTest;
+import com.jupiter.mvc.service.MapTest;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;

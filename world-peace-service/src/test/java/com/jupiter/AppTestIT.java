@@ -1,7 +1,7 @@
 package com.jupiter;
 
 import com.jupiter.calc.Calculator;
-import com.jupiter.service.MapTest;
+import com.jupiter.mvc.service.MapTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -12,7 +12,7 @@ import org.springframework.context.ApplicationContext;
 
 import java.math.BigDecimal;
 
-//@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class) 等价于 @RunWith(MockitoJUnitRunner.class)
 //@SpringBootTest(classes = MapTest.class)
 @SpringBootTest(classes = App.class)
 //@EnableAutoConfiguration

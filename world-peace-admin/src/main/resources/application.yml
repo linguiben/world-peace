@@ -6,6 +6,7 @@ env: dev
 spring.profiles.active: ${env}
 server:
   port: 8090
+  shutdown: graceful # graceful shutdown
 
 governmentIssuedNumber: 粤ICP备2024203563号
 food:
@@ -35,3 +36,5 @@ spring:
     multipart:
       max-file-size: 50MB
       max-request-size: 50MB
+  lifecycle:
+    timeout-per-shutdown-phase: 30 # shutdown timeout

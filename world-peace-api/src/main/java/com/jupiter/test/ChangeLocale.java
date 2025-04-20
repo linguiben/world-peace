@@ -7,8 +7,9 @@ import java.util.Locale;
  * @author: Jupiter.Lin
  * @date: 2024-11-16
  *
-java8=/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/bin/java
-$java8 com.jupiter.test.DateTest_1_8 #startup test
+<p>
+java8=/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/bin/java. </p>
+$java8 com.jupiter.test.DateTest_1_8 #startup test.
 
 $java8 -jar /Users/jupiter/11.java/arthas-packaging-3.6.7-bin/arthas-boot.jar #start arthas --help
 classloader --classLoaderClass sun.misc.Launcher$AppClassLoader --load com.jupiter.test.ChangeLocale #load a new class

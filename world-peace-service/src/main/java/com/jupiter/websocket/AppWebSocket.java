@@ -6,6 +6,7 @@
  */
 package com.jupiter.websocket;
 
+import com.jupiter.mvc.controller.IndexController;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
@@ -16,7 +17,7 @@ import org.springframework.context.annotation.Import;
  * @date 2024-04-01 23:56
  */
 @SpringBootApplication // (scanBasePackageClasses={com.jupiter.controller.IndexController.class})
-@Import(com.jupiter.controller.IndexController.class)
+@Import(IndexController.class)
 public class AppWebSocket {
     public static void main(String[] args) {
         SpringApplication.run(AppWebSocket.class, args);

@@ -1,12 +1,17 @@
 if [ $# -lt 1 ]; then
-  echo "Usage: $0.sh [up|down|create|rm|start|stop|restart|scale]"
+  echo "Usage: $0 [up|down|create|rm|start|stop|restart|scale]"
   echo -e "for help: docker-compose -h \n"
   exit 1
 fi
 
-
 args=$1
+absolute_dir=$(cd "$(dirname "$0")"; pwd)
 if [ $1 = "up" ]; then args="up -d"; fi
+if [ -f ${absolute_dir}/.env ]; then echo "using env: " && cat ${absolute_dir}/.env; fi
+
+echo "Working dir: ${absolute_dir}"
+echo "Running: \"${0} ${args} ...\""
+echo "log path: /opt/docker"
 
 #docker-compose -h
 #Options:

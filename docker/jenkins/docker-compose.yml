@@ -1,15 +1,17 @@
-version: '3.9'
+version: '2'
  
 services:
   jenkins:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: jenkins:jdk21
+    user: "0:0"
+    cpus: '1'
+    mem_limit: 1280m
+    container_name: jenkins
+    hostname: jenkins
     ports:
-      - "8080:8080"
+      - "58080:8080" #login port
       - "50000:50000"
+    restart: always
     volumes:
-      - ./jenkins_home:/var/jenkins_home
- 
-volumes:
-  jenkins_home:
+      - /opt/docker/jenkins/conf/jenkins_home:/var/jenkins_home
+      - /opt/docker/jenkins/data:/data

@@ -9,7 +9,7 @@ logs/*
 **/target/
 .aider*
 
-#Ingore the sensitive files
+#Ingore the sensitive files, prerequisite is that the version repository has not been added
 c3p0-config.xml
 jdbc.properties
 postgresql.properties
