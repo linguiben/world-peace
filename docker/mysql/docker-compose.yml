@@ -1,31 +1,33 @@
 version: '3.9'
 services:
-    mysql:
-      image: mysql:8.0 #参考https://registry.hub.docker.com/_/mysql
-      mem_limit: 512m #限制内存使用
-      container_name: mysql
-      restart: no #本机不开启always,服务器建议开启
-      environment: #更多环境变量https://dev.mysql.com/doc/refman/8.0/en/environment-variables.html
-        - MYSQL_ROOT_PASSWORD=root #设置 root 账户密码
-        - MYSQL_DATABASE=app #创建一个新的数据库
-        - MYSQL_ALLOW_EMPTY_PASSWORD=yes #允许root使用空密码登录
-        - TZ=Asia/Shanghai #设置时区
-        - MYSQL_USER=jupiter #A new user
-        - MYSQL_PASSWORD=jupiter
-      ports:
-        - "3306:3306" #端口映射
-      volumes: #本机目录:容器目录
-        - ./mysql/data:/var/lib/mysql 
-        - ./mysql/etc/mysql/my.cnf:/etc/mysql/my.cnf
-        - ./mysql/root:/root
-      command: #mysql的一些配置 
-        --max_connections=1000
-        --character-set-server=utf8mb4
-        --collation-server=utf8mb4_general_ci
-        --default-authentication-plugin=mysql_native_password
+  mysql:
+    image: mysql:8.0 #参考https://registry.hub.docker.com/_/mysql
+    mem_limit: 512m #限制内存使用
+    cpus: 0.5 #限制cpu使用
+    container_name: mysql
+    restart: no #本机不开启always,服务器建议开启
+    environment: #更多环境变量https://dev.mysql.com/doc/refman/8.0/en/environment-variables.html
+      - MYSQL_ROOT_PASSWORD=root #设置 root 账户密码
+      - MYSQL_DATABASE=app #创建一个新的数据库
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes #允许root使用空密码登录
+      - TZ=Asia/Shanghai #设置时区
+      - MYSQL_USER=jupiter #A new user
+      - MYSQL_PASSWORD=jupiter
+    ports:
+      - "3306:3306" #端口映射
+    volumes: #本机目录:容器目录
+      - ${PERSIST_PATH}/mysql/data:/var/lib/mysql
+      - ${PERSIST_PATH}/mysql/etc/mysql:/etc/mysql
+      - ${PERSIST_PATH}/mysql/mysql-files:/var/lib/mysql-files
+      - ${PERSIST_PATH}/mysql/root:/root
+    command: #mysql的一些配置
+      --max_connections=1000
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-authentication-plugin=mysql_native_password
 # 连接外部网络
 networks:
- wp_net:
+  wp_net:
     external: true
 
 #docker-compose -f docker-compose.yml up -d #启动mysql容器，未设置网络
