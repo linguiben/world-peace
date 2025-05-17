@@ -14,7 +14,7 @@ services:
       - MYSQL_USER=jupiter #A new user
       - MYSQL_PASSWORD=jupiter
     ports:
-      - "3306:3306" #端口映射
+      - "13306:3306" #端口映射
     volumes: #本机目录:容器目录
       - ${PERSIST_PATH}/mysql/data:/var/lib/mysql
       - ${PERSIST_PATH}/mysql/etc/mysql:/etc/mysql

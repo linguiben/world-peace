@@ -18,7 +18,7 @@ import java.io.InputStream;
 @ImportResource("classpath:beans.xml")  // 配置文件中的bean注入容器
 @ConditionalOnMissingBean(name = "RT_SZ") // 不存在该bean时才执行
 @Configuration(proxyBeanMethods = false) // default:true(bean单例)
-@EnableConfigurationProperties(MarketInfo.class) // 属性绑定并且注册到容器, id为prefix-全类名
+@EnableConfigurationProperties(MarketInfo.class) // (SpringBoot默认开启) 属性绑定并且注册到容器, id为prefix-全类名
 public class MyConfig {
 
     @Bean(name = "marketInfo2")
