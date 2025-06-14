@@ -1,0 +1,16 @@
+# This script is used to enter a running Docker container.
+# Usage: ./enter_container.sh <container_name_or_id>
+
+if [ -z "$1" ]; then
+  echo "Usage: $0 <container_name_or_id>"
+  exit 1
+fi
+# Check if the container is running
+if ! docker ps -q --filter "name=$1" | grep -q .; then
+  echo "Container '$1' is not running or does not exist."
+  exit 1
+fi
+# Enter the specified Docker container
+docker exec -it "$1" /bin/bash
+
+# If you want to use a different shell, replace /bin/bash with /bin/sh or another shell of your choice.
