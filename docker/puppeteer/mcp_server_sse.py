@@ -7,9 +7,10 @@
 from mcp.server.fastmcp import FastMCP
 import tools
 
-mcp = FastMCP("host info mcp") # Create a FastMCP instance with a name
-mcp.add_tool(tools.webpage_capture) # Add the custom tool to the MCP instance
-
+# Create a FastMCP instance with a name
+mcp = FastMCP("host info mcp", host="0.0.0.0", port=8000)
+# Add the custom tool to the MCP instance
+mcp.add_tool(tools.webpage_capture)
 @mcp.tool()
 def system_info():
     """Get system information and return it as a JSON string."""

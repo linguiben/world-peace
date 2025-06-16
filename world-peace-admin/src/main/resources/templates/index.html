@@ -60,7 +60,9 @@
         <a href="/ws">web socket</a>
     </div>
     <div class="box" style="width: 300px;border: solid;border-color: #e4393c">
-        <!--Content-Type: application/x-www-form-urlencouded只能用于上传文本格式的文件-->
+        <!--Content-Type: application/x-www-form-urlencouded 用于简单表单数据，也可用于上传文本格式的文件-->
+        <!-- Content-Type: application/json 常用于Web API进行数据交换 -->
+        <!-- Content-Type: multipart/form-data 用于复杂表单数据，包括上传文件 -->
         <!--此段请求的Content-Type: multipart/form-data; boundary=&#45;&#45;&#45;&#45;WebKitFormBoundaryH19JutoXQAKYamdA-->
         <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
             描述:<input type="text" name="desc"><br/>

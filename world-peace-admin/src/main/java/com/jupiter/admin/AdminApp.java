@@ -20,7 +20,7 @@ import java.io.File;
 public class AdminApp
 {
     public static void main(String[] args) {
-        // SpringApplication.run(App.class,args);
+//         SpringApplication.run(AdminApp.class,args);
 
         SpringApplication app = new SpringApplication(AdminApp.class);
         //Banner.Mode.OFF 关闭

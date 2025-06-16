@@ -31,10 +31,10 @@ class RequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(output.encode())
 
-def run(server_class=HTTPServer, handler_class=RequestHandler, port=8080):
-    server_address = ('', port)
+def run(server_class=HTTPServer, handler_class=RequestHandler, port=8000):
+    server_address = ('0.0.0.0', port)  # 监听所有网卡，支持对外访问
     httpd = server_class(server_address, handler_class)
-    print(f"Starting server on port {port}...")
+    print(f"Starting server on 0.0.0.0:{port} (external access enabled)...")
     httpd.serve_forever()
 
 if __name__ == '__main__':

@@ -6,7 +6,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Data
 //@Component
-@ConfigurationProperties(prefix = "stock") // 开启配置绑定，绑定配置文件中的值
+// 进行配置绑定(依赖@Setter)，绑定配置文件中的值，SpringBoot默认已开启@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "stock")
 public class MarketInfo {
 
     @Value("${stock.market}") // 加了@ConfigurationProperties后，可省
@@ -16,7 +17,7 @@ public class MarketInfo {
     public MarketInfo() {
     }
 
-    // 写了有参构造器后，必须手动写无参构造器
+    // 写了有参构造器后，必须手动写无参构造器，或者@NoArgsConstructor@AllArgsConstructor
     public MarketInfo(String market) {
         this.market = market;
     }
