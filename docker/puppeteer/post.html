@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>POST 截图示例</title>
+</head>
+<body>
+<h2>提交url进行截图</h2>
+<form id="postForm">
+    <label for="url">url</label>
+    <input type="text" id="url" name="url"><br>
+    <input type="submit" value="提交">
+</form>
+<pre id="result"></pre>
+<script>
+    document.getElementById('postForm').onsubmit = async function(e) {
+        e.preventDefault();
+        const url = document.getElementById('url').value;
+        // 直接拼接body字符串，不进行URL编码
+        const body = 'url=' + url;
+        const response = await fetch('http://127.0.0.1:8000/hisil/sse', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: body
+        });
+        const text = await response.text();
+        document.getElementById('result').textContent = text;
+    }
+</script>
+</body>
+</html>
