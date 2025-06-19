@@ -8,7 +8,7 @@ from mcp.server.fastmcp import FastMCP
 import tools
 
 # Create a FastMCP instance with a name
-mcp = FastMCP("host info mcp", host="0.0.0.0", port=8000)
+mcp = FastMCP("host info mcp", host="0.0.0.0", port=8000, stateless_http=True)
 # Add the custom tool to the MCP instance
 mcp.add_tool(tools.webpage_capture)
 @mcp.tool()
@@ -30,7 +30,7 @@ def system_info():
 # stido transport is useful for local testing, while sse is useful for web applications.
 def main():
     # mcp.run("stdio") # Run the MCP server with stdio transport or sse (Server-Sent Events)
-    mcp.run("sse")  # Run the MCP server with SSE transport
+    mcp.run(transport="streamable-http")  # Run the MCP server with SSE transport
     # mcp.run("streamable-http")
 
 if __name__ == "__main__":
