@@ -23,10 +23,20 @@ docker run \
   --name puppeteer-http \
   --hostname puppeteer \
   -v $(pwd):/app/images \
-  -p 8001:8000 \
+  -p 8000:8000 \
   -w /app \
   --network wp_net \
   --entrypoint python3 puppeteer-app:2.0 http_server.py
+
+cd /opt/git/repo/world-peace/docker/puppeteer-stateless/images
+docker run -it -d \
+  --name puppeteer-statless2 \
+  --hostname puppeteer \
+  -v $(pwd):/app/images \
+  -p 8001:8000 \
+  -w /app \
+  --network wp_net \
+  --entrypoint python puppeteer-app:2.2 mcp_server_sse.py
 
 #curl -X POST http://localhost:8090/ai/listTools
 #curl -X POST http://localhost:8090/ai/capture -d 'url=http://www.qq.com'
@@ -36,7 +46,7 @@ docker run \
 curl -i -X POST http://localhost:8080/mcp/ \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{"_meta":{"progressToken":2}}}'
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
 
 # call tool
 curl -i -X POST http://localhost:8080/mcp/ \
@@ -49,3 +59,16 @@ curl -i -X POST http://localhost:8080/mcp/ \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"_meta":{"progressToken":2},"name":"webpage_capture","arguments":{"url":"http://www.baidu.com"}}}'
+
+
+curl -i -X POST http://jupiterSo.com:8001/mcp/ \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}'
+
+curl -i -X POST http://jupiterSo.com:8001/mcp/ \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"system_info","arguments":{"toolName":"system_info","\"\"":""}}}'
+
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"system_info","arguments":{"toolName":"system_info","url":"http://www.baidu.com"}}}
