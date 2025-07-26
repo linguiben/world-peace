@@ -12,7 +12,7 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD=yes #允许root使用空密码登录
       - TZ=Asia/Shanghai #设置时区
       - MYSQL_USER=jupiter #A new user
-      - MYSQL_PASSWORD=jupiter
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     ports:
       - "13306:3306" #端口映射
     volumes: #本机目录:容器目录

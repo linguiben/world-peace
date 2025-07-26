@@ -1,0 +1,23 @@
+services:
+  postgres:
+    image: postgres:14
+    mem_limit: 512mb #限制内存使用
+    cpus: 1 #限制cpu使用
+    container_name: postgres
+    restart: no #本机不开启always,服务器建议开启
+    environment: #更多环境变量查看官网
+      - POSTGRES_USER=jupiter
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD} #read from .env
+      - POSTGRES_DB=wp
+    ports:
+      - "9527:5432" #端口映射
+    volumes: #本机目录:容器目录
+      - /opt/docker/postgres/data:/var/lib/postgresql/data
+# 连接外部网络
+networks:
+  wp_net:
+    external: true
+
+# docker network create wp-network #创建外部网络
+# docker-compose -f docker-compose.yml up -d #启动mysql容器，未设置网络
+# docker-compose -f docker-compose.yml down --volumes #同时移除关联的匿名卷

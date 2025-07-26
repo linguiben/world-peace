@@ -1,4 +1,11 @@
 ## Re-build wpadmin docker container
+
+**IMPORTANT**  
+*Create a new user `appuser` to run the docker container, this is to avoid running the container as root user.*  
+`sudo useradd -r -s /sbin/nologin appuser`  
+<span style="color: gray;">*-r：创建系统用户（不会登录 shell）*  
+*-s /sbin/nologin：禁用 shell 登录*</span>
+
 ### 1. build docker images
 ```shell
 # upload to aliyun ECS
@@ -22,7 +29,8 @@ export GIT_REPO=/opt/git/repo
 ```shell
 docker stop wpadmin
 docker rm wpadmin
-docker run -d --name wpadmin --hostname wpadmin -p 8090:8090 --network=data_default -v /data/logs/wpadmin:/data/logs/wpadmin -v /data/wpadmin:/usr/apps/wp/data --restart=always world-peace-admin:1.0
+#docker run -d --name wpadmin --hostname wpadmin -p 8090:8090 --network=data_default -v /data/logs/wpadmin:/data/logs/wpadmin -v /data/wpadmin:/usr/apps/wp/data --restart=always world-peace-admin:1.0
+docker run -d --name wpadmin --hostname wpadmin -p 80:8090 -p 443:8090 --network=default -v /opt/docker/wpadmin/data/logs:/data/logs/wpadmin -v /opt/docker/wpadmin/data:/usr/apps/wp/data --restart=always wpadmin:latest
 ```
 
 ### For local test

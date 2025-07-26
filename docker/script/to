@@ -1,5 +1,5 @@
 # This script is used to enter a running Docker container.
-# Usage: ./enter_container.sh <container_name_or_id>
+# Usage: ./to <container_name_or_id>
 
 if [ -z "$1" ]; then
   echo "Usage: $0 <container_name_or_id>"
@@ -14,3 +14,4 @@ fi
 docker exec -it "$1" /bin/bash
 
 # If you want to use a different shell, replace /bin/bash with /bin/sh or another shell of your choice.
+# This script should cooperate with _to_docker_container.sh

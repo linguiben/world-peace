@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .chat-container {
+            max-width: 600px;
+            margin: auto;
+        }
+        .message-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .response {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .history {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .clear-btn {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>Chat with AI</h1>
+        <form id="chatForm">
+            <input type="text" id="message" class="message-box" placeholder="Type your message here..." required>
+            <button type="submit">Send</button>
+            <select id="uriSelector" class="uri-selector">
+                <option value="/ai/vertexChat">Vertex Chat</option>
+                <option value="/ai/clients">List Clients</option>
+                <option value="/ai">ai</option>
+            </select>
+        </form>
+        <button id="clearHistory" class="clear-btn">Clear History</button>
+        <div class="history" id="history"></div>
+    </div>
+
+    <script>
+        const historyDiv = document.getElementById('history');
+        const clearHistoryBtn = document.getElementById('clearHistory');
+        const uriSelector = document.getElementById('uriSelector');
+
+        document.getElementById('chatForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const message = document.getElementById('message').value;
+            const selectedUri = uriSelector.value;
+
+            try {
+                const response = await fetch(`${selectedUri}?message=${encodeURIComponent(message)}`);
+                const text = await response.text();
+                const newEntry = `<p><strong>You:</strong> ${message}<br><strong>AI Response:</strong> ${text}</p>`;
+                historyDiv.innerHTML += newEntry;
+            } catch (error) {
+                const errorEntry = `<p><strong>You:</strong> ${message}<br><strong>AI Response:</strong> Error communicating with AI.</p>`;
+                historyDiv.innerHTML += errorEntry;
+            }
+        });
+
+        clearHistoryBtn.addEventListener('click', function() {
+            historyDiv.innerHTML = '';
+        });
+    </script>
+</body>
+</html>

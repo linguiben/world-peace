@@ -38,3 +38,25 @@ spring:
     listener:
       missing-topics-fatal: false # consumer listener topics 不存在时，启动项目就会报错
 #      type: batch
+  ai:
+    location:
+      us-central1
+    vertex:
+      ai:
+        gemini:
+          vertex:
+            ai:
+              gemini:
+                project-id: direct-hope-437005-e1
+          chat:
+            options:
+              model: gemini-2.0-flash-001 # or gemini-1.5-pro-002
+              temperature: 0.5
+          # api-endpoint: "https://direct-hope-437005-e1-prediction.aiplatform.googleapis.com" # optional, use default
+
+#spring.ai.vertex.ai.gemini.vertex.ai.gemini.project-id=direct-hope-437005-e1
+#spring.ai.location=us-central1
+#spring.ai.vertex.ai.gemini.chat.options.model=gemini-1.5-pro-002
+#spring.ai.vertex.ai.gemini.chat.options.model=gemini-2.0-flash-001
+#spring.ai.vertex.ai.gemini.chat.options.temperature=0.5
+#spring.ai.vertex.ai.gemini.api-endpoint="https://direct-hope-437005-e1-prediction.aiplatform.googleapis.com"

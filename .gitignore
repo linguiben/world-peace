@@ -15,3 +15,5 @@ jdbc.properties
 postgresql.properties
 mail.properties
 cert-world-peace.json
+application-local.yml # local development有key的配置，避免泄露
+.env

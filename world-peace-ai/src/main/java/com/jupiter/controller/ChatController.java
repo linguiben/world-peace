@@ -10,12 +10,14 @@ import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
+import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.tool.ToolCallbackProvider;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatModel;
 import org.springframework.ai.vertexai.gemini.VertexAiGeminiChatOptions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -37,51 +39,59 @@ public class ChatController {
 //    @Autowired
 //    private ToolCallbackProvider mcpTools;
 
-    private ChatClient chatClient;
-
-    private VertexAiGeminiChatModel chatModel;
-
+    //    private OpenAiChatModel openAiChatModel;
     private final ChatMemory chatMemory; // default: InMemoryChatMemory
+    private final ChatModel vertexAiGeminiChatModel;
+    private final ChatClient vertexChatClient; // ChatClient是比ChatModel更高级的抽象，提供了更多功能，如流式响应、工具调用等。
 
-//    @Autowired
-//    public ChatController(VertexAiGeminiChatModel chatModel) {
-//        this.chatModel = chatModel;
-//        this.chatClient = ChatClient.builder(chatModel).build();
-//    }
-
+    /**
+     * Constructor for ChatController.
+     *
+     * @param vertexAiProjectId
+     * @param vertexAiLocation
+     * @param vertexAiModel
+     * @param mcpTools
+     * @param chatMemory
+     */
     @Autowired
-    public ChatController(ToolCallbackProvider mcpTools, ChatMemory chatMemory) {
-        VertexAI vertexAi = new VertexAI("direct-hope-437005-e1", "us-central1");
+    public ChatController(@Value("${spring.ai.vertex.ai.gemini.project-id}") String vertexAiProjectId,
+                          @Value("${spring.ai.vertex.ai.gemini.location:global}") String vertexAiLocation,
+                          @Value("${spring.ai.vertex.ai.gemini.model:GEMINI_2_0_FLASH}") String vertexAiModel,
+                          ToolCallbackProvider mcpTools,
+                          ChatMemory chatMemory) {
+
+        vertexAiProjectId = vertexAiProjectId;
+        vertexAiLocation = vertexAiLocation;
+        vertexAiModel = vertexAiModel;
+        this.chatMemory = chatMemory;
 //        VertexAiGeminiChatModel vertexAiGeminiChatModel = new VertexAiGeminiChatModel(vertexAi,
 //                VertexAiGeminiChatOptions.builder()
 //                        .model(VertexAiGeminiChatModel.ChatModel.GEMINI_1_5_FLASH)
 //                        .temperature(0.4)
 //                        .build());
-        VertexAiGeminiChatModel vertexAiGeminiChatModel = VertexAiGeminiChatModel.builder()
+        VertexAI vertexAi = new VertexAI(vertexAiProjectId, vertexAiLocation);
+        vertexAiGeminiChatModel = VertexAiGeminiChatModel.builder()
                 .vertexAI(vertexAi)
                 .defaultOptions(VertexAiGeminiChatOptions.builder()
-                        .model(VertexAiGeminiChatModel.ChatModel.GEMINI_2_0_FLASH)
+                        .model(vertexAiModel)
                         .temperature(0.4)
                         .build())
                 .build();
-        chatClient = ChatClient
+        vertexChatClient = ChatClient
                 .builder(vertexAiGeminiChatModel)
                 .defaultSystem("""
                         You are a expert programmer and AI assistant, you can help users to solve their problems.
                         """)
                 .defaultAdvisors(PromptChatMemoryAdvisor.builder(chatMemory).build(), new SimpleLoggerAdvisor())
                 .defaultTools() // 可以添加默认的工具
-                .defaultToolCallbacks(mcpTools)
+                .defaultToolCallbacks(mcpTools) // add mcp server tools
                 .build();
-        this.chatMemory = chatMemory;
     }
 
-
-
     @ResponseBody
-    @GetMapping("/ai/test")
+    @GetMapping("/ai/testVertexAI")
     public String testGemini(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) throws IOException {
-        VertexAI vertexAi = new VertexAI("direct-hope-437005-e1", "us-central1");
+        VertexAI vertexAi = new VertexAI("direct-hope-437005-e1", "global");
         GenerativeModel model = new GenerativeModel("gemini-2.0-flash-001", vertexAi);
         GenerateContentResponse response = model.generateContent(message);
         String decoded = GeminiResponseDecoder.decode(response);
@@ -91,13 +101,13 @@ public class ChatController {
     }
 
     @CrossOrigin
-    @GetMapping(value = "/ai/springai", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/ai/vertexChatFlux", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> generateStreamAsString(@RequestParam(value = "message", defaultValue = "Tell me a jok") String message) {
 
-        Flux<String> content = chatClient.prompt()
+        Flux<String> content = vertexChatClient.prompt()
                 .system(s -> s.param("current_date", LocalDate.now().toString()))
                 //.advisors(a -> a.param(ChatMemory.CONVERSATION_ID, userId))
-                .user(message+"/no_think")
+                .user(message + "/no_think")
 //                .advisors(QuestionAnswerAdvisor.builder(vectorStore)
 //                        .searchRequest(SearchRequest.builder().similarityThreshold(0.8d).topK(6).build())
 //                        .build())
@@ -108,10 +118,10 @@ public class ChatController {
         return content.concatWith(Flux.just("[complete]"));
     }
 
-    @CrossOrigin
-    @GetMapping(value = "/ai/springai2", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @CrossOrigin(origins = "*")
+    @GetMapping(value = "/ai/vertexChat", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public String generateStreamAsString2(@RequestParam(value = "message", defaultValue = "Tell me a jok") String message) {
-        String content = chatClient.prompt()
+        String content = vertexChatClient.prompt()
                 .system(s -> s.param("current_date", LocalDate.now().toString()))
                 .user(message + "/no_think")
                 .stream()
@@ -127,12 +137,12 @@ public class ChatController {
     @ResponseBody
     @GetMapping("/ai/generate")
     public Map generate(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) throws IOException {
-        return Map.of("generation", this.chatModel.call(message));
+        return Map.of("generation", this.vertexAiGeminiChatModel.call(message));
     }
 
     @GetMapping("/ai/generateStream")
     public Flux<ChatResponse> generateStream(@RequestParam(value = "message", defaultValue = "Tell me a joke") String message) {
         Prompt prompt = new Prompt(new UserMessage(message));
-        return this.chatModel.stream(prompt);
+        return this.vertexAiGeminiChatModel.stream(prompt);
     }
 }

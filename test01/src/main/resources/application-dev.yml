@@ -38,3 +38,17 @@ spring:
     listener:
       missing-topics-fatal: false # consumer listener topics 不存在时，启动项目就会报错
 #      type: batch
+  server:
+    port: 8060
+  ai:
+    mcp:
+      client:
+        enable: true
+        name: mcp-client
+        version: 1.0.0
+        request-timeout: 60s
+        type: SYNC
+        sse:
+          connections:
+            server1:
+              url: http://127.0.0.1:8000

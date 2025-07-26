@@ -1,3 +1,9 @@
+# How to enable the completion functions?
+## 1. save this script to `~/Jupiter/._completion/_to_docker_container.sh`
+## 2. add the following to `~/.bashrc` or `~/.bash_profile`
+## if [ -f /root/Jupiter/._completion/_* ]; then . /root/Jupiter/._completion/_*; fi
+## export PATH=$PATH:~/Jupiter
+
 # 定义to_container的补全函数
 _to_container() {
     local cur prev opts # 声明三个局部变量， cur表示当前输入的命令， prev表示前一个输入的命令， opts表示可选的命令
@@ -12,14 +18,3 @@ _to_container() {
     fi
 }
 complete -F _to_container to # 将 _to_container 函数注册为 to 命令的补全函数
-
-# 将此脚本保存为 _to_docker_container.sh 并放在合适的目录下
-# 使用 source 命令加载脚本
-# source ./_to_docker_container.sh
-# 然后在终端中输入 to 并按 Tab 键进行补全
-# 你可以在终端中输入 to 并按 Tab 键来测试补全功能
-
-# 如何令补全函数在登录时自动生效:
-# 最常见的是在 ~/.bashrc 中增加:
-# User-defined completion functions
-# if [ -f /root/Jupiter/._completion/_* ]; then . /root/Jupiter/._completion/_*; fi

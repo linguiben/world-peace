@@ -1,5 +1,3 @@
-version: "3.9"
-
 networks:
   wp_net:
     #driver: bridge

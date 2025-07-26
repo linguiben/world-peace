@@ -1,8 +1,7 @@
-version: '3.9'
-
 networks:
-  wp_net:
-    driver: bridge
+  wp-net:
+    external: true
+    name: wp-net # 如果运行报错则手动创建 docker network create wp-net
 
 services:
   wpadmin:
@@ -12,12 +11,12 @@ services:
     container_name: wpadmin
     hostname: wpadmin
     ports:
-      - "80:8090"
+      - "8090:8090"
     volumes:
       - ${PERSIST_PATH}/wpadmin/logs:/logs/admin
       - ${PERSIST_PATH}/wpadmin/data:/usr/apps/wp/data
     networks:
-      wp_net:
+      wp-net:
         aliases:
           - wpadmin
   wpapi:
@@ -26,7 +25,7 @@ services:
     container_name: wpapi
     hostname: wpapi
     networks:
-      wp_net:
+      wp-net:
         aliases:
           - wpapi
     ports:
@@ -39,7 +38,7 @@ services:
     container_name: wppoc
     hostname: wppoc
     networks:
-      wp_net:
+      wp-net:
         aliases:
           - wppoc
     ports:

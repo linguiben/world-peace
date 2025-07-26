@@ -1,0 +1,25 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    hostname: nginx
+    ports:
+      - "8080:80"  # 访问 http://localhost:8080 会被代理到 Java 应用
+    volumes:
+      - /opt/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /opt/docker/nginx/html:/usr/share/nginx/html:ro  # 可选
+#    depends_on:
+#      - java-app
+    networks:
+      - wp-net
+
+# docker network create wp-net
+networks:
+  wp-net:
+    external: true
+    name: wp-net
+
+
+# test
+# curl http://localhost:8090
+# docker run -d --name wpadmin90 --hostname wpadmin -p 8090:8090 --network=wp-net wpadmin:latest

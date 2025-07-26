@@ -48,7 +48,7 @@ spring:
         version: 1.0.0
         request-timeout: 60s
         type: SYNC
-        sse:
+        sse: # spring-ai-1.0.0 还不支持stream-http
           connections:
             server1:
               url: http://JupiterSo.com:8001
@@ -58,8 +58,8 @@ spring:
       ai:
         gemini:
           project-id: direct-hope-437005-e1
-          location: global
-          model: gemini-2.0-flash-0001
+          location: us-central1
+          model: gemini-2.0-flash-001
 
 # 调试日志
 logging:
