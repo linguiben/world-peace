@@ -1,0 +1,19 @@
+services:
+  redis:
+    image: registry.openanolis.cn/openanolis/redis:5.0.3-8.6
+    mem_limit: 128m #限制内存使用
+    cpus: 1 #限制cpu使用
+    container_name: redis
+    restart: no #本机不开启always,服务器建议开启
+    ports:
+      - "16379:6379" #端口映射
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+# 连接外部网络
+networks:
+  wp-net:
+    external: true
+
+# redis-server
+#docker run --network wp-net --name redis -p 6379:6379 -d registry.openanolis.cn/openanolis/redis:5.0.3-8.6
+# redis-cli
+# docker run --network wp-net --name redis-cli -it --rm registry.openanolis.cn/openanolis/redis:5.0.3-8.6 redis-cli

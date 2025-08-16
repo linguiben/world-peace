@@ -3,8 +3,13 @@ services:
     image: nginx:latest
     container_name: nginx
     hostname: nginx
+    cpus:  1
+    mem_limit: 64m
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
     ports:
-      - "8080:80"  # 访问 http://localhost:8080 会被代理到 Java 应用
+      - "80:80"
     volumes:
       - /opt/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /opt/docker/nginx/html:/usr/share/nginx/html:ro  # 可选

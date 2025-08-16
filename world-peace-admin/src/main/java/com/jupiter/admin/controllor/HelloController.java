@@ -47,6 +47,11 @@ public class HelloController {
         return "index";
     }
 
+    @RequestMapping("/test")
+    public String testUpload(Model model){
+        return "upload";
+    }
+
     @RequestMapping("/hello")
     @ResponseBody
     public String hello(HttpServletRequest request) throws IOException {

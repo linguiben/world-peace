@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>JupiterSo</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <style>
+        body {
+            text-align: center;
+        }
+        .subfoot .subfoot_zbdw {
+            color: #666;
+            text-align: center;
+            margin-top: -10px;
+            padding-bottom: 35px;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="bottom">
+    <!-- 主办单位 -->
+    <div class="subfoot_zbdw">
+        <p><a href="http://beian.miit.gov.cn/" target="_blank">工业和信息化部备案管理系统网站 <span
+                th:text="${governmentIssuedNumber}"/></a></p>
+        <p>主办单位：Jupiter.Lin</p>
+        <p>建站只是为了玩玩，若有侵权请联系QQ79499480，即删。</p>
+        <p>JupiterSo.com, jovesi.com</p>
+    </div>
+
+    <!-- 底部logo -->
+    <div class="subfoot_logo">
+        <a href="https://www.piyao.org.cn/">
+            <img src="https://static.ws.126.net/163/f2e/www/index20170701/images/py_logo.jpg" alt="中国互联网联合辟谣平台">
+        </a>
+        <span>
+            <img src="https://static.ws.126.net/163/f2e/www/index20170701/images/wzalogo.jpg" alt="适老化无障碍服务">
+        </span>
+    </div>
+</div>
+</body>
+</html>

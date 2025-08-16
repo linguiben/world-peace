@@ -1,0 +1,38 @@
+services:
+  ruoyi-admin:
+    image: ruoyi:1.0
+    container_name: ruoyi
+    hostname: ruoyi
+    cpus:  2
+    mem_limit: 640m
+    restart: no
+    environment:
+      - TZ=Asia/Shanghai
+#    ports:
+#      - "8070:8080"
+    volumes:
+      - /opt/docker/ruoyi/logs:/apps/logs
+      - /opt/docker/ruoyi/target/ruoyi-admin.jar:/apps/ruoyi-admin.jar
+#    depends_on:
+#      - java-app
+    networks:
+      - wp-net
+
+# docker network create wp-net
+networks:
+  wp-net:
+    external: true
+    name: wp-net
+
+
+# test
+# curl http://ruoyi:8080
+#cd /opt/docker/ruoyi && docker build -t ruoyi:0.1 . # build Dockerfile
+#docker run --rm -it \
+#--name ruoyi \
+#--network wp-net \
+#-p 8070:8080 \
+#--restart=no \
+#-v /opt/docker/ruoyi/logs:/apps/logs \
+#-v /opt/docker/ruoyi/target/ruoyi-admin.jar:/apps/ruoyi-admin.jar \
+#ruoyi:0.1

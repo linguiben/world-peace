@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>JupiterSo</title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/common.css" />
+    <style>
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="box" style="width: 300px;border: solid">
+        <a href="hello">hello</a>
+        <form th:action="@{/hello}" method="post">
+            <input type="submit" value="test @RequestMapping#method">
+        </form>
+        <br/>
+        <a th:href="@{/params(userName='Jupiter',pwd='*&*',age=18)}">params1</a>
+        <br/>
+        <a th:href="@{/params?userName=Jupiter&pwd=*&*&age=18}">params</a>
+        <br/>
+        <a th:href="@{/params/Jupiter/18}">params/Jupiter/18</a>
+        <br/><br/>
+        <a href="/ws">web socket</a>
+    </div>
+    <div class="box" style="width: 300px;border: solid;border-color: #e4393c">
+        <!--Content-Type: application/x-www-form-urlencouded 用于简单表单数据，也可用于上传文本格式的文件-->
+        <!-- Content-Type: application/json 常用于Web API进行数据交换 -->
+        <!-- Content-Type: multipart/form-data 用于复杂表单数据，包括上传文件 -->
+        <!--此段请求的Content-Type: multipart/form-data; boundary=&#45;&#45;&#45;&#45;WebKitFormBoundaryH19JutoXQAKYamdA-->
+        <form th:action="@{/upload}" method="post" enctype="multipart/form-data">
+            描述:<input type="text" name="desc"><br/>
+            文件:<input type="file" name="file"><br/>
+            <input type="submit" value="上传">
+        </form>
+    </div>
+    <div class="box" style="width: 300px;text-align: left;border: solid; border-color: #3d3d3f">
+        <p>大文件上传拖拽到此处</p>
+    </div>
+</div>
+<div class="footer" th:replace="bottom :: bottom"></div>
+</body>
+</html>

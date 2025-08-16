@@ -1,0 +1,48 @@
+body {
+    text-align: center;
+}
+
+.container {
+    text-align: center;
+    display: flex;
+    margin-left: 100px;
+}
+
+.item {
+    margin-right: 10px; /* 可选，为了在项目之间创建间隔 */
+}
+
+.box {
+    /*
+    width: 200px;
+    height: 300px;
+    */
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    text-align: left;
+}
+
+.center {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background: #f5f5f5;
+    padding: 10px 0;
+}
+
+.subfoot .subfoot_zbdw {
+    color: #666;
+    text-align: center;
+    margin-top: -10px;
+    padding-bottom: 35px;
+}
