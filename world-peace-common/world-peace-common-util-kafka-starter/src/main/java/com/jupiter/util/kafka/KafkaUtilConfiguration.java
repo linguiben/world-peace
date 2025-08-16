@@ -33,17 +33,15 @@ import org.springframework.context.annotation.FilterType;
         )}
 )
 public class KafkaUtilConfiguration {
-
-    //    public static void main(String[] args) {
-//        SpringApplication.run(AppKafkaDemo.class, args);
+//    public static void main(String[] args) {
+//        SpringApplication.run(KafkaUtilConfiguration.class, args);
 //    }
 //
-//    // @Bean
+//    @Bean
 //    public CommandLineRunner commandLineRunner(KafkaSender kafkaProducerDemo) {
 //        return args -> {
-//            kafkaProducerDemo.sendMessage("Hello, Kafka!--"+ LocalDateTime.now());
+//            kafkaProducerDemo.sendMessage("Hello, Kafka!--" + LocalDateTime.now());
 //            log.info("msg sent to topic {}", kafkaProducerDemo.getDstTopic());
 //        };
 //    }
-//
 }

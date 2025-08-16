@@ -1,6 +1,6 @@
 /**
  * @className AppTest
- * @desc TODO
+ * @desc Kafka测试类
  * @author Jupiter.Lin
  * @date 2024-02-06 01:32
  */
@@ -10,7 +10,6 @@ import com.jupiter.util.kafka.KafkaUtilConfiguration;
 import com.jupiter.util.kafka.annotation.ToKafkaTopic;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -29,10 +28,11 @@ import java.util.Optional;
  */
 @EnableAutoConfiguration
 @SpringBootTest(classes = {KafkaUtilConfiguration.class, AppKafkaTestIT.MyTestConfig.class})
+//@SpringBootTest(classes = {KafkaUtilConfiguration.class})
 @Slf4j
 public class AppKafkaTestIT {
 
-    @Disabled
+    // @Disabled
     @Test
     public void testKafkaDemo() {
         System.out.println("com.jupiter.kafka.AppKafkaTestIT: " + test1);

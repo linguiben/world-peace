@@ -11,7 +11,6 @@ import com.jupiter.util.distribute.lock.redis.RedissonConfiguration;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -30,17 +29,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *@date 2024-04-28 09:56
  */
 @EnableAutoConfiguration
-@SpringBootTest(classes = {RedissonConfiguration.class, AppRedisLockTestIT.MyTestConfig.class})
+@SpringBootTest(classes = {RedissonConfiguration.class, AppRedisLockSIT_Test.MyTestConfig.class})
 @Slf4j
-public class AppRedisLockTestIT {
+public class AppRedisLockSIT_Test {
 
     @Autowired(required = false)
     String testLock;
 
     @Test
-    @Disabled("depend on redis-server")
+//    @Disabled("depend on redis-server")
     public void testLockDemo() {
-        System.out.println("com.jupiter.AppRedisLockTestIT: " + testLock);
+        System.out.println("com.jupiter.AppRedisLockSIT_Test: " + testLock);
         String result = Optional.ofNullable(testLock).orElse("Jupiter");
         assertEquals("Jupiter", result);
     }
@@ -55,17 +54,18 @@ public class AppRedisLockTestIT {
 
         @Bean
         @ConditionalOnProperty(prefix = "redis.distribution.lock", name = "enabled", havingValue = "true")
-        @Lock(value="'test_'+#student.stuNo",expireTime = 10000, waitTime = 3000)
+        @Lock(value="'test_'+#student.stuNo",expireTime = 10_000, waitTime = 3_000)
         public String testLock(Student student) throws InterruptedException {
             // 业务代码
             System.out.println("testLock");
-            Thread.sleep(100);
+            Thread.sleep(3_000); // simulate long-running task
             return student.getName();
         }
     }
 }
 
-@Data@AllArgsConstructor
+@Data
+@AllArgsConstructor
 class Student {
     private String stuNo;
     private String name;

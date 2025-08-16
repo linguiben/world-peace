@@ -38,6 +38,3 @@ spring:
     listener:
       missing-topics-fatal: false # consumer listener topics 不存在时，启动项目就会报错
 #      type: batch
-
-#redis.distribution.lock.enabled: true
-#redis.addr: 127.0.0.1:6379

@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.jupiter.util.kafka.KafkaUtilConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.jupiter.util.distribute.lock.redis.RedissonConfiguration

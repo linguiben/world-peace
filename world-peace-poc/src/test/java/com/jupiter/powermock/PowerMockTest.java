@@ -11,11 +11,11 @@ import java.lang.reflect.Method;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @desc: TODO
+ * @desc: PowerMock测试
  * @author: Jupiter.Lin
  * @date: 2024-11-09
  */
-@RunWith(PowerMockRunner.class)
+@RunWith(PowerMockRunner.class) // PowerMock已长期不维护，建议替换为Mockito
 //@ExtendWith(PowerMockExtension.class)
 @PrepareForTest(MyClass.class)
 public class PowerMockTest {
@@ -23,11 +23,11 @@ public class PowerMockTest {
     public void testPrivateMethod() throws Exception {
         MyClass myClass = new MyClass();
         // 获取私有方法
-        Method privateMethod = MyClass.class.getDeclaredMethod("privateMethod");
+        Method privateMethod = MyClass.class.getDeclaredMethod("privateMethod", String[].class);
         // 设置可访问
         privateMethod.setAccessible(true);
         // 调用私有方法
-        String result = (String) privateMethod.invoke(myClass);
+        String result = (String) privateMethod.invoke(myClass, (Object) new String[]{"unit test"});
         // 验证结果
         assertEquals("Private Method Result", result);
     }

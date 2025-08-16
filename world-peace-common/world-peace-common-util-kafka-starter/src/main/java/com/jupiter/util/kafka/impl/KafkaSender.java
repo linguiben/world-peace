@@ -54,6 +54,7 @@ public class KafkaSender implements Sender {
             dstTopic = this.dstTopic;
         }
         kafkaTemplate.send(dstTopic,key, message);
+        log.info("message sent to kafka:{}",message);
     }
 }
 
