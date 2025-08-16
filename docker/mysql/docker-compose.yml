@@ -1,7 +1,8 @@
 version: '2.29.2' #参考https://docs.docker.com/compose/compose-file/
 services:
   mysql:
-    image: registry.openanolis.cn/openanolis/mysql:8.0.30-8.6 #参考https://registry.hub.docker.com/_/mysql
+    # image: registry.openanolis.cn/openanolis/mysql:8.0.30-8.6 #参考https://registry.hub.docker.com/_/mysql
+    image: mysql:8.0
     mem_limit: 640m #限制内存使用
     cpus: 2 #限制cpu使用
     container_name: mysql
