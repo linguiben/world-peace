@@ -75,7 +75,7 @@
             <version>1.8</version>
             <!-- 引入本地的jar包 -->
             <scope>system</scope>
-            <systemPath>/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/lib/tools.jar</systemPath>
+            <systemPath>${project.basedir}/../data/lib/tools.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
