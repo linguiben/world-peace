@@ -8,6 +8,10 @@ services:
     restart: no
     environment:
       - TZ=Asia/Shanghai
+      - JAVA_OPTS=-Xms512m -Xmx512m
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - RUOYI_PASSWORD=${RUOYI_PASSWORD}
 #    ports:
 #      - "8070:8080"
     volumes:

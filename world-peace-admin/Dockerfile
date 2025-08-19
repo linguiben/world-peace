@@ -10,10 +10,10 @@ ENTRYPOINT ["java","-jar","/apps/world-peace-admin.jar"]
 MAINTAINER Jupiter
 
 ### build the image and push to dockerhub
-# . ../docker/wp/.env #wpadmin-version=world-peace-admin:1.1
-# docker build -t ${wpadmin-version} -f ./Dockerfile . #build Dockerfile
-# docker tag ${wpadmin-version} ${REPO_URL}/${wpadmin-version}
-# docker push ${REPO_URL}/${wpadmin-version}
+# . ../docker/wp/.env #WPADMIN_VERSION=world-peace-admin:1.1
+# docker build -t ${WPADMIN_VERSION} -f ./Dockerfile . #build Dockerfile
+# docker tag ${WPADMIN_VERSION} ${REPO_URL}/${WPADMIN_VERSION}
+# docker push ${REPO_URL}/${WPADMIN_VERSION}
 
 #docker run -d --name wpadmin --hostname wpadmin -p 8090:8090 --network=data_default -v /data/logs/wpadmin:/data/logs/wpadmin --restart=always world-peace-admin:1.0
 #-v /path/on/host:/path/in/container
