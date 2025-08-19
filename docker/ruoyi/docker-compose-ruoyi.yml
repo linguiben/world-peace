@@ -1,6 +1,6 @@
 services:
   ruoyi-admin:
-    image: ruoyi:1.0
+    image: registry.cn-shenzhen.aliyuncs.com/hub-jupiter/ruoyi:0.2
     container_name: ruoyi
     hostname: ruoyi
     cpus:  2
@@ -16,7 +16,7 @@ services:
 #      - "8070:8080"
     volumes:
       - /opt/docker/ruoyi/logs:/apps/logs
-      - /opt/docker/ruoyi/target/ruoyi-admin.jar:/apps/ruoyi-admin.jar
+      - /opt/docker/ruoyi/ruoyi-admin.jar:/apps/ruoyi-admin.jar
 #    depends_on:
 #      - java-app
     networks:
