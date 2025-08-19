@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:21-jdk-slim
 ENV APPS_HOME=/apps
 RUN mkdir -p $APPS_HOME
 USER root
