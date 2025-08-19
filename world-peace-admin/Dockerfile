@@ -4,13 +4,13 @@ RUN mkdir -p $APPS_HOME
 USER root
 WORKDIR $APPS_HOME
 VOLUME $APPS_HOME
-ADD ./target/world-peace-admin-1.1.jar $APPS_HOME/world-peace-admin.jar
+ADD ./target/world-peace-admin-1.2.jar $APPS_HOME/world-peace-admin.jar
 EXPOSE 8090
 ENTRYPOINT ["java","-jar","/apps/world-peace-admin.jar"]
 MAINTAINER Jupiter
 
 ### build the image and push to dockerhub
-# . ../docker/wp/.env #WPADMIN_VERSION=world-peace-admin:1.1
+# . ../docker/wp/.env #WPADMIN_VERSION=world-peace-admin:1.2
 # docker build -t ${WPADMIN_VERSION} -f ./Dockerfile . #build Dockerfile
 # docker tag ${WPADMIN_VERSION} ${REPO_URL}/${WPADMIN_VERSION}
 # docker push ${REPO_URL}/${WPADMIN_VERSION}
