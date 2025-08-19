@@ -12,8 +12,8 @@ services:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - RUOYI_PASSWORD=${RUOYI_PASSWORD}
-#    ports:
-#      - "8070:8080"
+    ports:
+      - "8080:8080"
     volumes:
       - /opt/docker/ruoyi/logs:/apps/logs
       - /opt/docker/ruoyi/ruoyi-admin.jar:/apps/ruoyi-admin.jar
