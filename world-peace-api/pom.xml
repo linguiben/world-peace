@@ -24,6 +24,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.compiler.compilerVersion>8</maven.compiler.compilerVersion>
+        <javac.8.path>${env.JAVA8_HOME}/bin/javac</javac.8.path>
         <spring-ai.version>0.8.1</spring-ai.version>
         <start-class>com.jupiter.api.ApiApp</start-class>
     </properties>
@@ -75,7 +76,7 @@
             <version>1.8</version>
             <!-- 引入本地的jar包 -->
             <scope>system</scope>
-            <systemPath>/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/lib/tools.jar</systemPath>
+            <systemPath>${project.basedir}/../data/lib/tools.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -97,7 +98,7 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <fork>true</fork>
-                    <executable>/Users/jupiter/11.java/jdk-1.8.0_422/Contents/Home/bin/javac</executable>
+                    <executable>${javac.8.path}</executable>
                 </configuration>
             </plugin>
         </plugins>

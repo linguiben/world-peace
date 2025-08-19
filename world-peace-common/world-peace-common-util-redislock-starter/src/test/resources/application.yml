@@ -37,7 +37,10 @@ spring:
             ms: 18000 # 消费请求的超时时间
     listener:
       missing-topics-fatal: false # consumer listener topics 不存在时，启动项目就会报错
+  redis:
+    host: JupiterSo.com
+    port: 16379
+    password: ${REDIS_PASSWORD:} # 使用环境变量 REDIS_PASSWORD 或默认密码
 #      type: batch
 
-#redis.distribution.lock.enabled: true
-#redis.addr: 127.0.0.1:6379
+redis.distribution.lock.enabled: true

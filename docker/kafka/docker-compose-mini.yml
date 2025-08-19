@@ -1,10 +1,8 @@
-version: "2"
-
 networks:
-  wp_net:
+  wp-net:
     #driver: bridge
-    external: true # 使用已有的 wp_net 网络
-    name: wp_net # 如果运行报错则手动创建 docker network create wp_net
+    external: true # 使用已有的 wp-net 网络
+    name: wp-net # 如果运行报错则手动创建 docker network create wp-net
 
 services:
   kafka-ui: #ui管理界面
@@ -25,7 +23,7 @@ services:
     depends_on:
       - kafka2
     networks:
-      wp_net:
+      wp-net:
         aliases:
           - kafka-ui
   kafka2:
@@ -55,6 +53,6 @@ services:
       - "$PERSIST_PATH/kafka2/data:/bitnami/kafka/data"
       #- "$PERSIST_PATH/kafka2/config:/opt/bitnami/kafka/config"
     networks:
-      wp_net:
+      wp-net:
         aliases:
           - kafka2

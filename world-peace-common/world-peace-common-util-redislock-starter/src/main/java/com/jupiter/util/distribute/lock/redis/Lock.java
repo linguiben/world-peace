@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 
 /**
  *@className Lock
- *@desc TODO
+ *@desc 分布式锁注解
  *@author Jupiter.Lin
  *@date 2024-04-28 10:02
  */

@@ -10,6 +10,15 @@
     <packaging>pom</packaging>
     <description>I hope peace all round the world!</description>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javac.8.path>${env.JAVA8_HOME}/bin/javac</javac.8.path>
+        <javac.11.path>${env.JAVA11_HOME}/bin/javac</javac.11.path>
+        <javac.17.path>${env.JAVA17_HOME}/bin/javac</javac.17.path>
+        <javac.21.path>${env.JAVA21_HOME}/bin/javac</javac.21.path>
+    </properties>
+
     <modules>
         <module>world-peace-dependencies</module>
         <module>world-peace-common</module>

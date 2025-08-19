@@ -27,6 +27,7 @@ public class DateTest {
         return outputFormat.format(date);
     }
 
+    // support "27 AUG 2024"
     public static String convertDate2(String dateStr) throws ParseException {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMM yyyy", Locale.ENGLISH);
         LocalDate date = LocalDate.parse(dateStr, formatter);
@@ -42,7 +43,7 @@ public class DateTest {
 
     @Test
     public void test2() throws ParseException {
-        String dateStr = "27 AUG 2024";
+        String dateStr = "27 Aug 2024";
         String convertedDate = convertDate2(dateStr);
         System.out.println(convertedDate);
     }
