@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 数据分析刷题系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            background: rgba(255, 255, 255, 0.3);
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: white;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            padding: 40px;
+        }
+
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .question-content {
+            background: #f8f9fa;
+            border-left: 5px solid #667eea;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            min-height: 100px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .answer-btn {
+            flex: 1;
+            padding: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .answer-btn.true-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .answer-btn.true-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.4);
+        }
+
+        .answer-btn.false-btn {
+            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        }
+
+        .answer-btn.false-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(235, 51, 73, 0.4);
+        }
+
+        .answer-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .answer-btn.selected {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .result {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .result.correct {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            color: #155724;
+        }
+
+        .result.wrong {
+            background: #f8d7da;
+            border-left: 5px solid #dc3545;
+            color: #721c24;
+        }
+
+        .result-icon {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .explanation {
+            background: #e7f3ff;
+            border-left: 5px solid #2196F3;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .explanation h3 {
+            color: #2196F3;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .explanation-content {
+            color: #333;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 15px;
+            font-size: 16px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            color: #666;
+        }
+
+        .stats span {
+            margin: 0 15px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .question-container {
+                padding: 20px;
+            }
+
+            .answer-buttons {
+                flex-direction: column;
+            }
+
+            .question-content {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐍 Python 数据分析刷题系统</h1>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="question-container">
+            <div class="question-info">
+                <span class="question-number" id="questionNumber">题目 1 / 164</span>
+                <span id="questionId">JUDGE_0001</span>
+            </div>
+
+            <div class="question-content" id="questionContent">
+                加载中...
+            </div>
+
+            <div class="answer-buttons">
+                <button class="answer-btn true-btn" id="trueBtn" onclick="selectAnswer(true)">
+                    ✓ 正确 (T)
+                </button>
+                <button class="answer-btn false-btn" id="falseBtn" onclick="selectAnswer(false)">
+                    ✗ 错误 (F)
+                </button>
+            </div>
+
+            <div class="result" id="result">
+                <span class="result-icon" id="resultIcon"></span>
+                <span id="resultText"></span>
+            </div>
+
+            <div class="explanation" id="explanation">
+                <h3>📖 解析</h3>
+                <div class="explanation-content" id="explanationContent"></div>
+            </div>
+
+            <div class="navigation">
+                <button class="nav-btn" id="prevBtn" onclick="previousQuestion()" disabled>
+                    ← 上一题
+                </button>
+                <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">
+                    下一题 →
+                </button>
+            </div>
+        </div>
+
+        <div class="stats">
+            <span>总题数: <span id="totalQuestions">164</span></span>
+            <span>已答: <span id="answeredCount">0</span></span>
+            <span>正确: <span id="correctCount">0</span></span>
+            <span>错误: <span id="wrongCount">0</span></span>
+            <span>正确率: <span id="accuracy">0%</span></span>
+        </div>
+    </div>
+
+    <script>
+        // 嵌入的题目数据
+        const questions = [
+  {
+    "question_id": "JUDGE_0001",
+    "question": "tuple('string') 返回的结果是 ('s', 't', 'r', 'i', 'n', 'g')",
+    "answer": true,
+    "explanation": "```python\ntuple('string')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0002",
+    "question": "d[tuple([1, 2, 3])] = 5 可以执行",
+    "answer": true,
+    "explanation": "```python\ntry:\n    d[tuple([1, 2, 3])] = 5\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0003",
+    "question": "元组中的元素只能是同一数据类型",
+    "answer": false,
+    "explanation": "```python\nt = (1, 'hello', 3.14, [1, 2])  # 包含多种类型\nprint(t)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0004",
+    "question": "可以用 a = {} 创建空集合，type(a) 返回 set",
+    "answer": false,
+    "explanation": "```python\na = {}\nprint(type(a))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0005",
+    "question": "设 a = [1, 2, 3]，c = list(a)，a is c 为 True",
+    "answer": false,
+    "explanation": "如a == c（T）\n```python\na = [1, 2, 3]\nc = list(a)\nprint(a is c)  # False，两个不同的对象\nprint(a == c)  # True，内容相同\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0006",
+    "question": "设 a = 'this is a string'，可执行 a[10] = 'f'",
+    "answer": false,
+    "explanation": "```python\na = 'this is a string'\n\ntry:\n    a[10] = 'f' \n    print(True)\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0007",
+    "question": "设 tup = tuple(['foo', [1, 2], True])，tup[1].append(3) 的结果是 ('foo', [1, 2, 3], True)",
+    "answer": true,
+    "explanation": "```python\ntup = tuple(['foo', [1, 2], True])\ntup[1].append(3)  # 元组中的列表是可变的\nprint(tup)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0008",
+    "question": "(4, None, 'for') + (6, 0, [0, 1]) 的结果是 (10, None, 'for', 0, [0, 1])",
+    "answer": false,
+    "explanation": "```python\nresult = (4, None, 'for') + (6, 0, [0, 1])\nprint(result)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0009",
+    "question": "d[[1, 2, 3]] = 5 可以执行",
+    "answer": false,
+    "explanation": "```python\ntry:\n    d = {}\n    d[[1, 2, 3]] = 5 \n    print(True)\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0010",
+    "question": "'5' + '3' 的结果是 '8'",
+    "answer": false,
+    "explanation": "```python\ntry:\n    print('5' + '3')\nexcept Exception as e:\n    print(e)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0011",
+    "question": "'5' + 5 会生成字符串 '55'",
+    "answer": false,
+    "explanation": "```python\ntry:\n    print('5' + 5) \nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0012",
+    "question": "语句 20 == 20.0 返回 True",
+    "answer": true,
+    "explanation": "```python\nprint(20 == 20.0)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0013",
+    "question": "设 a = 'python'，可执行 a[0] = 'P'",
+    "answer": false,
+    "explanation": "```python\ntry:\n    a = 'python'\n    a[0] = 'P'\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0014",
+    "question": "在 Python 中，运行代码 4 > 3 > 2 > 1 将返回 True",
+    "answer": true,
+    "explanation": "```python\n4 > 3 > 2 > 1\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0015",
+    "question": "列表的 remove() 函数会移除列表中所有指定的元素",
+    "answer": false,
+    "explanation": "```python\nlist1 = [1, 2, 3, 4, 5,1]\nlist1.remove(1)\nprint(list1)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0016",
+    "question": "列表的 insert() 指定的序号可以大于列表长度",
+    "answer": true,
+    "explanation": "```python\nmy_list = [10, 20, 30]\nprint(\"原列表：\", my_list)  # 输出：[10, 20, 30]\n\nmy_list.insert(10, 40)\nprint(\"插入索引10后：\", my_list)  # 输出：[10, 20, 30, 40]（元素添加到末尾）\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0017",
+    "question": "列表中 pop() 方法可以返回特定位置的元素，但 remove() 不可以",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0018",
+    "question": "设 a = [7, 2, 5, 1, 3]，a.sort() 之后 a 的值为 [1, 2, 3, 5, 7]",
+    "answer": true,
+    "explanation": "```python\na = [7, 2, 5, 1, 3]\na.sort()\na\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0019",
+    "question": "设 a = [7, 2, 5, 1, 3]，sorted(a) 之后 a 的值不变",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0020",
+    "question": "所有写在 // 之后的文本会自动被 Python 忽略",
+    "answer": false,
+    "explanation": "- 应该是#之后会被忽略\n```python\na = 10 // 3\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0021",
+    "question": "list('list') 返回的结果是 ['l', 'i', 's', 't']",
+    "answer": true,
+    "explanation": "```python\nlist('list')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0022",
+    "question": "设 a_tuple = (3, 5, (4, 5))，可执行 a_tuple[1] = a_tuple[2]",
+    "answer": false,
+    "explanation": "```python\ntry:\n    a_tuple = (3, 5, (4, 5))\n    a_tuple[1] = a_tuple[2]\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0023",
+    "question": "设 tup = tuple(['foo', [1, 2], True])，可执行 tup[2] = True",
+    "answer": false,
+    "explanation": "```python\ntry:\n    tup = tuple(['foo', [1, 2], True])\n    tup[2] = True\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0024",
+    "question": "已知 d = {}，d[(1, 2, 3)] = (1, 2, 3) 可以执行",
+    "answer": true,
+    "explanation": "```python\ntry:\n    d = {}\n    d[(1, 2, 3)] = (1, 2, 3)\n    print(True)\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0025",
+    "question": "set([2, [2, 3, 4]]) 的输出结果是 {2, [2, 3, 4]}",
+    "answer": false,
+    "explanation": "* 集合（set）要求元素必须是 “可哈希（hashable）” 的类型，而列表（list）是可变类型、不可哈希，因此不能作为集合的元素\n```python\ntry:\n    set([2, [2, 3, 4]])\nexcept Exception as e:\n    print(False)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0026",
+    "question": "(4, None, 'foo') + (6, 0) + ('bar') 不能执行",
+    "answer": true,
+    "explanation": "```python\ntry:\n    (4, None, 'foo') + (6, 0) + ('bar')\nexcept Exception as e:\n    print(True)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0027",
+    "question": "可以通过 isinstance(a, (int, str)) 检测变量 a 的类型是否在 int 或 str 中",
+    "answer": true,
+    "explanation": "```python\nisinstance(a, (int, str))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0028",
+    "question": "列表、字典、NumPy 数组都是可变对象",
+    "answer": true,
+    "explanation": "```python\ns = \"hello world\"\n# 检查子串是否存在，返回True/False\nprint(\"world\" in s)  # 输出：True\nprint(\"python\" in s) # 输出：False\n\ns = \"hello world\"\nprint(s.find(\"world\"))  # 输出：6\nprint(s.find(\"python\")) # 输出：-1\n\ns = \"hello world\"\nprint(s.index(\"world\"))  # 输出：6\ntry:\n    print(s.index(\"python\"))\nexcept ValueError as e:\n    print(\"错误：\", e)  # 输出：substring not found\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0029",
+    "question": "通过find方法查找指定字符的位置，如果字符不存在会返回-1",
+    "answer": true,
+    "explanation": "```python\ns = \"hello world\"\nprint(s.find(\"python\")) # 输出：-1\n```\n```python\n\"\"\"\n字符串的 find() 方法在未找到子串时返回 -1，而 index() \n方法在未找到子串时会引发 ValueError 异常。\n\"\"\"\n\n'''\n字符串的 find() 方法在未找到子串时返回 -1，而 index() \n方法在未找到子串时会引发 ValueError 异常。\n'''\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0030",
+    "question": "执行程序：tup1=(1,2,3,4,5)；a , b , *rest = tup1；type(rest)；结果为 tuple",
+    "answer": false,
+    "explanation": "```python\ntup1=(1,2,3,4,5)\na , b , *rest = tup1\ntype(rest)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0031",
+    "question": "ar = np.arange(9).reshape(3,3) ；ar[:2,0] 会生成一维数组",
+    "answer": true,
+    "explanation": "```python\nar = np.arange(9).reshape(3,3)\nar[:2,0]\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0032",
+    "question": "set([2,[2,3,4]])的输出结果是{2,[2,3,4]}",
+    "answer": false,
+    "explanation": "```python\ntry:\n    set([2,[2,3,4]])\nexcept Exception as e:\n    print(e)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0033",
+    "question": "list('list')返回的结果是('l', 'i', 's', 't')",
+    "answer": true,
+    "explanation": "```python\nlist('list')\n```\n```python\na=[1,2,3,4,5]\nb=[6,7,8,9]\na.append(b)\na\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0034",
+    "question": "NumPy 中进行切片其实是原数据的一个视图，修改切片会影响原数据",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0035",
+    "question": "np.unique() 可以对 NumPy 数组去重",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0036",
+    "question": "numpy.mean() 函数只能对一维数组使用",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0037",
+    "question": "np.array([[0,1,2,3,4],[5,6,7]])得到二维数组",
+    "answer": false,
+    "explanation": "* 非numpy标准的二维数组\n```python\nnp.array([[0,1,2,3,4],[5,6,7]])\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0038",
+    "question": "两个大小相等的数组之间的算术运算是“点对点”的运算",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0039",
+    "question": "数组的切片是原数组的复制，对切片的修改不会影响原数组",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0040",
+    "question": "嵌套序列（如元组组成的元组）能被转换为多维数组",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0041",
+    "question": "ndarray 中的每个元素必须是相同类型",
+    "answer": true,
+    "explanation": "* 当你试图在 ndarray 中存储不同类型元素时，NumPy 会自动 “向上转换” 类型，而非保留多种类型",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0042",
+    "question": "arr.ndim 可以查看数组 arr 的秩",
+    "answer": true,
+    "explanation": "```python\narr3 = np.array([[[1, 2], [3, 4]], [[5, 6], [7, 8]]])\nprint(\"3维数组的秩（ndim）：\", arr3.ndim)  # 输出：3\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0043",
+    "question": "对 NumPy 数组切片的修改会影响原数组",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0044",
+    "question": "已知 x = np.array([3, 5, 1, 6, 9, 3])，np.argmax(x) 的值为 3",
+    "answer": false,
+    "explanation": "```python\nx = np.array([3, 5, 1, 6, 9, 3])\nnp.argmax(x)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0045",
+    "question": "np.sign(data) 根据数据的正负分别生成 0 和 1",
+    "answer": false,
+    "explanation": "```python\ndata = pd.Series(np.arange(5),index=list('abcde'))\ndata[0:2].values\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0046",
+    "question": "如果a.shape = (2, 3, 4)，则 a.mean(1).shape = (2, 3)",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0047",
+    "question": "ar = np.arange(9).reshape(3, 3)，ar[:2, 0] 会生成一维数组",
+    "answer": true,
+    "explanation": "```python\nar = np.arange(9).reshape(3, 3)\nar[:2, 0]\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0048",
+    "question": "使用布尔值索引选择数据时，生成的是数据的视图",
+    "answer": false,
+    "explanation": "* 布尔索引返回的是原数组的副本（copy）而非视图（view），修改布尔索引的结果不会影响原数组",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0049",
+    "question": "嵌套序列能被转换为多维数组",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0050",
+    "question": "pandas.Series 可以看作长度固定且有序的字典",
+    "answer": true,
+    "explanation": "* Series 与字典（dict）的核心逻辑高度契合，且额外具备 “长度固定、有序、支持数值运算” 的特性",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0051",
+    "question": "DataFrame 的列索引自动从 1 开始",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0052",
+    "question": "包含 Series 的字典可以用于构造 DataFrame",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0053",
+    "question": "DataFrame 的 values 属性返回 NumPy 数组",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0054",
+    "question": "从 DataFrame 中选取的列是数据的视图，而非拷贝",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0055",
+    "question": "对从 DataFrame 创建的 GroupBy 对象用列表或数组索引时，返回的是DataFrameGroupBy对象",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    'k1': ['a', 'a', 'b', 'b'],  # 分组列\n    'k2': [1, 2, 3, 4],          # 数据列1\n    'v1': [10, 20, 30, 40]       # 数据列2\n})\n# 按k1列分组，生成GroupBy对象（DataFrameGroupBy）\ngrouped = df.groupby('k1')\nprint(\"原始GroupBy对象类型：\", type(grouped))\n# 输出：<class 'pandas.core.groupby.generic.DataFrameGroupBy'>\n\n# 2. 用列名列表索引GroupBy对象\ngrouped_sub = grouped[['k2', 'v1']]  # 选取k2、v1两列的分组对象\nprint(\"\\n列表索引后对象类型：\", type(grouped_sub))\n# 输出：<class 'pandas.core.groupby.generic.DataFrameGroupBy'>\n\n# 3. 验证仍可执行分组计算（保留分组特性）\nresult = grouped_sub.mean()  # 计算分组均值\nprint(\"\\n分组均值结果（DataFrame）：\")\nprint(result)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0056",
+    "question": "DataFrame 可以直接用切片索引行和列",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0057",
+    "question": "使用 rename 方法对 DataFrame 重命名会返回新对象",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0058",
+    "question": "del 在 DataFrame 中只能删除列，不能删除行",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    'col1': [1, 2, 3],\n    'col2': [10, 20, 30]\n}, index=['a', 'b', 'c'])\n\ntry:\n    del df[0]  # 尝试按行位置删除 → 报错\nexcept KeyError as e:\n    print(\"del删除行（位置）报错：\", e)  # 输出：0\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0059",
+    "question": "DataFrame 的 plot 方法默认绘制条形图",
+    "answer": false,
+    "explanation": "* 默认折线图",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0060",
+    "question": "pandas 的索引中不可以包含重复标签",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0061",
+    "question": "DataFrame 的 plot.barh 方法绘制垂直柱状图",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0062",
+    "question": "DataFrame 的 plot 方法可以在同一子图中绘制不同列并自动生成图例",
+    "answer": true,
+    "explanation": "```python\ns = pd.Series(np.arange(3))\nprint(s.loc[:1])\nprint(s.iloc[:2])\nprint(s[:2])\n```\n```python\nnested_dict = {\n    '数学': {'小明': 90, '小红': 85, '小刚': 95},\n    '语文': {'小明': 88, '小红': 92, '小刚': 89},\n    '英语': {'小明': 92, '小红': 88, '小刚': 90}\n}\n\n# 嵌套字典构造DataFrame\ndf = pd.DataFrame(nested_dict)\n\nprint(\"嵌套字典构造的DataFrame：\")\nprint(df)\n\n# 验证列索引和行索引\nprint(\"\\n列索引（外层字典键）：\", df.columns.tolist())  # 输出：['数学', '语文', '英语']\nprint(\"行索引（内层字典键）：\", df.index.tolist())    # 输出：['小明', '小红', '小刚']\n```\n```python\nobj=pd.Series(np.arange(4.),index=[\"a\",\"b\",\"c\",\"d\"])\n obj[\"b\":\"c\"]\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0063",
+    "question": "用 pandas 读取文件时不指定列名会报错",
+    "answer": false,
+    "explanation": "* 默认用第一行作为列名，或生成整数列名\n```python\ndf = pd.read_csv('data.csv', header=None, encoding='utf-8')\nprint(\"header=None 的读取结果（无列名，自动生成整数列名）：\")\nprint(df)\nprint(\"列名：\", df.columns.tolist())  # 输出：[0, 1, 2]\n```\n```python\ndf = pd.read_csv('data.csv', header=0, encoding='utf-8')\nprint(\"header=None 的读取结果（无列名，自动生成整数列名）：\")\nprint(df)\nprint(\"列名：\", df.columns.tolist())  # 输出：[0, 1, 2]\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0064",
+    "question": "使用read_csv方法读取文件时，可以使用 chunksize 分块读入文件",
+    "answer": true,
+    "explanation": "```python\nchunk_reader = pd.read_csv(\n    'data.csv',\n    chunksize=2,          # 每次读取2行数据\n    encoding='utf-8',\n    header=None,          # 假设文件无表头（可根据实际调整）\n    names=['姓名', '科目', '分数']  # 自定义列名\n)\n\n# 2. 迭代读取每个数据块\nchunk_num = 1\nfor chunk in chunk_reader:\n    print(f\"=== 第 {chunk_num} 个数据块（{len(chunk)} 行） ===\")\n    print(chunk)\n    chunk_num += 1\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0065",
+    "question": "读取字段由多个空格分隔时，可向 sep 传入正则表达式",
+    "answer": true,
+    "explanation": "```python\ndf_correct = pd.read_csv(\n    'multi_space_data.txt',\n    sep='\\s+',  # 正则表达式，匹配任意数量的空白字符\n    encoding='utf-8'\n)\nprint(\"sep='\\\\s+' 的正确结果：\")\nprint(df_correct)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0066",
+    "question": "read_csv 中 na_values 参数可以为每列指定不同的缺失值标识",
+    "answer": true,
+    "explanation": "```python\ndata = {\n    '姓名': ['小明', '未知', '小红', '小刚'],\n    '科目': ['数学', '语文', '无', '数学'],\n    '分数': [90, '-', 92, '-']\n}\ndf = pd.DataFrame(data)\ndf.to_csv('missing_data.csv', index=False, encoding='utf-8')\nprint(\"含自定义缺失值的CSV文件已生成！\")\n```\n```python\ndf = pd.read_csv(\n    'missing_data.csv',\n    encoding='utf-8',\n    # 键=列名，值=该列的缺失值标识列表\n    na_values={\n        '姓名': ['未知'],    # 姓名列的「未知」视为缺失值\n        '科目': ['无'],      # 科目列的「无」视为缺失值\n        '分数': ['-']       # 分数列的「-」视为缺失值\n    }\n)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0067",
+    "question": "header 和 names 同时设置时以 names 为准",
+    "answer": true,
+    "explanation": "```python\ndf = pd.read_csv(\n    'data.csv',\n    header=0,          # 声明文件第0行是原有表头\n    names=['学生姓名', '考试科目', '考试分数'],  # 手动指定新列名\n    encoding='utf-8'\n)\n\nprint(\"header=0 + names 后的列名：\", df.columns.tolist())\nprint(\"\\n数据内容：\")\nprint(df)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0068",
+    "question": "skiprows 传入的行号必须为列表形式",
+    "answer": true,
+    "explanation": "* 行号必须是列表形式，但是skiprows=2表示跳过前n行\n```python\npd.read_csv('./examples/ex4.csv', skiprows=[2],\n            skipfooter=2,engine='python')\n# pd.read_csv('./examples/ex4.csv',skiprows=2, #报错\n#             skipfooter=2,engine='python')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0069",
+    "question": "pandas.read_html 默认解析页面中所有表格，返回 DataFrame 列表",
+    "answer": true,
+    "explanation": "* tables是一个DataFrame列表，每个DataFrame对应页面中的一个表格\n```python\npd.read_html('./examples/fdic_failed_bank_list.html') [0]\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0070",
+    "question": "使用 read_table 时可以使用正则表达式作为分隔符",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0071",
+    "question": "None 和 np.nan 含义相同",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0072",
+    "question": "dropna() 可直接过滤缺失值",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    'A': [1, np.NaN, 3],\n    'B': [np.NaN, 5, 6],\n    'C': [7, 8, 9]\n})\n\nprint(\"原始数据：\")\nprint(df)\n\n# 1. 默认调用 dropna()（等价于 axis=0, how='any'）\ndf_default = df.dropna()\nprint(\"\\n默认 dropna() 结果：\")\nprint(df_default)\n\n# 2. 显式指定 axis=0, how='any'\ndf_explicit = df.dropna(axis=0, how='any')\nprint(\"\\n显式指定 axis=0, how='any' 结果：\")\nprint(df_explicit)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0073",
+    "question": "dropna(how='all') 删除所有包含NA的行",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({\n    'A': [1, np.NaN, np.NaN],\n    'B': [2, 3, np.NaN],\n    'C': [4, 5, np.NaN]\n})\n\nprint(\"原始数据：\")\nprint(df)\n\n# 1. dropna(how='all') → 仅删除所有列都为NA的行（仅行2）\ndf_all = df.dropna(how='all')\nprint(\"\\ndropna(how='all') 结果（仅删全缺失行）：\")\nprint(df_all)\n\n# 2. dropna(how='any') → 删除任意列有NA的行（行1、行2）\ndf_any = df.dropna(how='any')\nprint(\"\\ndropna(how='any') 结果（删所有含NA的行）：\")\nprint(df_any)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0074",
+    "question": "在删除dataframe的某一行时,drop函数设置关键词inplace=True可以覆盖原有的数据",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0075",
+    "question": "fillna 可传入字典为不同列设置不同填充值",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    '姓名': ['小明', None, '小红', '小刚'],    # 文本列：缺失值填充为「未知」\n    '科目': ['数学', '语文', np.NaN, '数学'],  # 文本列：缺失值填充为「未指定」\n    '分数': [90, np.NaN, 92, np.NaN]         # 数值列：缺失值填充为该列均值\n})\n\nprint(\"原始数据：\")\nprint(df)\n\n# 1. 计算分数列的均值（用于填充）\nscore_mean = df['分数'].mean()\n\n# 2. 传入字典：为不同列指定不同填充值\ndf_filled = df.fillna({\n    '姓名': '未知',        # 姓名列缺失值 → 填充「未知」\n    '科目': '未指定',      # 科目列缺失值 → 填充「未指定」\n    '分数': score_mean    # 分数列缺失值 → 填充均值（81.0）\n})\n\nprint(\"\\n按列填充后的结果：\")\nprint(df_filled)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0076",
+    "question": "在DataFrame对象中，使用fillna来补全缺失值时，返回新对象",
+    "answer": true,
+    "explanation": "```python\ndf_original = pd.DataFrame({\n    'A': [1, np.nan, 3],\n    'B': [np.nan, 5, 6]\n})\n\nprint(\"原始DataFrame：\")\nprint(df_original)\n\n# 调用fillna()，默认返回新对象\ndf_filled = df_original.fillna(0)\n\nprint(\"\\n填充后的新DataFrame（df_filled）：\")\nprint(df_filled)\n\nprint(\"\\n原始DataFrame（df_original）是否变化？\")\nprint(df_original)  # 原数据仍保留缺失值，无变化\n\nid(df_original)\nid(df_filled)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0077",
+    "question": "pd.isnull() 与 pd.notnull() 可以判断DataFrame对象frame中的元素是否缺失，返回布尔数组",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0078",
+    "question": "data[data.notnull()] 与 data.dropna() 等价",
+    "answer": false,
+    "explanation": "--更正",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0079",
+    "question": "combine_first可用于拼接重复数据，用一个对象中的值填充另一个对象中的缺失值",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    '姓名': ['小明', '小红', '小明', '小刚', '小红'],\n    '科目': ['数学', '语文', '数学', '数学', '语文'],\n    '分数': [90, 92, 90, 95, 92]\n})\n\nprint(\"原始数据（含重复行）：\")\nprint(df)\n\n# 默认调用 drop_duplicates() → 保留第一个重复行\ndf_clean = df.drop_duplicates()\nprint(\"\\ndrop_duplicates() 默认结果（保留第一个重复行）：\")\nprint(df_clean)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0080",
+    "question": "merge 连接缺省值为 how='inner'",
+    "answer": true,
+    "explanation": "```python\ndf1 = pd.DataFrame({'key': ['A', 'B'], 'value': [1, 2]})\ndf2 = pd.DataFrame({'key': ['B', 'C'], 'value': [3, 4]})\npd.merge(df1, df2, on='key')  # 默认inner，只返回B\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0081",
+    "question": "merge 会自动将重叠列名作为连接键",
+    "answer": true,
+    "explanation": "* 如果不指定on，merge会自动寻找两个DataFrame中重叠的列名作为连接键",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0082",
+    "question": "merge 中 on 参数列名必须在两边 DataFrame 中都出现",
+    "answer": true,
+    "explanation": "* 如果指定on='key'，那么'key'必须在两个DataFrame中都存在",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0083",
+    "question": "join 连接的缺省值是 how='left'",
+    "answer": false,
+    "explanation": "* DataFrame.join的默认连接方式是how='left'，但题目中写的是缺省值，实际是how='left'，所以判断为F\n```python\nleft1 = pd.DataFrame({'key': ['a', 'b', 'a', 'a', 'b', 'c'], \n                      'value': range(6)}).set_index('key')\nright1 = pd.DataFrame({'group_val': [3.5, 7]}, index=['a', 'e'])\nleft1\nright1\n\nleft1.join(right1)\n```\n```python\narr1 = np.array([1, 2])\narr2 = np.array([3, 4])\nprint(np.concatenate([arr1, arr2]))  # 默认axis=0，纵向（行向）拼接\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0084",
+    "question": "concat 缺省沿 axis=0 生效",
+    "answer": true,
+    "explanation": "```python\ndf1 = pd.DataFrame({'A': [1, 2]})\ndf2 = pd.DataFrame({'A': [3, 4]})\nprint(pd.concat([df1, df2]))  # 默认axis=0，纵向拼接\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0085",
+    "question": "concat 中 join 默认 'inner'",
+    "answer": false,
+    "explanation": "*pd.concat的默认join是'outer'",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0086",
+    "question": "concat 对两个重叠索引 Series 连接后，重叠索引值为原值之和",
+    "answer": false,
+    "explanation": "```python\ns1 = pd.Series([1, 2], index=['a', 'b'])\ns2 = pd.Series([3, 4], index=['b', 'c'])\npd.concat([s1,s2])\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0087",
+    "question": "DataFrame.join 要求没有重叠列",
+    "answer": true,
+    "explanation": "* 如果两个DataFrame有重叠列，需要指定lsuffix和rsuffix\n```python\nleft1 = pd.DataFrame({'key': ['a', 'b', 'a', 'a', 'b', 'c'], \n                      'value': range(6)}).set_index('key')\nright1 = pd.DataFrame({'value': [3.5, 7]}, index=['a', 'e'])\nleft1\nright1\nleft1.join(right1)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0088",
+    "question": "对两个 Series 调用 concat(axis=0) 生成 Series，axis=1 生成 DataFrame",
+    "answer": true,
+    "explanation": "```python\ns1 = pd.Series([1, 2])\ns2 = pd.Series([3, 4])\nprint(type(pd.concat([s1, s2], axis=0)))  # Series\nprint(type(pd.concat([s1, s2], axis=1)))  # DataFrame\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0089",
+    "question": "merge 进行列-列连接时会丢弃索引",
+    "answer": true,
+    "explanation": "```python\ndf1 = pd.DataFrame({'key': ['A', 'B'], 'value': [1, 2]})\ndf2 = pd.DataFrame({'key': ['B', 'C'], 'value': [3, 4]})\nresult = pd.merge(df1, df2, on='key')\nprint(result.index)  # RangeIndex，原索引被丢弃\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0090",
+    "question": "groupby 生成 GroupBy 对象，不能直接输出",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'b', 'a'], 'B': [1, 2, 3]})\ngrouped = df.groupby('A')\nprint(type(grouped))  # <class 'pandas.core.groupby.generic.DataFrameGroupBy'>\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0091",
+    "question": "Goupby 对象会生成包含组名和数据块的二元组序列",
+    "answer": true,
+    "explanation": "```python\nfor name, group in df.groupby('A'):\n    print(name)\n    print(group)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0092",
+    "question": "groupby的参数只可以是列名，不可以是index名",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2, 3]}, index=['a', 'a', 'b'])\ndf.index.name='t'\n# print(df.groupby(level=0).sum())  # 可以按索引名分组\nprint(df.groupby('t').sum())\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0093",
+    "question": "groupby 默认在 axis=0 上分组",
+    "answer": true,
+    "explanation": "*默认axis=0，按行分组（即按列值分组\n```python\ndf = pd.DataFrame({\n    '班级': ['一班', '一班', '二班', '二班'],\n    '姓名': ['小明', '小红', '小刚', '小兰'],\n    '数学': [90, 92, 88, 95],\n    '语文': [85, 88, 90, 87]\n})\n\n# 1. 默认 axis=0 分组（按行方向，对列聚合）\n# 按「班级」列分组，计算各科平均分（核心场景）\ngroup_axis0 = df.groupby('班级').mean(numeric_only=True)\nprint(\"✅ 默认 axis=0 分组（按班级聚合行）：\")\nprint(group_axis0)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0094",
+    "question": "在分级索引中，可以通过level选项和改变轴axis向来进行聚合",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0095",
+    "question": "groupby 分组键可以是多种形式，而且键的类型也不一定完全相同",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0096",
+    "question": "groupby 中 size 方法会排除缺失值",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'b', None], 'B': [1, 2, 3]})\nprint(df.groupby('A').size())  # 缺失值会被排除\n```\n```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3], 'C': [4, 5, 6]})\nfor (key1, key2), group in df.groupby(['A', 'B']):\n    print((key1, key2), group)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0097",
+    "question": "假设有DataFrame对象df，key1是df中的列，则df.groupby('key1').mean()等价于df.groupby(['key1']).mean()",
+    "answer": true,
+    "explanation": "* 单列分组和列表单元素分组等价\n```python\ndf = pd.DataFrame({\n    'key1': ['A', 'A', 'B', 'B', 'A'],\n    'key2': ['X', 'Y', 'X', 'Y', 'X'],\n    'value1': [1, 2, 3, 4, 5],\n    'value2': [10, 20, 30, 40, 50]\n})\n\n# 写法1：传入单个字符串列名\nresult1 = df.groupby('key1').mean(numeric_only=True)\n# 写法2：传入单元素列表列名\nresult2 = df.groupby(['key1']).mean(numeric_only=True)\n\n# 验证结果是否一致\nprint(\"✅ df.groupby('key1').mean() 结果：\")\nprint(result1)\nprint(\"\\n✅ df.groupby(['key1']).mean() 结果：\")\nprint(result2)\nprint(f\"\\n两种写法结果是否完全一致：{result1.equals(result2)}\")\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0098",
+    "question": "默认对所有数值列进行聚合",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3], 'C': [4.0, 5.0, 6.0]})\nprint(df.groupby('A').mean())  # 对B和C列聚合，A不是数值列\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0099",
+    "question": "聚合数据必须返回原DataFrame的行索引",
+    "answer": false,
+    "explanation": "* 聚合后返回的索引是分组键，不一定是原行索引\n```python\ndf = pd.DataFrame({ 'key1': ['A', 'A', 'B', 'B'], \"data1\": [1, 3, 5, 8], \"data2\": [3, 5, None, 7] }) \ndf\ndf.groupby('key1').mean()\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0100",
+    "question": "传入一组函数名，agg聚合函数结果的列以函数命名",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\nprint(df.groupby('A').agg(['mean', 'sum']))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0101",
+    "question": "groupby 后 transform('len') 可以运行",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\n# grouped.transform('len')  # 报错，transform需要函数，字符串'len'可能不被识别\n# 应该使用 grouped.transform(len)\ndf.groupby(['A']).transform(len)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0102",
+    "question": "transform可以产生一个标量值，并广播到各分组的相同形状(shape)中",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\nprint(df.groupby('A')['B'].transform('mean'))  # 返回与B相同长度的Series\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0103",
+    "question": "分层索引可在指定层级聚合",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0104",
+    "question": "使用不存在于数据中的分组键会报错",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\ndf[['A']].groupby('B')\n# 如果分组键不存在，会作为新列处理，但可能报错或产生意外结果。\n# 例如：df.groupby('B')，如果B不是列名，会报KeyError\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0105",
+    "question": "crosstab() 返回交叉表 DataFrame新对象",
+    "answer": true,
+    "explanation": "```python\na = [1, 2, 1, 2]\nb = [3, 4, 3, 4]\nprint(pd.crosstab(a, b))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0106",
+    "question": "聚合只是接受能够将一维数组简化为标量值的函数",
+    "answer": true,
+    "explanation": "* 聚合函数将一组数据转换为一个标量，如sum、mean等\n```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\ndf.groupby('A').agg(lambda x:x+1)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0107",
+    "question": "quantile 可用于聚合",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': ['a', 'a', 'b'], 'B': [1, 2, 3]})\nprint(df.groupby('A')['B'].quantile(0.5))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0108",
+    "question": "date为时间序列，pd.to_datetime(date).year 可提取年份",
+    "answer": false,
+    "explanation": "```python\nfailures = pd.read_html('./examples/fdic_failed_bank_list.html') [0]\nfailures['Closing Date']\n# pd.to_datetime(failures['Closing Date']).dt.year\npd.to_datetime(failures['Closing Date']).year\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0109",
+    "question": "datetime.strptime 可在已知格式下转换日期",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0110",
+    "question": "时间序列索引可传入解释为日期的字符串",
+    "answer": true,
+    "explanation": "```python\nts = pd.Series([1, 2, 3], index=pd.date_range('2020-01-01', periods=3))\nprint(ts['2020-01-01'])\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0111",
+    "question": "不能创建重复索引的时间序列",
+    "answer": false,
+    "explanation": "```python\npd.Series(np.arange(2),index=['2025-12-10']*2)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0112",
+    "question": "两个时间序列的算术运算会自动对齐日期",
+    "answer": true,
+    "explanation": "```python\nts1 = pd.Series([1, 2], index=pd.date_range('2020-01-01', periods=2))\nts2 = pd.Series([3, 4], index=pd.date_range('2020-01-02', periods=2))\nprint(ts1 + ts2)  # 自动对齐，缺失值用NaN\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0113",
+    "question": "两个时区不同的时间序列联合结果为 UTC",
+    "answer": true,
+    "explanation": "* 合并不同时区的时间序列，结果会转换为UTC\n```python\nrng = pd.date_range('3/7/2012 9:30', periods=10, freq='B')\nts = pd.Series(np.arange(len(rng)), index=rng)\nts1 = ts[:7].tz_localize('Asia/Shanghai')\n# ts1\nts2 = ts1[2:].tz_convert('Europe/Moscow')  #是ts1[2:]，不是ts\n# ts2\nts1 + ts2   #时区转换为UTC，再对齐\nresult = ts1 + ts2\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0114",
+    "question": "时间戳与 datetime 均为时间类型，时间戳使用更少的存储空间",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0115",
+    "question": "时间序列可以是固定或非固定频率",
+    "answer": true,
+    "explanation": "* 固定频率如每天，非固定频率如不规则时间间隔\n```python\npd.date_range('2025-12-12',periods=5,freq='3D')\npd.date_range('2025-12-12',periods=5,freq='ME')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0116",
+    "question": "可用时间序列中不包含的时间戳切片",
+    "answer": true,
+    "explanation": "```python\nts = pd.Series([1, 2, 3], index=pd.date_range('2020-01-01', periods=3))\nprint(ts['2020-01-01':'2020-01-05'])  # 包含不存在的日期，会返回已有部分\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0117",
+    "question": "shift 函数可推移时间戳和数据",
+    "answer": true,
+    "explanation": "```python\nts = pd.Series([1, 2, 3], index=pd.date_range('2020-01-01', periods=3))\nprint(ts.shift(1))  # 数据推移\nprint(ts.shift(1,freq='D'))  # 数据推移\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0118",
+    "question": "resample 是一种基于时间分段的分组操作",
+    "answer": true,
+    "explanation": "```python\nts = pd.Series([1, 2, 3], index=pd.date_range('2020-01-01', periods=3, freq='D'))\nprint(ts.resample('2D').sum())\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0119",
+    "question": "resample 后使用 ohlc 聚合函数可获得四列聚合值的DataFrame",
+    "answer": true,
+    "explanation": "```python\nts = pd.Series([1, 2, 3], index=pd.date_range('2020-01-01', periods=3, freq='D'))\nprint(ts.resample('2D').ohlc())\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0120",
+    "question": "resample 的 convention 默认值为 'start'",
+    "answer": true,
+    "explanation": "```python\nframe = pd.DataFrame(np.random.randn(24, 4),\n                     index=pd.period_range('1-2000', '12-2001',\n                                           freq='M'),\n                     columns=['Colorado', 'Texas', 'New York', 'Ohio'])\n# frame[:5]\nannual_frame = frame.resample('Y-DEC').mean()\nannual_frame.resample('Q-DEC').asfreq()\nannual_frame.resample('Q-DEC', convention='end').asfreq()\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0121",
+    "question": "如果两个时间区间拥有相同的频率，则它们的差是它们之间的单位数",
+    "answer": true,
+    "explanation": "```python\npd.Period(2009,freq='Y-DEC')- pd.Period(2007,freq='Y-DEC')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0122",
+    "question": "使用 pd.Grouper 时，时间数据必须作为索引（index）存在于 Series 或 DataFrame 中",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({\n    'date': pd.date_range('2020-01-01', periods=3),\n    'value': [1, 2, 3]\n})\ndf.set_index('date', inplace=True)\nprint(df.groupby(pd.Grouper(freq='M')).sum())\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0123",
+    "question": "pd.date_range('2000-01-01','2000-01-03 23:59',freq='0.545h') 可以运行",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0124",
+    "question": "date_range 中 freq='6D' 表示 6 天间隔",
+    "answer": true,
+    "explanation": "```python\nrng = pd.date_range('2020-01-01', periods=3, freq='6D')\nprint(rng)  # 间隔6天\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0125",
+    "question": "pd.to_datetime(['2000-1-1','31-12-2000','8-31-2000']) 会报错",
+    "answer": true,
+    "explanation": "```python\ntry:\n    pd.to_datetime(['2000-1-1','31-12-2000','8-31-2000'])\nexcept Exception as e:\n    print(e)  # 月份13报错：month must be in 1..12\n# \n\npd.to_datetime(['2000-1-1','31-12-2000','8-31-2000'],format='mixed')\n```\n```python\nts = pd.Series([1, 2, 3, 4], index=pd.DatetimeIndex(['2020-01-01', '2020-01-01', '2020-01-02', '2020-01-02']))\ntt=ts[['2020-01-01']]  # 返回两个值，新对象\ntt.iloc[0]=1000\nts \n\ntt=ts['2020-01-01']  # 返回两个值，切片\ntt.iloc[0]=1000\nts\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0126",
+    "question": "Categorical 对象比 Series 使用更少内存，操作更快",
+    "answer": true,
+    "explanation": "* 分类数据类型可以节省内存，提高性能",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0127",
+    "question": "分类数组可包含任意不可变值类型",
+    "answer": true,
+    "explanation": "```python\ncat = pd.Categorical(['a', 'b', 'a', (1,2)])\nprint(cat)\ncat = pd.Categorical(['a', 'b', 'a', [1,2]])\nprint(cat)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0128",
+    "question": "分类数据一定是字符串",
+    "answer": false,
+    "explanation": "```python\ncat = pd.Categorical([1, 2, 3, 1])\nprint(cat)  # 可以是数字\n\npd.Series(np.arange(10),index=['2025-12-10']*8+['2025-12-8','2025-12-9']).reset_index()['index'].astype('category')\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0129",
+    "question": "将数据转换为分类数据可提高大型数据集性能",
+    "answer": true,
+    "explanation": "* 对于重复值多的数据，分类类型可以节省内存并提高速度\n```python\nN = 10000000\ndraws = pd.Series(np.random.randn(N))\nlabels = pd.Series(['foooooooooooopppppppppppppppppppppppppppoo', 'barooooooooooooo', 'bazoooooooooooooo', 'quxoooooooooooo'] * (N // 4))\ncategories = labels.astype('category')\n%time draws.groupby(labels).mean()\n%time draws.groupby(categories,observed=True).mean()\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0130",
+    "question": "通过 pandas.qcut 分箱生成的类别已指定顺序",
+    "answer": true,
+    "explanation": "```python\ns = pd.Series([1, 2, 3, 4, 5])\nprint(pd.qcut(s, 3))\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0131",
+    "question": "fig.add_subplot(2, 3, 5) 表示在 6 个子图中选中第 5 个",
+    "answer": true,
+    "explanation": "* 2行3列共6个子图，索引从1开始，第5个是第二行第二列",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0132",
+    "question": "fig.add_subplot(224) 与 fig.add_subplot(2, 2, 4) 结果相同",
+    "answer": true,
+    "explanation": "* 两种写法等价，224表示2行2列第4个\n```python\nfig = plt.figure() \nax1 = fig.add_subplot(2, 1, 1)\nax2 = fig.add_subplot(224) \nplt.plot(np.random.randn(50).cumsum(), 'k--') \n# fig.add_subplot(2, 2, 4)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0133",
+    "question": "plt.subplots 方法可以创建一个新的Figure，返回含子图对象的数组",
+    "answer": true,
+    "explanation": "```python\nfig, axes = plt.subplots(2, 2)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0134",
+    "question": "plt.plot([2,3,6,7,8], 'g--o') 与 plt.plot([2,3,6,7,8], 'go--') 图形相同",
+    "answer": true,
+    "explanation": "* 两种格式字符串都表示绿色、虚线、圆圈标记",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0135",
+    "question": "分面网格是利用多种分组变量进行可视化的方式",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2, 3], 'B': [4, 5, 6]})\ndf.plot(subplots=True)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0136",
+    "question": "json.loads 可将 JSON 字符串转为 Python 对象，json.dumps 反之",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0137",
+    "question": "JSON 对象中的键可以是 int 形式",
+    "answer": false,
+    "explanation": "* JSON键必须是字符串",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0138",
+    "question": "使用 astype 可显式转换数组类型",
+    "answer": true,
+    "explanation": "```python\narr = np.array([1, 2, 3])\narr_float = arr.astype(float)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0139",
+    "question": "obj = pd.Series(['a', 'bb', 'cc', 'ab', 9])，obj.str.replace('a', 'd') 中 9 会变为 NaN",
+    "answer": true,
+    "explanation": "```python\nobj = pd.Series(['a', 'bb', 'cc', 'ab', 9])\nprint(obj.str.replace('a', 'd'))  # 9变为NaN，因为str方法只对字符串有效\n```\n```python\ns = pd.Series(['a', 'b', 'c'])\nprint(s.map({'a': 'A'}))  # 将'a'替换为'A'\nprint(s.replace('a', 'A'))  # 将'a'替换为'A'\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0140",
+    "question": "ser = pd.Series(np.arange(3))，ser.loc[:1]、ser.iloc[:2]、ser[:2] 输出不同",
+    "answer": false,
+    "explanation": "```python\nser = pd.Series(np.arange(3))\nprint(ser.loc[:1])   # 0,1\nprint(ser.iloc[:2])  # 0,1\nprint(ser[:2])       # 0,1\n# 相同\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0141",
+    "question": "ser = pd.Series(np.arange(3.))，ser.loc[:1] 与 ser.iloc[:1] 结果相同",
+    "answer": false,
+    "explanation": "```python\nser = pd.Series(np.arange(3.))\nprint(ser.loc[:1])   # 索引0到1，共两个元素\nprint(ser.iloc[:1])  # 位置0，一个元素\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0142",
+    "question": "obj2 = pd.Series([4, 7, -5, 3], index=['d', 'b', 'a', 'c'])，obj2['a':'f'] 可执行",
+    "answer": false,
+    "explanation": "* 有序索引可以越界；否则不行\n```python\nobj2 = pd.Series([4, 7, -5, 3], index=['d', 'b', 'a', 'c'])\nobj2.sort_index()['a':'f']\nobj2['a':'f']\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0143",
+    "question": "4 in pd.Series([4, 7, -5, 3]) 返回 True",
+    "answer": false,
+    "explanation": "```python\ns = pd.Series([4, 7, -5, 3])\nprint(4 in s)  # False，因为in检查的是索引，不是值\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0144",
+    "question": "obj = pd.Series(np.arange(4.), index=['a','b','c','d'])，obj['b':'c'] 输出 b 1.0",
+    "answer": false,
+    "explanation": "```python\nobj = pd.Series(np.arange(4.), index=['a','b','c','d'])\nprint(obj['b':'c'])   #label取值左闭右闭\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0145",
+    "question": "data.index[0] = 'aaa' 可将第 0 行索引改为 'aaa'",
+    "answer": false,
+    "explanation": "```python\ndata = pd.Series([1, 2, 3], index=['a', 'b', 'c'])\n# data.index[0] = 'aaa'  # 报错，Index对象不可变\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0146",
+    "question": "iloc 为左闭右开区间，loc 为左闭右闭区间",
+    "answer": true,
+    "explanation": "```python\ns = pd.Series([1, 2, 3, 4], index=['a', 'b', 'c', 'd'])\nprint(s.iloc[1:3])  # 索引1,2（位置）\nprint(s.loc['b':'c'])  # 索引'b'和'c'\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0147",
+    "question": "当 A 为有效变量名时，frame['A'] 与 frame.A 结果相同",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2, 3]})\nprint(df['A'].equals(df.A))  # True\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0148",
+    "question": "stack() 与 unstack() 是互逆操作",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2], 'B': [3, 4]}, index=['a', 'b'])\nstacked = df.stack()\nunstacked = stacked.unstack()\nprint(df.equals(unstacked))  # True\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0149",
+    "question": "unstack 操作会引入缺失数据",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0150",
+    "question": "unstack 时，被unstack 的层级变为结果中列索引的最低层级（level最大）",
+    "answer": true,
+    "explanation": "* 默认unstack最后一层，成为列索引的最低层级",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0151",
+    "question": "swaplevel 可交换两个层级",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0152",
+    "question": "分层索引中“内部层级”不可选择",
+    "answer": false,
+    "explanation": "* 内部层级可以选择，通过level参数",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0153",
+    "question": "frame.swaplevel() 返回新对象，原数据不变",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0154",
+    "question": "sort_index 只能在单一层级上排序",
+    "answer": false,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0155",
+    "question": "通过给出层级排序函数sort_index函数中的level选项，可以指明对这一个层级的索引排序",
+    "answer": true,
+    "explanation": "",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0156",
+    "question": "在使用字典构造传给 groupby 的数组时，字典的大小（即键值对的数量）必须与调用对象（如 Series 或 DataFrame）的长度一致",
+    "answer": false,
+    "explanation": "* 字典作为分组键，其键值对数量不需要与数据长度一致，因为分组键会被广播",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0157",
+    "question": "cut 操作返回 DataFrame",
+    "answer": false,
+    "explanation": "```python\ns = pd.Series([1, 2, 3, 4, 5])\nprint(pd.cut(s, 3))  # 返回Categorical对象\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0158",
+    "question": "pandas.cut 可通过参数实现两端封闭",
+    "answer": false,
+    "explanation": "* cut默认是左开右闭，可以通过right=False改为左闭右开，但不能两端封闭\n```python\nages = [20, 22,18, 25, 27, 21, 23, 37, 31, 61, 45, 41, 32]\nbins = [18,25, 35, 60, 100]  # 需要有序并且唯一\n\ncats = pd.cut(ages, bins)\ncats\ncats = pd.cut(ages, bins,right='right')\ncats\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0159",
+    "question": "pd.Period('2007', freq='A-JUN').asfreq('M', 'start') 返回 Period('2007-07', 'M')",
+    "answer": false,
+    "explanation": "```python\np = pd.Period('2007', freq='A-JUN')  # 会计年度，结束于6月\nprint(p.asfreq('M', 'start'))  # 返回'2006-07'，而不是'2007-07'\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0160",
+    "question": "pd.Period('2007', freq='A-JUN').asfreq('M', 'end') 返回 Period('2008-06', 'M')",
+    "answer": false,
+    "explanation": "```python\np = pd.Period('2007', freq='A-JUN')\nprint(p.asfreq('M', 'end'))  # 返回'2007-06'，而不是'2008-06'\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0161",
+    "question": "pd.DataFrame(np.arange(9).reshape((3, 3))) 可创建 3 行 3 列 DataFrame",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame(np.arange(9).reshape((3, 3)))\nprint(df.shape)  # (3, 3)\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0162",
+    "question": "DataFrame.set_index 会生成新 DataFrame",
+    "answer": true,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2], 'B': [3, 4]})\ndf_new = df.set_index('A')\nprint(df_new is not df)  # True\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0163",
+    "question": "DataFrame.assign 会修改原对象",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({'A': [1, 2]})\ndf_new = df.assign(B=[3, 4])\nprint('B' in df.columns)  # False\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  },
+  {
+    "question_id": "JUDGE_0164",
+    "question": "df['fruit'].astype('category') 返回 NumPy 数组",
+    "answer": false,
+    "explanation": "```python\ndf = pd.DataFrame({'fruit': ['apple', 'banana', 'apple']})\ncat_series = df['fruit'].astype('category')\nprint(type(cat_series))  # pandas Series，不是NumPy数组\n```",
+    "tags": [],
+    "source": "Deepseek判断题.ipynb"
+  }
+];
+        
+        let currentIndex = 0;
+        let userAnswers = {}; // 记录用户答案
+        let stats = {
+            answered: 0,
+            correct: 0,
+            wrong: 0
+        };
+
+        // 显示题目
+        function showQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+
+            currentIndex = index;
+            const question = questions[index];
+
+            // 更新题目信息
+            document.getElementById('questionNumber').textContent = 
+                `题目 ${index + 1} / ${questions.length}`;
+            document.getElementById('questionId').textContent = question.question_id;
+            document.getElementById('questionContent').textContent = question.question;
+
+            // 更新进度条
+            const progress = ((index + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+
+            // 重置按钮状态
+            document.getElementById('trueBtn').disabled = false;
+            document.getElementById('falseBtn').disabled = false;
+            document.getElementById('trueBtn').classList.remove('selected');
+            document.getElementById('falseBtn').classList.remove('selected');
+
+            // 隐藏结果和解析
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('explanation').style.display = 'none';
+
+            // 如果已经答过，显示之前的答案
+            if (userAnswers[index] !== undefined) {
+                const userAnswer = userAnswers[index];
+                const correctAnswer = question.answer;
+                showResult(userAnswer, correctAnswer, question);
+            }
+
+            // 更新导航按钮
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').disabled = index === questions.length - 1;
+        }
+
+        // 选择答案
+        function selectAnswer(userAnswer) {
+            const question = questions[currentIndex];
+            const correctAnswer = question.answer;
+
+            // 禁用按钮
+            document.getElementById('trueBtn').disabled = true;
+            document.getElementById('falseBtn').disabled = true;
+
+            // 高亮选中的按钮
+            if (userAnswer) {
+                document.getElementById('trueBtn').classList.add('selected');
+            } else {
+                document.getElementById('falseBtn').classList.add('selected');
+            }
+
+            // 记录答案
+            userAnswers[currentIndex] = userAnswer;
+
+            // 显示结果
+            showResult(userAnswer, correctAnswer, question);
+
+            // 更新统计
+            updateStats();
+        }
+
+        // 显示结果
+        function showResult(userAnswer, correctAnswer, question) {
+            const isCorrect = userAnswer === correctAnswer;
+            const resultDiv = document.getElementById('result');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultText = document.getElementById('resultText');
+
+            resultDiv.className = 'result ' + (isCorrect ? 'correct' : 'wrong');
+            resultIcon.textContent = isCorrect ? '✓' : '✗';
+            resultText.textContent = isCorrect 
+                ? '回答正确！' 
+                : `回答错误。正确答案是: ${correctAnswer ? '正确 (T)' : '错误 (F)'}`;
+
+            resultDiv.style.display = 'block';
+
+            // 显示解析
+            if (question.explanation && question.explanation.trim()) {
+                const explanationDiv = document.getElementById('explanation');
+                const explanationContent = document.getElementById('explanationContent');
+                explanationContent.textContent = question.explanation;
+                explanationDiv.style.display = 'block';
+            }
+        }
+
+        // 上一题
+        function previousQuestion() {
+            if (currentIndex > 0) {
+                showQuestion(currentIndex - 1);
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                showQuestion(currentIndex + 1);
+            }
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            stats.answered = Object.keys(userAnswers).length;
+            stats.correct = 0;
+            stats.wrong = 0;
+
+            Object.keys(userAnswers).forEach(index => {
+                const q = questions[parseInt(index)];
+                if (userAnswers[index] === q.answer) {
+                    stats.correct++;
+                } else {
+                    stats.wrong++;
+                }
+            });
+
+            document.getElementById('totalQuestions').textContent = questions.length;
+            document.getElementById('answeredCount').textContent = stats.answered;
+            document.getElementById('correctCount').textContent = stats.correct;
+            document.getElementById('wrongCount').textContent = stats.wrong;
+            
+            const accuracy = stats.answered > 0 
+                ? ((stats.correct / stats.answered) * 100).toFixed(1) 
+                : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+        }
+
+        // 键盘快捷键
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                previousQuestion();
+            } else if (e.key === 'ArrowRight' && currentIndex < questions.length - 1) {
+                nextQuestion();
+            } else if (e.key === 't' || e.key === 'T') {
+                if (!document.getElementById('trueBtn').disabled) {
+                    selectAnswer(true);
+                }
+            } else if (e.key === 'f' || e.key === 'F') {
+                if (!document.getElementById('falseBtn').disabled) {
+                    selectAnswer(false);
+                }
+            }
+        });
+
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', function() {
+            showQuestion(0);
+            updateStats();
+        });
+    </script>
+</body>
+</html>

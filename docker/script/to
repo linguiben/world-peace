@@ -1,17 +1,53 @@
+#!/bin/bash
 # This script is used to enter a running Docker container.
 # Usage: ./to <container_name_or_id>
 
 if [ -z "$1" ]; then
-  echo "Usage: $0 <container_name_or_id>"
+  echo "Usage: $0 <remote_server>"
+  echo "Usage: $0 docker <container_name_or_id>"
+  exit 1
+fi
+
+# If the first argument is not "docker", treat it as a remote server and use ssh to connect
+if [ "$1" != "docker" ]; then
+  ssh "$1"
+  exit 0
+fi
+
+if [ -z "$2" ]; then
+  echo "Usage: $0 docker <container_name_or_id>"
+  exit 1
+fi
+
+# Check if the Docker is running
+if [ -z `ps -elf | grep dockerd | grep -v grep | awk '{print $4}'` ]; then
+  echo "Docker is not running."
   exit 1
 fi
 # Check if the container is running
-if ! docker ps -q --filter "name=$1" | grep -q .; then
-  echo "Container '$1' is not running or does not exist."
+if ! docker ps -q --filter "name=$2" | grep -q .; then
+  echo "Container '$2' is not running or does not exist."
   exit 1
 fi
 # Enter the specified Docker container
-docker exec -it "$1" /bin/bash
+docker exec -it "$2" /bin/bash
 
 # If you want to use a different shell, replace /bin/bash with /bin/sh or another shell of your choice.
 # This script should cooperate with _to_docker_container.sh
+
+
+########## copy to ~/.ssh/config ###############
+#Host *
+#       ServerAliveInterval 60
+#       ServerAliveCountMax 3
+#Host JupiterSo.com jupiterso.com jupiterSo.com
+#  HostName JupiterSo.com
+#  port 22
+#  HostKeyAlgorithms +ssh-rsa
+#  User root
+#Host tx.JupiterSo.com tx.jupiterso.com tx.jupiterSo.com
+#  HostName tx.JupiterSo.com
+#  port 22
+#  HostKeyAlgorithms +ssh-rsa
+#  User root
+########## copy to ~/.ssh/config ###############

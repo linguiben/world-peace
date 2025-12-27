@@ -7,13 +7,14 @@ package com.jupiter.test;
  */
 public class T02 {
     public static void main(String[] args) {
-        while(true) {
-            System.out.println("Hello, World!" + System.currentTimeMillis());
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        // print the jdk version
+        System.out.println(System.getProperty("java.version"));
+        // use text block to define a sql
+        String sql = """
+                select *
+                from mytable
+                where weather = 'snow';
+                """;
+        System.out.println(sql);
     }
 }

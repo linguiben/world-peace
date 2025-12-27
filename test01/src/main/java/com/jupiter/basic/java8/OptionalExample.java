@@ -57,6 +57,48 @@ public class OptionalExample {
                 .orElse("china");
         Assertions.assertEquals("CN", CNName);
     }
+
+    /**
+     * Demonstrates the difference between Optional.map() and Optional.flatMap().
+     * <p>
+     * First, a User object is created with the userName set to "Jupiter".
+     * <pre>
+     * User user = User.builder().userName("Jupiter").build();
+     * </pre>
+     *
+     * <b>Using map:</b>
+     * <pre>
+     * Optional<String> name = Optional.ofNullable(user).map(User::getUserName);
+     * </pre>
+     * If the user is not null, map extracts the userName property and wraps it in an Optional.
+     * If user is null, the result is Optional.empty().
+     *
+     * <b>Using flatMap:</b>
+     * <pre>
+     * Optional<String> name2 = Optional.ofNullable(user)
+     *     .flatMap(u -> Optional.ofNullable(u.getUserName()));
+     * </pre>
+     * flatMap is used when the mapping function returns an Optional. It avoids nested Optionals by flattening the result.
+     *
+     * Both results are printed, defaulting to "default" if the value is absent.
+     */
+    @Test
+    public void test_map_and_flatmap() {
+        User user = User
+                .builder()
+                .userName("Jupiter")
+                .build();
+
+        // test map
+        Optional<String> name = Optional.ofNullable(user)
+                .map(User::getUserName);
+        System.out.println("map: " + name.orElse("default"));
+
+        // test flatMap
+        Optional<String> name2 = Optional.ofNullable(user)
+                .flatMap(u -> Optional.ofNullable(u.getUserName()));
+        System.out.println("flatMap: " + name2.orElse("default") );
+    }
 }
 
 @Data

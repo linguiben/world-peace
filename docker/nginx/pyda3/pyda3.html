@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python 数据分析刷题器 (代码实现题)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 顶部工具栏 */
+        .top-bar {
+            background: #252526;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            background: #3c3c3c;
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: #d4d4d4;
+            font-size: 14px;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #007acc;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            background: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #005a9e;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        /* 进度与状态条 */
+        .progress-bar {
+            background: #252526;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .progress-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .progress-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            background: #3c3c3c;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #d4d4d4;
+        }
+
+        .status-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .status-btn {
+            padding: 6px 16px;
+            background: #3c3c3c;
+            color: #d4d4d4;
+            border: 1px solid #555;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .status-btn.active {
+            background: #007acc;
+            border-color: #007acc;
+            color: white;
+        }
+
+        /* 题目卡片 */
+        .question-card {
+            background: #252526;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #4ec9b0;
+        }
+
+        .question-stem {
+            white-space: pre-wrap;
+            font-size: 15px;
+            line-height: 1.8;
+            color: #d4d4d4;
+        }
+
+        /* 答案总区 */
+        .answer-container {
+            background: #252526;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .answer-container-header {
+            padding: 15px 20px;
+            background: #2d2d30;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .answer-container-header:hover {
+            background: #3c3c3c;
+        }
+
+        .answer-container-header::after {
+            content: '▼';
+            transition: transform 0.3s;
+        }
+
+        .answer-container-header.collapsed::after {
+            transform: rotate(-90deg);
+        }
+
+        .answer-container-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .answer-container-content.expanded {
+            max-height: 5000px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .answer-panels {
+            padding: 20px;
+        }
+
+        /* 答案分区 */
+        .answer-panel {
+            background: #1e1e1e;
+            border: 1px solid #3c3c3c;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .answer-panel:last-child {
+            margin-bottom: 0;
+        }
+
+        .answer-panel-header {
+            padding: 12px 16px;
+            background: #2d2d30;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .answer-panel-header:hover {
+            background: #3c3c3c;
+        }
+
+        .answer-panel-label {
+            font-weight: 500;
+            color: #4ec9b0;
+        }
+
+        .answer-panel-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
+
+        .answer-panel-content {
+            padding: 16px;
+        }
+
+        .answer-panel-content.collapsed {
+            display: none;
+        }
+
+        /* Hints区域 */
+        .hints-section {
+            background: #2d2d30;
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            border-left: 3px solid #4ec9b0;
+        }
+
+        .hints-title {
+            font-size: 13px;
+            color: #858585;
+            margin-bottom: 8px;
+        }
+
+        .hints-content {
+            white-space: pre-wrap;
+            font-size: 14px;
+            color: #d4d4d4;
+        }
+
+        /* Code区域 */
+        .code-section {
+            margin-bottom: 15px;
+        }
+
+        .code-header {
+            padding: 8px 12px;
+            background: #2d2d30;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-size: 13px;
+            color: #858585;
+        }
+
+        .code-header:hover {
+            background: #3c3c3c;
+        }
+
+        .code-header::after {
+            content: '▶';
+            transition: transform 0.2s;
+        }
+
+        .code-header.expanded::after {
+            transform: rotate(90deg);
+        }
+
+        .code-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+
+        .code-content.expanded {
+            max-height: 2000px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 0 0 4px 4px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #d4d4d4;
+            white-space: pre;
+        }
+
+        /* Expected Output区域 */
+        .output-section {
+            margin-bottom: 0;
+        }
+
+        .output-header {
+            padding: 8px 12px;
+            background: #2d2d30;
+            border-radius: 4px 4px 0 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            font-size: 13px;
+            color: #858585;
+        }
+
+        .output-header:hover {
+            background: #3c3c3c;
+        }
+
+        .output-header::after {
+            content: '▶';
+            transition: transform 0.2s;
+        }
+
+        .output-header.expanded::after {
+            transform: rotate(90deg);
+        }
+
+        .output-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s;
+        }
+
+        .output-content.expanded {
+            max-height: 1000px;
+        }
+
+        .output-block {
+            background: #1e1e1e;
+            padding: 15px;
+            border-radius: 0 0 4px 4px;
+            white-space: pre-wrap;
+            font-size: 13px;
+            color: #d4d4d4;
+        }
+
+        /* 底部导航 */
+        .nav-bar {
+            background: #252526;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 10px 24px;
+            font-size: 16px;
+        }
+
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #007acc;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 确认对话框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #252526;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #d4d4d4;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部工具栏 -->
+        <div class="top-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="搜索关键字: tz / value_counts / groupby ..." />
+            </div>
+            <button class="btn" onclick="randomQuestion()">随机一题</button>
+            <button class="btn btn-secondary" onclick="showClearConfirm()">清除进度</button>
+        </div>
+
+        <!-- 进度与状态条 -->
+        <div class="progress-bar">
+            <div class="progress-left">
+                <span class="progress-text" id="progressText">第 1 / 共 9 题</span>
+                <div class="tags" id="tagsContainer"></div>
+            </div>
+            <div class="status-buttons">
+                <button class="status-btn" id="masteredBtn" onclick="toggleStatus('mastered')">已掌握</button>
+                <button class="status-btn" id="reviewBtn" onclick="toggleStatus('review')">需再看</button>
+            </div>
+        </div>
+
+        <!-- 题目卡片 -->
+        <div class="question-card">
+            <div class="question-title" id="questionTitle">题目1</div>
+            <div class="question-stem" id="questionStem"></div>
+        </div>
+
+        <!-- 答案总区 -->
+        <div class="answer-container">
+            <div class="answer-container-header collapsed" id="answerContainerHeader" onclick="toggleAnswerContainer()">
+                <span>点击展开本题答案 (建议先思考30秒)</span>
+            </div>
+            <div class="answer-container-content" id="answerContainerContent">
+                <div class="answer-panels" id="answerPanels"></div>
+            </div>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="nav-bar">
+            <button class="btn nav-btn" onclick="prevQuestion()">上一题</button>
+            <button class="btn nav-btn" onclick="toggleAnswerContainer()">显示答案</button>
+            <button class="btn nav-btn" onclick="nextQuestion()">下一题</button>
+        </div>
+    </div>
+
+    <!-- Toast提示 -->
+    <div class="toast" id="toast"></div>
+
+    <!-- 确认对话框 -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-title">确认清除进度</div>
+            <div style="color: #d4d4d4; margin-bottom: 20px;">
+                确定要清除所有进度和掌握状态吗？此操作不可恢复。
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" onclick="hideClearConfirm()">取消</button>
+                <button class="btn" onclick="clearProgress()">确认清除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 数据（使用JSON.parse确保正确解析）
+        const questionsData = [
+  {
+    "id": 1,
+    "title": "题目1",
+    "stem": "已知 records 为由日志解析得到的字典列表，其中包含字段 tz（时区）。请完成以下分析任务：\n\n1）将 records 转换为 Pandas DataFrame；\n\n2）对 tz 字段进行数据清洗：\n\n    – 将缺失值（NaN）替换为 \"Missing\"；\n    – 将空字符串 \"\" 替换为 \"Unknown\"；\n    \n3）统计各时区的访问频数；\n\n4）绘制访问量排名前 10 的时区横向条形图。",
+    "tags": [
+      "时区",
+      "DataFrame"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "1. records 转为 DataFrame\n2. tz 字段清洗\n3. 统计访问频数\n4. 绘制前 10 个时区的横向条形图",
+        "code": "# 1. records 转为 DataFrame\nframe = pd.DataFrame(records)\n\n# 2. tz 字段清洗\nclean_tz = frame[\"tz\"].fillna(\"Missing\")\nclean_tz[clean_tz == \"\"] = \"Unknown\"\n\n# 3. 统计访问频数\ntz_counts = clean_tz.value_counts(ascending=False)\n\n# 4. 绘制前 10 个时区的横向条形图\ntz_counts[9::-1].plot(kind=\"barh\")",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2: dict.get + replace（不构造 DataFrame）",
+        "hints": "第二种写法：dict.get + replace（不构造 DataFrame）",
+        "code": "import pandas as pd\n\nsubset1 = (\n    pd.Series([rec.get(\"tz\", \"Missing\") for rec in records])\n      .replace({\"\": \"Unknown\"})\n      .value_counts()[9::-1]\n)\n\nsubset1.plot(kind=\"barh\")",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "题目2",
+    "stem": "已知 frame 为包含 USA.gov 访问日志的 DataFrame，其中 a 为 User-Agent 字段、tz 为时区字段。请完成以下任务：\n\n1）删除 a 缺失的记录；\n\n2）根据 a 字段是否包含字符串 \"Windows\"，生成新列 os（取值为 \"Windows\" 或 \"Not Windows\"）；\n\n3）统计「时区 tz × 操作系统 os」的频数交叉表；\n\n4）取“访问量最高的前 10 个时区”，并按从小到大顺序输出该交叉表。",
+    "tags": [
+      "时区",
+      "DataFrame"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "1) 过滤：a 不为空\n2) 生成 os\n3) 交叉频数表：tz × os\n4) 取访问量前10的 tz，并从小到大输出",
+        "code": "# 1) 过滤：a 不为空\ncframe = frame.dropna(subset=[\"a\"]).copy()\n\n# 2) 生成 os\ncframe[\"os\"] = np.where(\n    cframe[\"a\"].str.contains(\"Windows\", na=False),\n    \"Windows\",\n    \"Not Windows\"\n)\n\n# 3) 交叉频数表：tz × os\nby_tz_os = cframe.groupby([\"tz\", \"os\"])\nagg_counts = by_tz_os.size().unstack().fillna(0)\n\n# 4) 取访问量前10的 tz，并从小到大输出\nindexer = agg_counts.sum(axis=1).argsort()\nresult = agg_counts.take(indexer)[-10:]\n\nprint(result)",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2: value_counts + crosstab",
+        "hints": "第二种写法：value_counts + crosstab",
+        "code": "top10_tz_small_to_large = cframe.tz.value_counts().index[9::-1]\nresult2 = pd.crosstab(cframe.tz, cframe.os).loc[top10_tz_small_to_large]\n\nprint(result2)",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "题目3",
+    "stem": "在 MovieLens 评分数据 data 中，每条记录表示一名用户对一部电影的评分，字段包括 title（电影名）、gender（性别）、rating（评分）、movie_id 等。\n为保证统计结果的可靠性，只分析评分次数不少于 250 次的电影。\n请完成以下分析任务：\n\n统计每电影的评分次数，并筛选出评分次数 ≥ 250 的电影；\n\n在此基础上，按电影标题（title）和性别（gender）统计平均评分，生成透视表。",
+    "tags": [
+      "透视表"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "1. 统计每部电影的评分次数\n2. 筛选评分次数不少于 250 的电影标题\n3. 对全部数据先做透视表\n4. 只保留活跃电影",
+        "code": "ratings_by_title = data.groupby('title').size()\n\n# 2. 筛选评分次数不少于 250 的电影标题\nactive_titles = ratings_by_title.index[ratings_by_title >= 250]\n\n# 3. 对全部数据先做透视表\nmean_ratings = data.pivot_table(\n    'rating',\n    index='title',\n    columns='gender',\n    aggfunc='mean'\n)\n\n# 4. 只保留活跃电影\nmean_ratings = mean_ratings.loc[active_titles]\n\nmean_ratings",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2: 使用 groupby + transform(len)",
+        "hints": "请参考代码实现",
+        "code": "Atv = data[data.groupby('title')['movie_id'].transform(len) >= 250]\nAtv.pivot_table('rating', index='title', columns='gender', aggfunc='mean')",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "题目4",
+    "stem": "在 MovieLens 电影评分数据集中，字段包括 title（电影名）、movie_id、rating 等。\n由于评分次数过少的电影其统计结果不稳定，现要求：\n\n在评分次数不少于 250 次的电影中，找出评分标准差（std）最大的前 10 部电影。\n\n请完成以下要求：\n\n使用 分步写法 完成分析；\n\n再根据提示，写出 等价的简化写法。",
+    "tags": [],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "1. 统计每部电影的评分次数\n2. 筛选评分次数不少于 250 的电影标题\n3. 计算每部电影评分的标准差\n4. 只保留活跃电影\n5. 按标准差降序排序，取前 10 个",
+        "code": "ratings_by_title = data.groupby('title').size()\n\n# 2. 筛选评分次数不少于 250 的电影标题\nactive_titles = ratings_by_title.index[ratings_by_title >= 250]\n\n# 3. 计算每部电影评分的标准差\nrating_std_by_title = data.groupby('title')['rating'].std()\n\n# 4. 只保留活跃电影\nrating_std_by_title = rating_std_by_title.loc[active_titles]\n\n# 5. 按标准差降序排序，取前 10 个\nrating_std_by_title.sort_values(ascending=False).head(10)",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2",
+        "hints": "请参考代码实现",
+        "code": "data[\n    data.groupby('title')['movie_id'].transform(len) >= 250\n].groupby('title')['rating'].std().nlargest(10)",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "题目5",
+    "stem": "现有一个 DataFrame：names，包含如下字段：\n\nyear：年份\n\nsex：性别\n\nname：姓名\n\nbirths：出生人数\n\n现在需要 按 year + sex 分组，在每个分组内取 births 最大的前 1000 条记录。",
+    "tags": [
+      "DataFrame"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "请参考代码实现",
+        "code": "def get_top1000(group):\n    return group.sort_values(by=\"births\", ascending=False)[:1000]\n\ngrouped = names.groupby([\"year\", \"sex\"], group_keys=False)\ntop1000 = grouped.apply(get_top1000)\n\ntop1000 = top1000.reset_index(level=-1, drop=True).reset_index()",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2: groupby + apply+nlargest",
+        "hints": "请参考代码实现",
+        "code": "names.groupby([\"year\", \"sex\"], group_keys=False).apply(lambda x: x.nlargest(1000, \"births\"))",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "题目6",
+    "stem": "现有一个 DataFrame：names，包含字段：\n\nname：姓名\n\nsex：性别\n\nyear：年份\n\nbirths：出生人数\n\n现在需要完成如下分析任务：\n\n按姓名最后一个字母进行分组，统计 1910、1960、2010 年 不同性别的出生人数总和，并以 宽表形式 展示。",
+    "tags": [
+      "DataFrame"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "请参考代码实现",
+        "code": "get_last_letter = lambda x: x[-1]\n\nlast_letters = names[\"name\"].map(get_last_letter)\nlast_letters.name = \"last_letter\"\n\ntable = names.pivot_table(\n    \"births\",\n    index=last_letters,\n    columns=[\"sex\", \"year\"],\n    aggfunc=\"sum\"\n)\n\nsubtable = table.reindex(columns=[1910, 1960, 2010], level=\"year\")",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2: isin+pivot_tabl+str[-1]",
+        "hints": "请参考代码实现",
+        "code": "names[names.year.isin([1910, 1960, 2010])].pivot_table(   \n    'births', index=names.name.str[-1],columns=['sex', 'year'], aggfunc='sum')",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "题目7",
+    "stem": "现有一个 JSON 数据列表 db，其中每个元素 rec 表示一种食物，包含字段：\n\nrec[\"id\"]：食物 ID\n\nrec[\"nutrients\"]：一个列表，列表中每个元素是一个字典，表示该食物的一种营养成分\n\n请将该嵌套 JSON 数据整理为一个 扁平化的 DataFrame，要求：\n\n每一行表示 某个食物的一种营养成分\n\n在原有营养成分字段的基础上，新增一列 id，表示该营养成分所属的食物 ID",
+    "tags": [
+      "DataFrame",
+      "JSON"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "请参考代码实现",
+        "code": "nutrients = []\n\nfor rec in db:\n    fnuts = pd.DataFrame(rec[\"nutrients\"])\n    fnuts[\"id\"] = rec[\"id\"]\n    nutrients.append(fnuts)\n\nnutrients_all = pd.concat(nutrients, ignore_index=True)",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2",
+        "hints": "请参考代码实现",
+        "code": "pd.DataFrame([\n    y | {\"id\": x[\"id\"]}\n    for x in db\n    for y in x[\"nutrients\"]\n])",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "title": "题目8",
+    "stem": "现有一个营养成分数据表 ndata，其中包含以下字段：\n\nnutgroup：营养素所属大类\n\nnutrient：具体营养素名称\n\nvalue：该营养素的含量\n\nfood：对应的食物名称\n\n现在需要 在每个（营养素大类 + 营养素）分组中，找出营养含量 value 最大的那条记录，并输出其 value 和 food。",
+    "tags": [],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "请参考代码实现",
+        "code": "by_nutrient = ndata.groupby([\"nutgroup\", \"nutrient\"])\n\nget_maximum = lambda x: x.loc[x.value.idxmax()]\n\nmax_foods = (\n    by_nutrient\n        .apply(get_maximum, include_groups=False)\n        [[\"value\", \"food\"]]\n)",
+        "expected_output": ""
+      },
+      {
+        "label": "方法2",
+        "hints": "请参考代码实现",
+        "code": "ndata.groupby([\"nutgroup\", \"nutrient\"]) \\\n     .apply(\n         lambda x: x.nlargest(1, \"value\"),\n         include_groups=False\n     )[[\"value\", \"food\"]]",
+        "expected_output": ""
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "title": "题目9",
+    "stem": "已知你用 tabula 从 PDF 抽取到一个 DataFrame df，列如下：\n\n门类名称及代码（可能出现：\"农、林、牧、渔业\"、\"(A)\"、空值）\n\n上市公司代码（可能是 \"998\"、\"2041\"，长度不固定）\n\n其他列暂不处理\n\n抽表后出现如下问题：\n\n每行数据可能整体向左错位（右侧列对齐更可靠），请将每行向右移动，直到该行最右侧非空值对齐（提示：用 shift + notnull()[::-1].argmax()）。\n\n从 门类名称及代码 中提取门类字母代码（A-Z），生成新列 门类代码。\n\n对 门类代码 做 向下填充 ffill，并且把第一行也补齐（提示：再做一次 bfill）。\n\n按 门类代码 分组，把每组内的 门类名称及代码 做去重后拼接，得到统一的 门类名称及代码（提示：groupby + transform + pd.unique + sum）。\n\n将 上市公司代码 补齐为 6 位字符串（左侧补 0）。\n\n删除临时列 门类代码。\n\n要求：写出完整 Pandas 代码实现上述 6 步",
+    "tags": [
+      "DataFrame",
+      "groupby",
+      "PDF解析"
+    ],
+    "answers": [
+      {
+        "label": "方法1",
+        "hints": "1) 每行向右移动：把最右侧非空值对齐\n2) 从“门类名称及代码”提取门类字母代码 A-Z -> 新列“门类代码”\n3) 门类代码向下填充，并用 bfill 补齐第一行\n4) 按门类代码分组，把“门类名称及代码”去重后拼接（修复 '(A)' 这种被拆开的情况）\n5) 上市公司代码补齐 6 位（左侧补 0）\n6) 删除临时列“门类代码”",
+        "code": "import pandas as pd\n\n# 1) 每行向右移动：把最右侧非空值对齐\ndf = df.apply(lambda row: row.shift(row.notnull()[::-1].argmax()), axis=1).ffill()\nprint(\"步骤1完成：行右移 + ffill\")\nprint(df.head(5))\n\n# 2) 从“门类名称及代码”提取门类字母代码 A-Z -> 新列“门类代码”\ndf['门类代码'] = df['门类名称及代码'].astype(str).str.extract(r'\\(([A-Z])\\)')\nprint(\"\\n步骤2完成：提取门类代码\")\nprint(df[['门类名称及代码', '门类代码']].head(8))\n\n# 3) 门类代码向下填充，并用 bfill 补齐第一行\ndf['门类代码'] = df['门类代码'].ffill().bfill()\nprint(\"\\n步骤3完成：门类代码 ffill + bfill\")\nprint(df[['门类名称及代码', '门类代码']].head(8))\n\n# 4) 按门类代码分组，把“门类名称及代码”去重后拼接（修复 '(A)' 这种被拆开的情况）\ndf['门类名称及代码'] = (\n    df.groupby('门类代码')['门类名称及代码']\n      .transform(lambda x: pd.unique(x).sum())\n)\nprint(\"\\n步骤4完成：按门类代码分组拼接门类名称\")\nprint(df[['门类名称及代码', '门类代码']].head(8))\n\n# 5) 上市公司代码补齐 6 位（左侧补 0）\ndf['上市公司代码'] = df['上市公司代码'].astype(str).apply(lambda x: '0' * (6 - len(x)) + x)\nprint(\"\\n步骤5完成：上市公司代码补齐6位\")\nprint(df[['上市公司代码']].head(8))\n\n# 6) 删除临时列“门类代码”\ndf = df.drop(columns=['门类代码'])\nprint(\"\\n步骤6完成：删除门类代码列\")\nprint(df.head(10))",
+        "expected_output": ""
+      }
+    ]
+  }
+];
+        
+        let questions = questionsData;
+        let currentIndex = 0;
+
+        // 初始化
+        function init() {
+            // 从localStorage加载进度
+            loadProgress();
+            
+            // 显示第一题
+            showQuestion(currentIndex);
+        }
+
+        // 加载进度
+        function loadProgress() {
+            const savedIndex = localStorage.getItem('currentIndex');
+            if (savedIndex !== null) {
+                currentIndex = parseInt(savedIndex);
+            }
+        }
+
+        // 保存进度
+        function saveProgress() {
+            localStorage.setItem('currentIndex', currentIndex);
+        }
+
+        // 显示题目
+        function showQuestion(index) {
+            if (index < 0 || index >= questions.length) return;
+            
+            currentIndex = index;
+            saveProgress();
+            
+            const question = questions[index];
+            
+            // 更新标题和题干
+            document.getElementById('questionTitle').textContent = question.title;
+            document.getElementById('questionStem').textContent = question.stem;
+            
+            // 更新进度
+            document.getElementById('progressText').textContent = `第 ${index + 1} / 共 ${questions.length} 题`;
+            
+            // 更新标签
+            const tagsContainer = document.getElementById('tagsContainer');
+            tagsContainer.innerHTML = '';
+            question.tags.forEach(tag => {
+                const tagEl = document.createElement('span');
+                tagEl.className = 'tag';
+                tagEl.textContent = tag;
+                tagsContainer.appendChild(tagEl);
+            });
+            
+            // 更新掌握状态
+            updateStatusButtons();
+            
+            // 渲染答案
+            renderAnswers(question.answers);
+            
+            // 折叠答案总区
+            collapseAnswerContainer();
+        }
+
+        // 渲染答案
+        function renderAnswers(answers) {
+            const panelsContainer = document.getElementById('answerPanels');
+            panelsContainer.innerHTML = '';
+            
+            answers.forEach((answer, idx) => {
+                const panel = document.createElement('div');
+                panel.className = 'answer-panel';
+                panel.id = `answerPanel${idx}`;
+                
+                panel.innerHTML = `
+                    <div class="answer-panel-header collapsed" onclick="toggleAnswerPanel(${idx})">
+                        <span class="answer-panel-label">${escapeHtml(answer.label)}</span>
+                        <div class="answer-panel-actions">
+                            <button class="btn btn-small" onclick="event.stopPropagation(); copyCode(${idx})">复制代码</button>
+                            <span style="color: #858585; font-size: 12px;">展开/收起</span>
+                        </div>
+                    </div>
+                    <div class="answer-panel-content collapsed" id="answerPanelContent${idx}">
+                        <div class="hints-section">
+                            <div class="hints-title">关键点/思路</div>
+                            <div class="hints-content">${escapeHtml(answer.hints || '请参考代码实现')}</div>
+                        </div>
+                        <div class="code-section">
+                            <div class="code-header collapsed" onclick="toggleCode(${idx})">
+                                <span>参考代码</span>
+                            </div>
+                            <div class="code-content collapsed" id="codeContent${idx}">
+                                <div class="code-block">${escapeHtml(answer.code)}</div>
+                            </div>
+                        </div>
+                        ${answer.expected_output ? `
+                        <div class="output-section">
+                            <div class="output-header collapsed" onclick="toggleOutput(${idx})">
+                                <span>预期输出/结果说明</span>
+                            </div>
+                            <div class="output-content collapsed" id="outputContent${idx}">
+                                <div class="output-block">${escapeHtml(answer.expected_output)}</div>
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                panelsContainer.appendChild(panel);
+            });
+        }
+
+        // 切换答案总区
+        function toggleAnswerContainer() {
+            const header = document.getElementById('answerContainerHeader');
+            const content = document.getElementById('answerContainerContent');
+            
+            const isCollapsed = header.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                header.classList.remove('collapsed');
+                content.classList.add('expanded');
+            } else {
+                header.classList.add('collapsed');
+                content.classList.remove('expanded');
+            }
+        }
+
+        // 折叠答案总区
+        function collapseAnswerContainer() {
+            const header = document.getElementById('answerContainerHeader');
+            const content = document.getElementById('answerContainerContent');
+            
+            header.classList.add('collapsed');
+            content.classList.remove('expanded');
+            
+            // 同时折叠所有答案分区
+            const panels = document.querySelectorAll('.answer-panel-content');
+            panels.forEach(panel => {
+                panel.classList.add('collapsed');
+            });
+            
+            const panelHeaders = document.querySelectorAll('.answer-panel-header');
+            panelHeaders.forEach(header => {
+                header.classList.add('collapsed');
+            });
+        }
+
+        // 切换答案分区
+        function toggleAnswerPanel(idx) {
+            const header = document.querySelector(`#answerPanel${idx} .answer-panel-header`);
+            const content = document.getElementById(`answerPanelContent${idx}`);
+            
+            const isCollapsed = header.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                header.classList.remove('collapsed');
+                content.classList.remove('collapsed');
+            } else {
+                header.classList.add('collapsed');
+                content.classList.add('collapsed');
+            }
+        }
+
+        // 切换代码
+        function toggleCode(idx) {
+            const header = document.querySelector(`#answerPanel${idx} .code-header`);
+            const content = document.getElementById(`codeContent${idx}`);
+            
+            const isCollapsed = header.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                header.classList.remove('collapsed');
+                content.classList.add('expanded');
+            } else {
+                header.classList.add('collapsed');
+                content.classList.remove('expanded');
+            }
+        }
+
+        // 切换输出
+        function toggleOutput(idx) {
+            const header = document.querySelector(`#answerPanel${idx} .output-header`);
+            const content = document.getElementById(`outputContent${idx}`);
+            
+            const isCollapsed = header.classList.contains('collapsed');
+            
+            if (isCollapsed) {
+                header.classList.remove('collapsed');
+                content.classList.add('expanded');
+            } else {
+                header.classList.add('collapsed');
+                content.classList.remove('expanded');
+            }
+        }
+
+        // 复制代码
+        function copyCode(idx) {
+            const question = questions[currentIndex];
+            const code = question.answers[idx].code;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('代码已复制到剪贴板');
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('复制失败');
+            });
+        }
+
+        // 上一题
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                showQuestion(currentIndex - 1);
+            } else {
+                showToast('已经是第一题了');
+            }
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (currentIndex < questions.length - 1) {
+                showQuestion(currentIndex + 1);
+            } else {
+                showToast('已经是最后一题了');
+            }
+        }
+
+        // 随机一题
+        function randomQuestion() {
+            if (questions.length <= 1) return;
+            
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * questions.length);
+            } while (newIndex === currentIndex && questions.length > 1);
+            
+            showQuestion(newIndex);
+            showToast(`已跳转到第 ${newIndex + 1} 题`);
+        }
+
+        // 搜索
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const keyword = this.value.trim().toLowerCase();
+                if (!keyword) return;
+                
+                // 搜索题目
+                for (let i = 0; i < questions.length; i++) {
+                    const q = questions[i];
+                    const searchText = (
+                        q.title + ' ' + q.stem + ' ' + 
+                        q.tags.join(' ') + ' ' +
+                        q.answers.map(a => a.label).join(' ')
+                    ).toLowerCase();
+                    
+                    if (searchText.includes(keyword)) {
+                        showQuestion(i);
+                        showToast(`已跳转到第 ${i + 1} 题`);
+                        return;
+                    }
+                }
+                
+                showToast('未找到匹配的题目');
+            }
+        });
+
+        // 切换掌握状态
+        function toggleStatus(status) {
+            const masteredBtn = document.getElementById('masteredBtn');
+            const reviewBtn = document.getElementById('reviewBtn');
+            
+            // 获取当前状态
+            const currentStatus = localStorage.getItem(`status_${currentIndex}`);
+            
+            if (currentStatus === status) {
+                // 取消状态
+                localStorage.removeItem(`status_${currentIndex}`);
+                masteredBtn.classList.remove('active');
+                reviewBtn.classList.remove('active');
+            } else {
+                // 设置新状态
+                localStorage.setItem(`status_${currentIndex}`, status);
+                masteredBtn.classList.toggle('active', status === 'mastered');
+                reviewBtn.classList.toggle('active', status === 'review');
+            }
+        }
+
+        // 更新状态按钮
+        function updateStatusButtons() {
+            const masteredBtn = document.getElementById('masteredBtn');
+            const reviewBtn = document.getElementById('reviewBtn');
+            
+            const status = localStorage.getItem(`status_${currentIndex}`);
+            
+            masteredBtn.classList.toggle('active', status === 'mastered');
+            reviewBtn.classList.toggle('active', status === 'review');
+        }
+
+        // 显示清除确认
+        function showClearConfirm() {
+            document.getElementById('confirmModal').classList.add('show');
+        }
+
+        // 隐藏清除确认
+        function hideClearConfirm() {
+            document.getElementById('confirmModal').classList.remove('show');
+        }
+
+        // 清除进度
+        function clearProgress() {
+            // 清除所有localStorage中的相关数据
+            for (let i = 0; i < questions.length; i++) {
+                localStorage.removeItem(`status_${i}`);
+            }
+            localStorage.removeItem('currentIndex');
+            
+            currentIndex = 0;
+            showQuestion(0);
+            hideClearConfirm();
+            showToast('进度已清除');
+        }
+
+        // 显示Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // HTML转义
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // 初始化
+        init();
+    </script>
+</body>
+</html>

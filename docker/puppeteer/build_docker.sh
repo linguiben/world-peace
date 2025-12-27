@@ -25,8 +25,8 @@ docker run \
   -v $(pwd):/app/images \
   -p 8000:8000 \
   -w /app \
-  --network wp_net \
-  --entrypoint python3 puppeteer-app:2.0 http_server.py
+  --network wp-net \
+  --entrypoint python3 puppeteer-app:1.0 http_server.py
 
 cd /opt/git/repo/world-peace/docker/puppeteer-stateless/images
 docker run -it -d \

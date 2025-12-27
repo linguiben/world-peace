@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -112,6 +113,21 @@ public class T01 {
         }
     }
 
+    @Test
+    public void test_double() {
+        double a = 0.1;
+        double b = 0.2;
+        double c = 0.3;
+        System.out.println(a + b == c); // false
+        System.out.println(a + b); // 0.30000000000000004
+    }
+
+    @Test
+    public void test_BigDecimal() {
+        BigDecimal a = BigDecimal.valueOf(0.1d);
+        BigDecimal b = BigDecimal.valueOf(0.2d);
+        System.out.println(a.add(b)); // 0.3
+    }
 }
 
 class PVTest implements Runnable {
