@@ -1,8 +1,8 @@
 
 # Test access mongodb
 ```shell
-#run at: mongodb://root:123456@localhost:27017
-docker exec -it mongodb mongosh -u root -p 123456
+#run at: mongodb://root:<pwd>@localhost:27017
+docker exec -it mongodb mongosh -u root -p <pwd>
 test> show dbs
 admin   40.00 KiB
 config  60.00 KiB

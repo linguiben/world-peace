@@ -19,7 +19,7 @@ wp-config:
     0011.HK: 340
 jasypt:
   encryptor:
-    password: 123456@!#
+    password: 123456@!#  # test only, on production please use env variable or command line argument to set jasypt.encryptor.password
     algorithm: PBEWithMD5AndDES #2.1.2默认PBEWithMD5AndDES 3.0.5默认PBEWithHMACSHA512AndAES_256
     iv-generator-classname: org.jasypt.iv.NoIvGenerator
 info:
