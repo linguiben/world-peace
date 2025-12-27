@@ -24,4 +24,14 @@ public class VueController {
     public String shop() {
         return "shop/shop";
     }
+
+    @GetMapping(value = {"/pyda"})
+    public String pyda() {
+        return "forward:/pyda/pyda.html";
+    }
+
+    @GetMapping(value = {"/pyda2"})
+    public String pyda2() {
+        return "forward:/pyda/pyda2.html";
+    }
 }

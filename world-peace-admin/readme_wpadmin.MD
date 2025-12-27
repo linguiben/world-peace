@@ -63,18 +63,28 @@ docker exec -it nginx /bin/bash -c "sed -i 's/java-master:8082/wpadmin:8090/g' /
 ```
 
 ```shell
-刷新nginx配置
-root@nginx:/etc/nginx/vhost# nginx -t #测试ngix配置文件
-nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-nginx: configuration file /etc/nginx/nginx.conf test is successful
-root@nginx:/etc/nginx/vhost#
-root@nginx:/etc/nginx/vhost# nginx -s reload #刷新配置文件
-sudo service nginx restart
+# test and reload nginx configuration
+to docker nginx # 1.login to nginx container
+root@nginx:/# nginx -t  # 2.test the conf
+root@nginx:/# nginx -s reload # 3.reload the conf
+  ### or run from host machine:
+[root@JupiterSo pyda3]# docker exec -it nginx nginx -t
+[root@JupiterSo pyda3]# docker exec -it nginx nginx -s reload
 ```
 
 ### git proxies 
 ```shell
-# 1.检查是否已存在proxy, or git config --global --get http.proxy && git config --global --get https.proxy
+# 0.check if global proxy is running
+run=`env|grep -i proxy`; \
+if [ -z "$run" ]; then \
+  echo -e '\nNo proxy found. run the following to set global proxy: \n'; \
+  cat ~/.ssh/http_proxy.sh; \
+else \
+  echo -e "proxy is running at:\n$run"; \
+fi
+```
+```shell
+# 1.check git proxy, or git config --global --get http.proxy && git config --global --get https.proxy
 GIT_PROXY=`git config -l|grep proxy`;if [ -z "${GIT_PROXY}" ];then echo "git proxy not exists.";else echo ${GIT_PROXY};fi
 ```
 ```shell

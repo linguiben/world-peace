@@ -9,7 +9,7 @@ server:
   shutdown: graceful # graceful shutdown
 
 mcp.server.url: http://www.JupiterSo.com:8001
-governmentIssuedNumber: 粤ICP备2024203563号
+governmentIssuedNumber: 粤ICP备2024203563号-1
 food:
   meat: 烤肉${random.int}
   rice: 拌饭

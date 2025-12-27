@@ -6,6 +6,7 @@ services:
     mem_limit: 640m #限制内存使用
     cpus: 2 #限制cpu使用
     container_name: mysql
+    hostname: mysql
     restart: no #本机不开启always,服务器建议开启
     environment: #更多环境变量https://dev.mysql.com/doc/refman/8.0/en/environment-variables.html
       - MYSQL_ROOT_PASSWORD=root #设置 root 账户密码
@@ -25,6 +26,10 @@ services:
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_general_ci
       --default-authentication-plugin=mysql_native_password
+    networks:
+      wp-net:
+        aliases:
+          - mysql
 # 连接外部网络
 networks:
   wp-net:
