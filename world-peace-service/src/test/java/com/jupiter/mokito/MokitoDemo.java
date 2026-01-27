@@ -18,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 /**
  *@desc Mokito 常用方法有:
  * 1. @InjectMocks @Mock, @Stub, @Spy, when() thenReturn
@@ -31,6 +30,9 @@ public class MokitoDemo {
     }
 }
 
+/**
+ * 待测试类: 该类有两个依赖: MyRepository, MyMapper，功能是从MyMapper获取name，并调用MyRepository保存到数据库。
+ */
 @Slf4j
 @RequiredArgsConstructor // 此注解会自动生成构造函数, 参数为final的属性
 class MyService {
@@ -59,21 +61,15 @@ class MyMapper {
     }
 }
 
-// 测试类
+// 创建单元测试
 @Slf4j
 @ExtendWith(MockitoExtension.class) // JUnit5提供的注解，使用MockitoExtension扩展类
 class MyServiceTest {
-    @Test
-    public void testSave() {
-        MyService myService = new MyService(new MyRepository(), new MyMapper());
-        myService.save("Jupiter");
-        assertEquals("Jupiter", myService.getName());
-    }
 
     // 只在测试类中执行一次
     @BeforeAll
     public static void init() {
-        // 初始化Mock对象，与@ExtendWith(MockitoExtension.class)效果相同
+        // 初始化Mock对象，与@ExtendWith(MockitoExtension.class)效果相同，（二选一）
          // MockitoAnnotations.openMocks(this);
     }
 
@@ -81,12 +77,22 @@ class MyServiceTest {
     @BeforeEach
     public void setUp() {}
 
-    @InjectMocks // 创建一个待测试的实例，并自动注入Mock对象
-    private MyService myService;
-    @Mock // 与Spy不同的是，此注解mock出来的对象不会调用真实的方法
+    @InjectMocks // 创建一个待测试的实例，并自动注入@Mock或@Spy对象
+    private MyService myService; // 默认调用无参构造函数，如果没有无参构造函数，可以加上 = new MyService(xxx)手动传参
+
+    @Mock // 与@Spy不同的是，@mock出来的对象不会调用真实的方法，默认返回null、0、false等，需要调用when()方法模拟返回值
     private MyRepository myRepository;
-    @Spy // 创建一个真实对象的包装，与Mock不同的是，此注解mock出来的对象会调用真实的方法，除非调用when()方法
+
+    @Spy // 创建一个真实对象的包装，与@Mock不同的是，@Spy出来的对象会调用真实的方法，除非调用when()方法
     private MyMapper myMapper;
+
+    @Test
+    public void testSave() {
+        MyService myService = new MyService(new MyRepository(), new MyMapper());
+        myService.save("Jupiter");
+        assertEquals("Jupiter", myService.getName());
+    }
+
     @Test
     public void testCase() {
         myService.save("Jupiter");

@@ -1,4 +1,4 @@
-package com.jupiter;
+package com.jupiter.mokito;
 
 import com.jupiter.mvc.service.MapTest;
 import org.junit.jupiter.api.*;
@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class) // 1
 class MockitoTest {
+
+    public final int instanceFinalField = 0;
 
     // @InjectMocks // 注入所有mock对象
     @Mock(answer = Answers.RETURNS_SMART_NULLS) // mock对象不会走真实的方法

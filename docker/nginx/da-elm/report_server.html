@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>饿了么推荐系统数据分析报告 - 业务洞察仪表盘</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+    :root {
+        font-size: 14px;
+        --primary-color: #0091ff;
+        --success-color: #52c41a;
+        --warning-color: #faad14;
+        --danger-color: #f5222d;
+        --border-color: #e8e8e8;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 1rem;
+        min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .header p {
+        font-size: 1rem;
+        opacity: 0.95;
+        margin-bottom: 0.3rem;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .metric-card {
+        background: white;
+        padding: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.3rem;
+    }
+    
+    .metric-change {
+        font-size: 0.85rem;
+        color: var(--success-color);
+    }
+    
+    .section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-color);
+    }
+    
+    .section-icon {
+        font-size: 1.8rem;
+        margin-right: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+    
+    .section-subtitle {
+        font-size: 0.9rem;
+        color: #666;
+        margin-left: auto;
+    }
+    
+    .chart {
+        height: 420px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .chart-small {
+        height: 320px;
+    }
+    
+    .chart-medium {
+        height: 380px;
+    }
+    
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .table-wrapper {
+        max-height: 500px;
+        overflow: auto;
+        margin-top: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    
+    th, td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+        background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+        font-weight: 600;
+        color: #333;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .footer {
+        text-align: center;
+        color: white;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .tag {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .tag-vip {
+        background: #fff7e6;
+        color: #fa8c16;
+        border: 1px solid #ffd591;
+    }
+    
+    .tag-high {
+        background: #f6ffed;
+        color: #52c41a;
+        border: 1px solid #b7eb8f;
+    }
+    
+    .tag-medium {
+        background: #e6f7ff;
+        color: #1890ff;
+        border: 1px solid #91d5ff;
+    }
+    
+    .tag-low {
+        background: #fff1f0;
+        color: #ff4d4f;
+        border: 1px solid #ffccc7;
+    }
+    
+    @media (max-width: 768px) {
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 页面标题 -->
+    <div class="header">
+        <h1>🍔 饿了么推荐系统数据分析报告</h1>
+        <p>基于1.28亿条真实业务日志的深度洞察</p>
+        <p style="font-size: 0.85rem; opacity: 0.8;">分析时段: 2022年4月1日 | 数据规模: 128,000,000条记录</p>
+    </div>
+    
+    <!-- 核心指标概览 -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">总曝光量</div>
+            <div class="metric-value">128.0M</div>
+            <div class="metric-change">📊 全量数据</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">总点击量</div>
+            <div class="metric-value">4.56M</div>
+            <div class="metric-change">✅ 活跃用户响应</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">全局点击率 (CTR)</div>
+            <div class="metric-value">3.56%</div>
+            <div class="metric-change">📈 行业中位水平</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">转化率 (CVR)</div>
+            <div class="metric-value">28.5%</div>
+            <div class="metric-change">🎯 推荐精准度指标</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">平均客单价</div>
+            <div class="metric-value">¥48.5</div>
+            <div class="metric-change">💰 用户消费能力</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">活跃用户数</div>
+            <div class="metric-value">45.2M</div>
+            <div class="metric-change">👥 独立用户访问</div>
+        </div>
+    </div>
+    
+    <!-- 第一部分：用户画像分析 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">👥</span>
+            <h2 class="section-title">用户全景画像与分层运营</h2>
+            <span class="section-subtitle">User Insights · RFM分层模型</span>
+        </div>
+        
+        <div class="two-column">
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">用户价值分层分布</h3>
+                <div id="userSegmentPie" class="chart chart-small"></div>
+            </div>
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">各层级用户平均消费金额</h3>
+                <div id="userValueBar" class="chart chart-small"></div>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">VIP会员 vs 普通用户对比</h3>
+        <div id="vipComparison" class="chart chart-medium"></div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">用户地理分布热力 (TOP 20城市)</h3>
+        <div id="cityHeatmap" class="chart"></div>
+    </div>
+    
+    <!-- 第二部分:商品分析 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">🍔</span>
+            <h2 class="section-title">商品效能与品类趋势</h2>
+            <span class="section-subtitle">Product Insights · 流量与转化分析</span>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">商品点击热度 TOP 30</h3>
+        <div id="productRanking" class="chart"></div>
+        
+        <div class="two-column">
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">商品分类点击占比</h3>
+                <div id="categoryPie" class="chart chart-small"></div>
+            </div>
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">不同价格区间的点击转化率</h3>
+                <div id="priceAnalysis" class="chart chart-small"></div>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">推荐位序效应分析 (黄金位置)</h3>
+        <div id="rankEffect" class="chart chart-medium"></div>
+    </div>
+    
+    <!-- 第三部分:行为分析 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">📊</span>
+            <h2 class="section-title">运营场景与行为决策</h2>
+            <span class="section-subtitle">Behavioral Insights · 时间与转化分析</span>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">24小时流量趋势 (黄金时段洞察)</h3>
+        <div id="hourlyTrend" class="chart"></div>
+        
+        <div class="two-column">
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">工作日 vs 周末行为对比</h3>
+                <div id="weekdayComparison" class="chart chart-small"></div>
+            </div>
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">转化漏斗分析</h3>
+                <div id="conversionFunnel" class="chart chart-small"></div>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">不同时段的品类偏好</h3>
+        <div id="timeCategory" class="chart"></div>
+    </div>
+    
+    <!-- 第四部分:数据明细表 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h2 class="section-title">核心数据明细表</h2>
+            <span class="section-subtitle">Data Summary · 关键指标汇总</span>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>分析维度</th>
+                        <th>指标名称</th>
+                        <th>数值</th>
+                        <th>占比/同比</th>
+                        <th>评级</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="footer">
+        <p>© 2026 饿了么推荐系统数据分析项目 | 基于真实业务数据的探索性分析</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">
+            技术栈: Python 3.12 · Pandas · NumPy · Matplotlib · ECharts
+        </p>
+    </div>
+</div>
+
+<script>
+
+
+// ========== 数据动态加载 (从JSON文件加载) ==========
+
+let metricsData = {};
+let userSegmentData = [];
+let userValueData = {};
+let vipData = {};
+let cityData = [];
+let productData = {};
+let categoryData = [];
+let priceData = {};
+let rankData = {};
+let hourlyData = {};
+let weekdayData = {};
+let funnelData = [];
+let timeCategoryData = {};
+let summaryTableData = [];
+
+async function loadData() {
+    try {
+        const [metrics, user, product, behavior, summary] = await Promise.all([
+            fetch('metrics.json').then(r => r.json()),
+            fetch('user.json').then(r => r.json()),
+            fetch('product.json').then(r => r.json()),
+            fetch('behavior.json').then(r => r.json()),
+            fetch('summary.json').then(r => r.json())
+        ]);
+        
+        metricsData = metrics.metrics;
+        userSegmentData = user.user.segment_distribution;
+        userValueData = user.user.segment_avg_consumption;
+        vipData = user.user.vip_comparison;
+        cityData = user.user.city_distribution;
+        productData = product.product.top_products;
+        categoryData = product.product.category_distribution;
+        priceData = product.product.price_analysis;
+        rankData = product.product.rank_effect;
+        hourlyData = behavior.behavior.hourly_trend;
+        weekdayData = behavior.behavior.weekday_comparison;
+        funnelData = behavior.behavior.conversion_funnel;
+        timeCategoryData = behavior.behavior.time_category_preference;
+        summaryTableData = summary.summary_table;
+        
+        updateMetrics();
+        initCharts();
+        renderTable();
+    } catch (error) {
+        console.error('数据加载失败:', error);
+        document.body.innerHTML = '<div style="text-align:center;padding:50px;"><h2>数据加载失败</h2><p>请确保JSON文件存在于output目录: metrics.json, user.json, product.json, behavior.json, summary.json</p><p>错误: ' + error.message + '</p></div>';
+    }
+}
+
+// Update Metrics on Page
+// Update Metrics on Page
+function updateMetrics() {
+    const m = metricsData;
+    if (!m) return;
+    
+    // Helper to find metric card by label text
+    const cards = document.querySelectorAll('.metric-card');
+    cards.forEach(card => {
+        const label = card.querySelector('.metric-label').textContent;
+        const valueEl = card.querySelector('.metric-value');
+        
+        if (label.includes('总曝光量')) valueEl.textContent = m.total_impressions_unit ? m.total_impressions + m.total_impressions_unit : m.total_impressions;
+        if (label.includes('总点击量')) valueEl.textContent = m.total_clicks_unit ? m.total_clicks + m.total_clicks_unit : m.total_clicks;
+        if (label.includes('全局点击率')) valueEl.textContent = m.global_ctr + '%';
+        if (label.includes('转化率')) valueEl.textContent = m.global_cvr + '%';
+        if (label.includes('平均客单价')) valueEl.textContent = '¥' + m.avg_price;
+        if (label.includes('活跃用户数')) valueEl.textContent = m.active_users_unit ? m.active_users + m.active_users_unit : m.active_users;
+    });
+    
+    // Update Header Info
+    const headerP = document.querySelector('.header p:last-child');
+    if (headerP) {
+        headerP.textContent = `分析时段: 2022年4月1日 | 数据规模: ${m.total_impressions}条记录`;
+    }
+}
+
+// Initialize
+
+// ========== 图表渲染函数 ==========
+
+function initCharts() {
+    // 1. 用户分层饼图
+    const segmentChart = echarts.init(document.getElementById('userSegmentPie'));
+    segmentChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}%<br/>占比: {d}%' },
+        legend: { bottom: 0, data: userSegmentData.map(d => d.name) },
+        series: [{
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: true,
+            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, formatter: '{b}\n{c}%' },
+            data: userSegmentData.map(d => ({ 
+                name: d.name, 
+                value: d.value,
+                itemStyle: { color: d.color }
+            }))
+        }]
+    });
+    
+    // 2. 用户价值柱状图
+    const valueChart = echarts.init(document.getElementById('userValueBar'));
+    valueChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        xAxis: { type: 'category', data: userValueData.categories },
+        yAxis: { type: 'value', name: '平均消费(元)' },
+        series: [{
+            type: 'bar',
+            data: userValueData.values,
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#83bff6' },
+                    { offset: 1, color: '#188df0' }
+                ]),
+                borderRadius: [6, 6, 0, 0]
+            },
+            label: { show: true, position: 'top', formatter: '¥{c}' }
+        }]
+    });
+    
+    // 3. VIP对比图
+    const vipChart = echarts.init(document.getElementById('vipComparison'));
+    vipChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['VIP用户', '普通用户'], top: 0 },
+        xAxis: { type: 'category', data: vipData.categories },
+        yAxis: { type: 'value' },
+        series: [
+            {
+                name: 'VIP用户',
+                type: 'bar',
+                data: vipData.vip,
+                itemStyle: { color: '#faad14', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            },
+            {
+                name: '普通用户',
+                type: 'bar',
+                data: vipData.normal,
+                itemStyle: { color: '#8c8c8c', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            }
+        ]
+    });
+    
+    // 4. 城市热力图
+    const cityChart = echarts.init(document.getElementById('cityHeatmap'));
+    cityChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        grid: { left: 80, right: 20, bottom: 20, top: 30 },
+        xAxis: { type: 'value', name: '订单量(千)' },
+        yAxis: { 
+            type: 'category', 
+            data: cityData.map(d => d.name).reverse(),
+            axisLabel: { fontSize: 11 }
+        },
+        series: [{
+            type: 'bar',
+            data: cityData.map(d => d.value).reverse(),
+            itemStyle: {
+                color: params => {
+                    const colors = ['#c23531', '#d48265', '#91c7ae', '#749f83', '#6e7074'];
+                    return colors[Math.floor(params.dataIndex / 4) % colors.length];
+                },
+                borderRadius: [0, 6, 6, 0]
+            },
+            label: { show: true, position: 'right', formatter: '{c}' }
+        }]
+    });
+    
+    // 5. 商品排名图
+    const productChart = echarts.init(document.getElementById('productRanking'));
+    productChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['点击量', '点击率(%)'], top: 0 },
+        grid: { left: 60, right: 60, bottom: 30, top: 50 },
+        xAxis: { 
+            type: 'category', 
+            data: productData.items,
+            axisLabel: { rotate: 45, fontSize: 10 }
+        },
+        yAxis: [
+            { type: 'value', name: '点击量', position: 'left' },
+            { type: 'value', name: 'CTR(%)', position: 'right' }
+        ],
+        series: [
+            {
+                name: '点击量',
+                type: 'bar',
+                data: productData.clicks,
+                itemStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: '#667eea' },
+                        { offset: 1, color: '#764ba2' }
+                    ]),
+                    borderRadius: [4, 4, 0, 0]
+                }
+            },
+            {
+                name: '点击率(%)',
+                type: 'line',
+                yAxisIndex: 1,
+                data: productData.ctr,
+                lineStyle: { width: 3, color: '#f5222d' },
+                itemStyle: { color: '#f5222d' },
+                symbol: 'circle',
+                symbolSize: 6
+            }
+        ]
+    });
+    
+    // 6. 分类饼图
+    const categoryChart = echarts.init(document.getElementById('categoryPie'));
+    categoryChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}%' },
+        legend: { bottom: 0, data: categoryData.map(d => d.name) },
+        series: [{
+            type: 'pie',
+            radius: '65%',
+            data: categoryData,
+            itemStyle: { borderRadius: 6, borderColor: '#fff', borderWidth: 2 },
+            label: { formatter: '{b}\n{c}%' }
+        }]
+    });
+    
+    // 7. 价格分析图
+    const priceChart = echarts.init(document.getElementById('priceAnalysis'));
+    priceChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['点击率(%)', '转化率(%)'], top: 0 },
+        xAxis: { type: 'category', data: priceData.ranges },
+        yAxis: { type: 'value', name: '百分比(%)' },
+        series: [
+            {
+                name: '点击率(%)',
+                type: 'line',
+                data: priceData.clicks,
+                lineStyle: { width: 3, color: '#1890ff' },
+                itemStyle: { color: '#1890ff' },
+                areaStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(24,144,255,0.3)' },
+                        { offset: 1, color: 'rgba(24,144,255,0.05)' }
+                    ])
+                }
+            },
+            {
+                name: '转化率(%)',
+                type: 'line',
+                data: priceData.conversion,
+                lineStyle: { width: 3, color: '#52c41a' },
+                itemStyle: { color: '#52c41a' },
+                areaStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(82,196,26,0.3)' },
+                        { offset: 1, color: 'rgba(82,196,26,0.05)' }
+                    ])
+                }
+            }
+        ]
+    });
+    
+    // 8. 推荐位序效应
+    const rankChart = echarts.init(document.getElementById('rankEffect'));
+    rankChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['点击率(%)', '曝光量(百万)'], top: 0 },
+        xAxis: { type: 'category', data: rankData.positions },
+        yAxis: [
+            { type: 'value', name: 'CTR(%)', position: 'left' },
+            { type: 'value', name: '曝光量(M)', position: 'right' }
+        ],
+        series: [
+            {
+                name: '点击率(%)',
+                type: 'bar',
+                data: rankData.ctr,
+                itemStyle: { 
+                    color: params => {
+                        const colors = ['#f5222d', '#fa8c16', '#fadb14', '#52c41a', '#1890ff', '#722ed1'];
+                        return colors[params.dataIndex];
+                    },
+                    borderRadius: [6, 6, 0, 0]
+                },
+                label: { show: true, position: 'top', formatter: '{c}%' }
+            },
+            {
+                name: '曝光量(百万)',
+                type: 'line',
+                yAxisIndex: 1,
+                data: rankData.impressions.map(v => (v / 1000000).toFixed(1)),
+                lineStyle: { width: 3, color: '#722ed1' },
+                itemStyle: { color: '#722ed1' },
+                symbol: 'circle',
+                symbolSize: 8
+            }
+        ]
+    });
+    
+    // 9. 24小时趋势
+    const hourChart = echarts.init(document.getElementById('hourlyTrend'));
+    hourChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['点击数', '订单数'], top: 0 },
+        grid: { left: 60, right: 60, bottom: 30, top: 50 },
+        xAxis: { 
+            type: 'category', 
+            data: hourlyData.hours,
+            axisLabel: { fontSize: 10 }
+        },
+        yAxis: { type: 'value', name: '数量' },
+        series: [
+            {
+                name: '点击数',
+                type: 'line',
+                data: hourlyData.clicks,
+                smooth: true,
+                lineStyle: { width: 3, color: '#1890ff' },
+                areaStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(24,144,255,0.4)' },
+                        { offset: 1, color: 'rgba(24,144,255,0.1)' }
+                    ])
+                }
+            },
+            {
+                name: '订单数',
+                type: 'line',
+                data: hourlyData.orders,
+                smooth: true,
+                lineStyle: { width: 3, color: '#52c41a' },
+                areaStyle: { 
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        { offset: 0, color: 'rgba(82,196,26,0.4)' },
+                        { offset: 1, color: 'rgba(82,196,26,0.1)' }
+                    ])
+                }
+            }
+        ]
+    });
+    
+    // 10. 工作日周末对比
+    const weekChart = echarts.init(document.getElementById('weekdayComparison'));
+    weekChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['工作日', '周末'], top: 0 },
+        xAxis: { type: 'category', data: weekdayData.metrics },
+        yAxis: { type: 'value' },
+        series: [
+            {
+                name: '工作日',
+                type: 'bar',
+                data: weekdayData.weekday,
+                itemStyle: { color: '#1890ff', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            },
+            {
+                name: '周末',
+                type: 'bar',
+                data: weekdayData.weekend,
+                itemStyle: { color: '#52c41a', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            }
+        ]
+    });
+    
+    // 11. 转化漏斗
+    const funnelChart = echarts.init(document.getElementById('conversionFunnel'));
+    funnelChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}' },
+        series: [{
+            type: 'funnel',
+            left: '10%',
+            top: 40,
+            bottom: 40,
+            width: '80%',
+            min: 0,
+            max: 128000000,
+            minSize: '0%',
+            maxSize: '100%',
+            sort: 'descending',
+            gap: 2,
+            label: {
+                show: true,
+                position: 'inside',
+                formatter: '{b}\n{c}'
+            },
+            labelLine: { show: false },
+            itemStyle: { borderColor: '#fff', borderWidth: 1 },
+            data: funnelData
+        }]
+    });
+    
+    // 12. 时段品类偏好
+    const timeCatChart = echarts.init(document.getElementById('timeCategory'));
+    timeCatChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        legend: { data: timeCategoryData.categories, bottom: 0 },
+        grid: { left: 100, right: 20, bottom: 80, top: 30 },
+        xAxis: { type: 'value', name: '点击占比(%)' },
+        yAxis: { type: 'category', data: timeCategoryData.times },
+        series: timeCategoryData.categories.map((cat, idx) => ({
+            name: cat,
+            type: 'bar',
+            stack: 'total',
+            data: timeCategoryData.data.map(row => row[idx]),
+            label: { show: true, formatter: params => params.value > 5 ? params.value + '%' : '' }
+        }))
+    });
+    
+    // 窗口大小调整时重绘
+    window.addEventListener('resize', () => {
+        [segmentChart, valueChart, vipChart, cityChart, productChart, 
+         categoryChart, priceChart, rankChart, hourChart, weekChart, 
+         funnelChart, timeCatChart].forEach(chart => chart.resize());
+    });
+}
+
+// ========== 明细表渲染 ==========
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    summaryTableData.forEach(row => {
+        const tr = document.createElement('tr');
+        
+        let ratingTag = '';
+        if (row.rating === '高') ratingTag = '<span class="tag tag-high">优秀</span>';
+        else if (row.rating === '中') ratingTag = '<span class="tag tag-medium">良好</span>';
+        else ratingTag = '<span class="tag tag-low">待优化</span>';
+        
+        tr.innerHTML = `
+            <td>${row.dimension}</td>
+            <td style="text-align: left; padding-left: 1.5rem;">${row.metric}</td>
+            <td><strong>${row.value}</strong></td>
+            <td>${row.compare}</td>
+            <td>${ratingTag}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ========== 初始化 ==========
+
+// ========== 初始化 ==========
+window.addEventListener('DOMContentLoaded', () => {
+    loadData();
+});
+
+</script>
+</body>
+</html>
