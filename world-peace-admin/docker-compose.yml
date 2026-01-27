@@ -1,0 +1,61 @@
+version: '3.8'
+
+networks:
+  wpadmin-net:
+    driver: bridge
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: wpadmin-postgres
+    hostname: postgres
+    restart: unless-stopped
+    mem_limit: 512mb
+    cpus: 1
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-jupiter}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-jupiter123}
+      POSTGRES_DB: ${POSTGRES_DB:-wp}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - wpadmin-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-jupiter} -d ${POSTGRES_DB:-wp}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  wpadmin:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: world-peace-admin:${APP_VERSION:-1.2}
+    container_name: wpadmin
+    hostname: wpadmin
+    restart: unless-stopped
+    mem_limit: 512m
+    cpus: 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-wp}
+      DB_USERNAME: ${POSTGRES_USER:-jupiter}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-jupiter123}
+      JAVA_OPTS: ${JAVA_OPTS:--Xms256m -Xmx512m}
+    ports:
+      - "${APP_PORT:-8090}:8090"
+    volumes:
+      - wpadmin-logs:/apps/logs
+      - wpadmin-data:/apps/data
+    networks:
+      - wpadmin-net
+
+volumes:
+  postgres-data:
+  wpadmin-logs:
+  wpadmin-data:

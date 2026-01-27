@@ -7,7 +7,10 @@
 package com.jupiter.admin.controllor;
 
 import com.jupiter.admin.config.AdminConfig;
+import com.jupiter.admin.entity.WpUser;
 import com.jupiter.admin.service.FileSaveService;
+import com.jupiter.admin.service.LoginService;
+import com.jupiter.admin.service.VisitorService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -40,10 +44,25 @@ public class HelloController {
 
     // @Autowired
     private final FileSaveService fileSaveService;
+    private final LoginService loginService;
+    private final VisitorService visitorService;
 
     @RequestMapping("/")
-    public String index(Model model){
-        model.addAttribute("governmentIssuedNumber",governmentIssuedNumber);
+    public String index(Model model, HttpSession session) {
+        model.addAttribute("governmentIssuedNumber", governmentIssuedNumber);
+
+        WpUser currentUser = (WpUser) session.getAttribute(LoginController.SESSION_USER_KEY);
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("loggedIn", currentUser != null);
+
+        long visitorCount = visitorService.incrementAndGetVisitorCount();
+        long loginCount = loginService.getTotalLoginCount();
+        model.addAttribute("visitorCount", visitorCount);
+        model.addAttribute("loginCount", loginCount);
+
+        boolean dbAvailable = loginService.isDatabaseAvailable();
+        model.addAttribute("loginAvailable", dbAvailable);
+
         return "index";
     }
 

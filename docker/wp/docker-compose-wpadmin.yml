@@ -11,6 +11,11 @@ services:
     cpus: 1
     container_name: wpadmin
     hostname: wpadmin
+    restart: unless-stopped
+    environment:
+      DB_URL: ${DB_URL}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
     ports:
       - "8090:8090"
     volumes:
