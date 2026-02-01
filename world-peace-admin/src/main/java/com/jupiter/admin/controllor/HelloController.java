@@ -48,14 +48,21 @@ public class HelloController {
     private final VisitorService visitorService;
 
     @RequestMapping("/")
-    public String index(Model model, HttpSession session) {
+    public String index(Model model, HttpSession session, HttpServletRequest request) {
         model.addAttribute("governmentIssuedNumber", governmentIssuedNumber);
 
         WpUser currentUser = (WpUser) session.getAttribute(LoginController.SESSION_USER_KEY);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("loggedIn", currentUser != null);
 
-        long visitorCount = visitorService.incrementAndGetVisitorCount();
+        String ip = getClientIp(request);
+        String path = request.getRequestURI();
+        String method = request.getMethod();
+        String userAgent = request.getHeader("User-Agent");
+        String referer = request.getHeader("Referer");
+        String acceptLanguage = request.getHeader("Accept-Language");
+
+        long visitorCount = visitorService.incrementAndGetVisitorCount(ip, path, method, userAgent, referer, acceptLanguage);
         long loginCount = loginService.getTotalLoginCount();
         model.addAttribute("visitorCount", visitorCount);
         model.addAttribute("loginCount", loginCount);
@@ -104,6 +111,22 @@ public class HelloController {
         food.setRice(this.meat);
 
         return food;
+    }
+
+    private static String getClientIp(HttpServletRequest request) {
+        String xff = request.getHeader("X-Forwarded-For");
+        if (xff != null && !xff.isBlank()) {
+            // XFF may contain a chain: client, proxy1, proxy2 ...
+            String first = xff.split(",")[0].trim();
+            if (!first.isEmpty()) return first;
+        }
+
+        String xRealIp = request.getHeader("X-Real-IP");
+        if (xRealIp != null && !xRealIp.isBlank()) {
+            return xRealIp.trim();
+        }
+
+        return request.getRemoteAddr();
     }
 
     @RequestMapping("/upload")

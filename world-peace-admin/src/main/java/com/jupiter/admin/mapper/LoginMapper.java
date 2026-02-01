@@ -19,6 +19,14 @@ public interface LoginMapper {
 
     Long getVisitorCount();
 
+    int insertVisitLog(@Param("ip") String ip,
+                       @Param("path") String path,
+                       @Param("method") String method,
+                       @Param("userAgent") String userAgent,
+                       @Param("browser") String browser,
+                       @Param("referer") String referer,
+                       @Param("acceptLanguage") String acceptLanguage);
+
     int insertUser(@Param("username") String username, @Param("password") String password);
 
     boolean existsByUsername(@Param("username") String username);
