@@ -17,3 +17,8 @@ mail.properties
 cert-world-peace.json
 application-local.yml # local development有key的配置，避免泄露
 .env
+.project
+.classpath
+org.eclipse.core.*.*
+org.eclipse.jdt.*.*
+org.eclipse.m2e.*.*
