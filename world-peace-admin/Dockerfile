@@ -4,7 +4,7 @@ RUN mkdir -p $APPS_HOME
 USER root
 WORKDIR $APPS_HOME
 VOLUME $APPS_HOME
-ADD ./target/world-peace-admin-1.2.jar $APPS_HOME/world-peace-admin.jar
+ADD ./target/world-peace-admin-2.0.jar $APPS_HOME/world-peace-admin.jar
 EXPOSE 8090
 ENTRYPOINT ["java","-jar","/apps/world-peace-admin.jar"]
 MAINTAINER Jupiter

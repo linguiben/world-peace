@@ -8,6 +8,7 @@ logs/*
 *.textClipping
 **/target/
 .aider*
+.DS_Store
 
 #Ingore the sensitive files, prerequisite is that the version repository has not been added
 c3p0-config.xml
