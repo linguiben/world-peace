@@ -40,6 +40,11 @@
         SELECT COALESCE(visit_count, 0) FROM wp_visitor_stats WHERE id = 1
     </select>
 
+    <insert id="insertVisitLog">
+        INSERT INTO wp_visit_log (ip, path, method, user_agent, browser, referer, accept_language, created_at)
+        VALUES (#{ip}, #{path}, #{method}, #{userAgent}, #{browser}, #{referer}, #{acceptLanguage}, NOW())
+    </insert>
+
     <insert id="insertUser">
         INSERT INTO wp_user (username, password, created_at, login_count)
         VALUES (#{username}, #{password}, NOW(), 0)

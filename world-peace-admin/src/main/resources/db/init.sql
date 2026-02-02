@@ -19,6 +19,23 @@ CREATE TABLE IF NOT EXISTS wp_visitor_stats (
     last_visit TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Visitor access log table (for analytics / auditing)
+-- Stores raw user agent + derived browser name, visitor ip, and requested path.
+CREATE TABLE IF NOT EXISTS wp_visit_log (
+    id BIGSERIAL PRIMARY KEY,
+    ip VARCHAR(64),
+    path VARCHAR(512),
+    method VARCHAR(16),
+    user_agent TEXT,
+    browser VARCHAR(64),
+    referer VARCHAR(512),
+    accept_language VARCHAR(128),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_wp_visit_log_created_at ON wp_visit_log(created_at);
+CREATE INDEX IF NOT EXISTS idx_wp_visit_log_ip ON wp_visit_log(ip);
+
 -- Create index for faster username lookup
 CREATE INDEX IF NOT EXISTS idx_wp_user_username ON wp_user(username);
 
