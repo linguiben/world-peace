@@ -19,7 +19,7 @@ services:
     ports:
       - "8090:8090"
     volumes:
-      - ${PERSIST_PATH}/wpadmin/world-peace-admin.jar:/apps/world-peace-admin.jar
+      #- ${PERSIST_PATH}/wpadmin/world-peace-admin.jar:/apps/world-peace-admin.jar
       - ${PERSIST_PATH}/wpadmin/logs:/apps/logs
       - ${PERSIST_PATH}/wpadmin/data:/apps/data
     networks:
