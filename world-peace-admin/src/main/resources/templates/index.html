@@ -127,8 +127,8 @@
             
             <form id="registerForm" class="auth-form" onsubmit="handleRegister(event)">
                 <div class="form-group">
-                    <label for="regUsername">Username</label>
-                    <input type="text" id="regUsername" name="username" required placeholder="Choose a username" minlength="3" maxlength="50">
+                    <label for="regUsername">Email</label>
+                    <input type="email" id="regUsername" name="username" required placeholder="you@example.com" minlength="3" maxlength="50">
                 </div>
                 <div class="form-group">
                     <label for="regPassword">Password</label>
@@ -236,7 +236,16 @@
             
             const password = document.getElementById('regPassword').value;
             const confirmPassword = document.getElementById('regConfirmPassword').value;
-            
+            const emailEl = document.getElementById('regUsername');
+            const email = emailEl.value.trim();
+
+            // Client-side: ensure email format
+            if (!emailEl.checkValidity()) {
+                errorDiv.textContent = 'Please enter a valid email address.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
             if (password !== confirmPassword) {
                 errorDiv.textContent = 'Passwords do not match.';
                 errorDiv.style.display = 'block';

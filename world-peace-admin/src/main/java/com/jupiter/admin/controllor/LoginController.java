@@ -14,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Controller
@@ -23,6 +24,9 @@ public class LoginController {
     private final LoginService loginService;
 
     public static final String SESSION_USER_KEY = "currentUser";
+
+    // simple RFC-ish email regex (good for validation without heavy deps)
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$", Pattern.CASE_INSENSITIVE);
 
     @PostMapping("/login")
     @ResponseBody
@@ -98,19 +102,27 @@ public class LoginController {
             return result;
         }
 
+        // Enforce email format for usernames
+        String trimmed = username.trim();
+        if (!EMAIL_PATTERN.matcher(trimmed).matches()) {
+            result.put("success", false);
+            result.put("message", "用户名必须为有效的邮箱地址");
+            return result;
+        }
+
         if (password == null || password.length() < 6) {
             result.put("success", false);
             result.put("message", "密码至少需要6个字符");
             return result;
         }
 
-        if (loginService.existsByUsername(username.trim())) {
+        if (loginService.existsByUsername(trimmed)) {
             result.put("success", false);
             result.put("message", "用户名已存在");
             return result;
         }
 
-        boolean success = loginService.register(username.trim(), password);
+        boolean success = loginService.register(trimmed, password);
 
         if (success) {
             result.put("success", true);

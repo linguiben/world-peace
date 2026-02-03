@@ -10,9 +10,14 @@ services:
       - TZ=Asia/Shanghai
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - /opt/docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /opt/docker/nginx/html:/usr/share/nginx/html:ro  # 可选
+      # Let's Encrypt: ACME challenge folder used by certbot
+      - /opt/docker/nginx/certbot/www:/var/www/certbot:rw
+      # Let's Encrypt live certs (ensure this is populated by certbot process)
+      - /etc/letsencrypt:/etc/letsencrypt:ro
 #    depends_on:
 #      - java-app
     networks:
