@@ -87,6 +87,7 @@ public class LoginController {
     @PostMapping("/register")
     @ResponseBody
     public Map<String, Object> register(@RequestParam String username,
+                                         @RequestParam String nickname,
                                          @RequestParam String password) {
         Map<String, Object> result = new HashMap<>();
 
@@ -106,7 +107,19 @@ public class LoginController {
         String trimmed = username.trim();
         if (!EMAIL_PATTERN.matcher(trimmed).matches()) {
             result.put("success", false);
-            result.put("message", "用户名必须为有效的邮箱地址");
+            result.put("message", "请输入合法的Email地址");
+            return result;
+        }
+
+        String nicknameTrimmed = nickname == null ? "" : nickname.trim();
+        if (nicknameTrimmed.length() < 2) {
+            result.put("success", false);
+            result.put("message", "昵称至少需要2个字符");
+            return result;
+        }
+        if (nicknameTrimmed.length() > 30) {
+            result.put("success", false);
+            result.put("message", "昵称不能超过30个字符");
             return result;
         }
 
@@ -122,7 +135,7 @@ public class LoginController {
             return result;
         }
 
-        boolean success = loginService.register(trimmed, password);
+        boolean success = loginService.register(trimmed, nicknameTrimmed, password);
 
         if (success) {
             result.put("success", true);

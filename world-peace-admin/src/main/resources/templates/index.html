@@ -8,7 +8,7 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/common.css" />
 </head>
-<body>
+<body th:data-logged-in="${loggedIn}">
 
     <nav class="navbar">
         <div class="logo">JupiterSo</div>
@@ -19,7 +19,7 @@
             </div>
             
             <div th:if="${loggedIn}" class="user-info" style="font-size: 0.9rem; color: var(--text);">
-                <span>Welcome, <strong th:text="${currentUser.username}">User</strong></span>
+                <span>Welcome, <strong th:text="${currentUser.nickname != null && !#strings.isEmpty(currentUser.nickname) ? currentUser.nickname : currentUser.username}">User</strong></span>
                 <a href="/logout" style="margin-left: 1rem; color: var(--text-muted); font-size: 0.85rem;">Logout</a>
             </div>
             
@@ -51,8 +51,8 @@
                 <p>后台管理</p>
             </a>
             
-            <a href="/test" target="_blank" class="service-card">
-                <h3>File Upload</h3>
+            <a href="#" onclick="openCloudSpace(event)" class="service-card">
+                <h3>免费云空间</h3>
                 <p>Storage Service</p>
             </a>
             
@@ -66,9 +66,9 @@
                 <p>CI/CD Platform</p>
             </a>
             
-            <a href="/pyda" class="service-card">
-                <h3>Python Quiz</h3>
-                <p>大数据分析刷题</p>
+            <a href="/guestbook" class="service-card">
+                <h3>留言板</h3>
+                <p>写下你的建议与想法</p>
             </a>
             
              <a href="/pyda2" class="service-card">
@@ -131,6 +131,10 @@
                     <input type="email" id="regUsername" name="username" required placeholder="you@example.com" minlength="3" maxlength="50">
                 </div>
                 <div class="form-group">
+                    <label for="regNickname">Nickname</label>
+                    <input type="text" id="regNickname" name="nickname" required placeholder="Your nickname" minlength="2" maxlength="30">
+                </div>
+                <div class="form-group">
                     <label for="regPassword">Password</label>
                     <input type="password" id="regPassword" name="password" required placeholder="Choose a password" minlength="6">
                 </div>
@@ -145,7 +149,34 @@
         </div>
     </div>
 
+    <div id="cloudLoginModal" class="modal-overlay">
+        <div class="modal" style="max-width: 360px; text-align: center;">
+            <button class="close-modal" onclick="closeCloudLoginModal()">&times;</button>
+            <h3 style="margin-bottom: 0.5rem;">Please login</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.25rem;">Login required to access Free Cloud Space.</p>
+            <button class="btn-primary" onclick="openAuthModal(); closeCloudLoginModal();">Login</button>
+        </div>
+    </div>
+
     <script>
+        function openCloudSpace(e) {
+            if (e) e.preventDefault();
+            const loggedIn = document.body.getAttribute('data-logged-in') === 'true';
+            if (!loggedIn) {
+                openCloudLoginModal();
+                return;
+            }
+            window.open('/test', '_blank');
+        }
+
+        function openCloudLoginModal() {
+            document.getElementById('cloudLoginModal').classList.add('active');
+        }
+
+        function closeCloudLoginModal() {
+            document.getElementById('cloudLoginModal').classList.remove('active');
+        }
+
         function openAuthModal() {
             document.getElementById('authModal').classList.add('active');
             document.getElementById('loginUsername').focus();
@@ -185,10 +216,16 @@
         document.getElementById('authModal').addEventListener('click', function(e) {
             if (e.target === this) closeAuthModal();
         });
+        document.getElementById('cloudLoginModal').addEventListener('click', function(e) {
+            if (e.target === this) closeCloudLoginModal();
+        });
 
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape' && document.getElementById('authModal').classList.contains('active')) {
                 closeAuthModal();
+            }
+            if (e.key === 'Escape' && document.getElementById('cloudLoginModal').classList.contains('active')) {
+                closeCloudLoginModal();
             }
         });
 
@@ -241,7 +278,7 @@
 
             // Client-side: ensure email format
             if (!emailEl.checkValidity()) {
-                errorDiv.textContent = 'Please enter a valid email address.';
+                errorDiv.textContent = '请输入合法的Email地址';
                 errorDiv.style.display = 'block';
                 return;
             }

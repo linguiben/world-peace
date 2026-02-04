@@ -27,7 +27,9 @@ public interface LoginMapper {
                        @Param("referer") String referer,
                        @Param("acceptLanguage") String acceptLanguage);
 
-    int insertUser(@Param("username") String username, @Param("password") String password);
+    int insertUser(@Param("username") String username,
+                   @Param("nickname") String nickname,
+                   @Param("password") String password);
 
     boolean existsByUsername(@Param("username") String username);
 }

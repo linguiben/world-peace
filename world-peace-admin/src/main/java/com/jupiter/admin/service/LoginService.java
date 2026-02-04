@@ -71,12 +71,12 @@ public class LoginService {
         }
     }
 
-    public boolean register(String username, String password) {
+    public boolean register(String username, String nickname, String password) {
         try {
             if (loginMapper.existsByUsername(username)) {
                 return false;
             }
-            int rows = loginMapper.insertUser(username, password);
+            int rows = loginMapper.insertUser(username, nickname, password);
             dbAvailable = true;
             log.info("New user registered: {}", username);
             return rows > 0;

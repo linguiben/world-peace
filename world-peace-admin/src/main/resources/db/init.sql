@@ -6,6 +6,7 @@
 CREATE TABLE IF NOT EXISTS wp_user (
     id BIGSERIAL PRIMARY KEY,
     username VARCHAR(100) NOT NULL UNIQUE,
+    nickname VARCHAR(100),
     password VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login_at TIMESTAMP,
@@ -46,3 +47,16 @@ ON CONFLICT (id) DO NOTHING;
 
 -- Example: Insert a test user (password should be hashed in production)
 -- INSERT INTO wp_user (username, password) VALUES ('admin', 'admin123');
+
+CREATE TABLE IF NOT EXISTS wp_guestbook_message (
+      id SERIAL PRIMARY KEY,
+      username VARCHAR(100) NOT NULL,
+      content TEXT NOT NULL,
+      ip VARCHAR(64),
+      created_at TIMESTAMP NOT NULL DEFAULT NOW()
+  );
+CREATE INDEX IF NOT EXISTS idx_wp_guestbook_message_created_at ON wp_guestbook_message(created_at);
+CREATE INDEX IF NOT EXISTS idx_wp_guestbook_message_username ON wp_guestbook_message(username);
+
+  ALTER TABLE wp_user ADD COLUMN IF NOT EXISTS nickname VARCHAR(100);
+  UPDATE wp_user SET nickname = username WHERE nickname IS NULL;

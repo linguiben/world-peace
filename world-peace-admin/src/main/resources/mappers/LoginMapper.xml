@@ -4,14 +4,14 @@
 <mapper namespace="com.jupiter.admin.mapper.LoginMapper">
 
     <select id="findByUsername" parameterType="String" resultType="com.jupiter.admin.entity.WpUser">
-        SELECT id, username, password, created_at, last_login_at, login_count
+        SELECT id, username, nickname, password, created_at, last_login_at, login_count
         FROM wp_user
         WHERE username = #{username}
         LIMIT 1
     </select>
 
     <select id="checkUser" resultType="com.jupiter.admin.entity.WpUser">
-        SELECT id, username, password, created_at, last_login_at, login_count
+        SELECT id, username, nickname, password, created_at, last_login_at, login_count
         FROM wp_user
         WHERE username = #{username} AND password = #{password}
         LIMIT 1
@@ -46,8 +46,8 @@
     </insert>
 
     <insert id="insertUser">
-        INSERT INTO wp_user (username, password, created_at, login_count)
-        VALUES (#{username}, #{password}, NOW(), 0)
+        INSERT INTO wp_user (username, nickname, password, created_at, login_count)
+        VALUES (#{username}, #{nickname}, #{password}, NOW(), 0)
     </insert>
 
     <select id="existsByUsername" parameterType="String" resultType="boolean">
