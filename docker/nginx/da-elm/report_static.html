@@ -1,0 +1,2446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>饿了么推荐系统数据分析报告 - 业务洞察仪表盘</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+<style>
+    :root {
+        font-size: 14px;
+        --primary-color: #0091ff;
+        --success-color: #52c41a;
+        --warning-color: #faad14;
+        --danger-color: #f5222d;
+        --border-color: #e8e8e8;
+    }
+    
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #333;
+        line-height: 1.6;
+        padding: 1rem;
+        min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    
+    .header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        text-align: center;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+    }
+    
+    .header p {
+        font-size: 1rem;
+        opacity: 0.95;
+        margin-bottom: 0.3rem;
+    }
+    
+    .metrics-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .metric-card {
+        background: white;
+        padding: 1.2rem;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        text-align: center;
+        transition: transform 0.2s;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.3rem;
+    }
+    
+    .metric-change {
+        font-size: 0.85rem;
+        color: var(--success-color);
+    }
+
+    .explain-note {
+        margin-top: 0.4rem;
+        padding: 0.55rem 0.75rem;
+        border-left: 3px solid #91d5ff;
+        background: #f6fbff;
+        border-radius: 6px;
+        color: #4a5a6a;
+        font-size: 0.84rem;
+    }
+
+    .effect-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 0.8rem;
+        margin-top: 0.8rem;
+    }
+
+    .effect-kpi-card {
+        border: 1px solid #d9e8ff;
+        background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+        border-radius: 10px;
+        padding: 0.9rem 1rem;
+    }
+
+    .effect-kpi-label {
+        font-size: 0.85rem;
+        color: #5a6b84;
+    }
+
+    .effect-kpi-value {
+        margin-top: 0.2rem;
+        font-size: 1.5rem;
+        line-height: 1.2;
+        font-weight: 700;
+        color: #0050b3;
+    }
+
+    .effect-kpi-formula {
+        margin-top: 0.3rem;
+        font-size: 0.8rem;
+        color: #76859b;
+    }
+    
+    .section {
+        background: white;
+        border-radius: 12px;
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    
+    .section-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.2rem;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid var(--primary-color);
+    }
+    
+    .section-icon {
+        font-size: 1.8rem;
+        margin-right: 0.8rem;
+    }
+    
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+    
+    .section-subtitle {
+        font-size: 0.9rem;
+        color: #666;
+        margin-left: auto;
+    }
+    
+    .chart {
+        height: 420px;
+        width: 100%;
+        margin-top: 1rem;
+    }
+    
+    .chart-small {
+        height: 320px;
+    }
+    
+    .chart-medium {
+        height: 380px;
+    }
+    
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .table-wrapper {
+        max-height: 500px;
+        overflow: auto;
+        margin-top: 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+    }
+
+    .sample-table-wrapper {
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+
+    .sample-data-table {
+        min-width: max-content;
+        table-layout: auto;
+    }
+
+    .sample-data-table th,
+    .sample-data-table td {
+        white-space: nowrap;
+        min-width: 120px;
+    }
+    
+    th, td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    th {
+        background: linear-gradient(to bottom, #fafafa, #f0f0f0);
+        font-weight: 600;
+        color: #333;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+    
+    tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .footer {
+        text-align: center;
+        color: white;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        background: rgba(255,255,255,0.1);
+        border-radius: 8px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .tag {
+        display: inline-block;
+        padding: 0.2rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        font-weight: 500;
+    }
+    
+    .tag-vip {
+        background: #fff7e6;
+        color: #fa8c16;
+        border: 1px solid #ffd591;
+    }
+    
+    .tag-high {
+        background: #f6ffed;
+        color: #52c41a;
+        border: 1px solid #b7eb8f;
+    }
+    
+    .tag-medium {
+        background: #e6f7ff;
+        color: #1890ff;
+        border: 1px solid #91d5ff;
+    }
+    
+    .tag-low {
+        background: #fff1f0;
+        color: #ff4d4f;
+        border: 1px solid #ffccc7;
+    }
+    
+    @media (max-width: 768px) {
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+        .metrics-grid {
+            grid-template-columns: 1fr;
+        }
+        .header h1 {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 页面标题 -->
+    <div class="header">
+        <h1>🍔 饿了么推荐系统数据分析报告</h1>
+        <p>数据来源天池数据集</p>
+        <p style="font-size: 0.85rem; opacity: 0.8;">分析时段: 20220401~20220407 | 数据规模: 0条记录</p>
+    </div>
+    
+    <!-- 核心指标概览 -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-label">总曝光量</div>
+            <div class="metric-value">0</div>
+            <div class="metric-change">📊 全量数据</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">总点击量</div>
+            <div class="metric-value">0</div>
+            <div class="metric-change">✅ 活跃用户响应</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">全局点击率 (CTR)</div>
+            <div class="metric-value">0%</div>
+            <div class="metric-change">📈 行业中位水平</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">转化率 (CVR)</div>
+            <div class="metric-value">0%</div>
+            <div class="metric-change">🎯 推荐精准度指标</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">平均客单价</div>
+            <div class="metric-value">¥0</div>
+            <div class="metric-change">💰 用户消费能力</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">活跃用户数</div>
+            <div class="metric-value">0</div>
+            <div class="metric-change">👥 独立用户访问</div>
+        </div>
+    </div>
+    
+    <!-- 第一部分：用户画像分析 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">👥</span>
+            <h2 class="section-title">用户全景画像与分层运营</h2>
+            <span class="section-subtitle">User Insights · RFM分层模型</span>
+        </div>
+        
+        <div class="two-column">
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">用户价值分层分布</h3>
+                <div id="userSegmentPie" class="chart chart-small"></div>
+            </div>
+            <div>
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">各层级用户平均消费金额</h3>
+                <div id="userValueBar" class="chart chart-small"></div>
+            </div>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">VIP用户价值对比（消费类指标）</h3>
+        <p class="explain-note">本图仅展示消费价值指标：平均客单价、30天下单次数。点击/转化相关指标已移至下方“行为覆盖率”和“全局效果指标”。</p>
+        <div id="vipComparison" class="chart chart-medium"></div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">平均客单价对比分析 – 基于性别</h3>
+        <div id="genderComparison" class="chart chart-medium"></div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">全局效果指标（曝光口径）</h3>
+        <div class="effect-kpi-grid">
+            <div class="effect-kpi-card">
+                <div class="effect-kpi-label">全局点击率 CTR</div>
+                <div id="globalCtrValue" class="effect-kpi-value">--</div>
+                <div id="globalCtrFormula" class="effect-kpi-formula">口径：总点击量 / 总曝光量</div>
+            </div>
+            <div class="effect-kpi-card">
+                <div class="effect-kpi-label">全局转化率 CVR</div>
+                <div id="globalCvrValue" class="effect-kpi-value">--</div>
+                <div id="globalCvrFormula" class="effect-kpi-formula">口径：sum(ord_30) / sum(ctr_30)</div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">各层用户30天行为覆盖率（用户口径）</h3>
+        <p class="explain-note">说明：该图不是曝光CTR/CVR，统计的是“该层用户中，30天内至少有一次点击/下单”的用户占比。</p>
+        <div id="segmentConversion" class="chart chart-medium"></div>
+    </div>
+    
+    <!-- 第二部分:行为分析 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">📊</span>
+            <h2 class="section-title">用户行为决策分析</h2>
+            <span class="section-subtitle">Behavioral Insights · 时间与转化分析</span>
+        </div>
+        
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #555;">24小时点击量与下单量趋势对比（按用户等级）</h3>
+        
+        <!-- 用户等级Tab切换 -->
+        <div class="segment-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <button class="segment-tab active" data-segment="super_vip" style="padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: var(--primary-color); color: white; border-radius: 6px; cursor: pointer; font-weight: 500;">👑 超级VIP</button>
+            <button class="segment-tab" data-segment="potential" style="padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: white; color: var(--primary-color); border-radius: 6px; cursor: pointer; font-weight: 500;">⭐ 潜力优质</button>
+            <button class="segment-tab" data-segment="active" style="padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: white; color: var(--primary-color); border-radius: 6px; cursor: pointer; font-weight: 500;">🔥 大众活跃</button>
+            <button class="segment-tab" data-segment="normal" style="padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: white; color: var(--primary-color); border-radius: 6px; cursor: pointer; font-weight: 500;">📦 一般用户</button>
+            <button class="segment-tab" data-segment="churn" style="padding: 0.5rem 1rem; border: 2px solid var(--primary-color); background: white; color: var(--primary-color); border-radius: 6px; cursor: pointer; font-weight: 500;">⚠️ 流失风险</button>
+        </div>
+        
+        <!-- 5张24小时趋势图容器 -->
+        <div id="hourlyTrend_super_vip" class="chart hourly-segment-chart" style="display: block;"></div>
+        <div id="hourlyTrend_potential" class="chart hourly-segment-chart" style="display: none;"></div>
+        <div id="hourlyTrend_active" class="chart hourly-segment-chart" style="display: none;"></div>
+        <div id="hourlyTrend_normal" class="chart hourly-segment-chart" style="display: none;"></div>
+        <div id="hourlyTrend_churn" class="chart hourly-segment-chart" style="display: none;"></div>
+        
+        <h3 style="font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: #555;">工作日 vs 非工作日行为对比</h3>
+        <div id="weekdayComparison" class="chart chart-medium"></div>
+    </div>
+    
+    <!-- 第四部分:数据明细表 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">📋</span>
+            <h2 class="section-title">核心数据明细表</h2>
+            <span class="section-subtitle">Data Summary · 关键指标汇总</span>
+        </div>
+        
+        <div class="table-wrapper">
+            <table id="summaryTable">
+                <thead>
+                    <tr>
+                        <th>分析维度</th>
+                        <th>指标名称</th>
+                        <th>数值</th>
+                        <th>对比基准</th>
+                        <th>评级</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 第五部分:原始数据样例 -->
+    <div class="section">
+        <div class="section-header">
+            <span class="section-icon">🔬</span>
+            <h2 class="section-title">原始数据样例</h2>
+            <span class="section-subtitle">Data Samples · 查看数据结构</span>
+        </div>
+        
+        <p style="color: #666; margin-bottom: 1rem;">以下展示10条真实样例数据，方便查看数据结构和字段内容：</p>
+        
+        <div class="table-wrapper sample-table-wrapper">
+            <table id="sampleDataTable" class="sample-data-table">
+                <thead>
+                    <tr id="sampleDataHeadRow"></tr>
+                </thead>
+                <tbody id="sampleDataBody"></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 页脚 -->
+    <div class="footer">
+        <p>© 2026 饿了么推荐系统数据分析项目 | 数据来源天池数据集</p>
+        <p style="font-size: 0.85rem; margin-top: 0.5rem; opacity: 0.9;">
+            技术栈: Python 3.12 · Pandas · NumPy · Matplotlib · ECharts
+        </p>
+        <p style="font-size: 0.85rem; margin-top: 0.4rem; opacity: 0.95;">
+            <a href="https://gitee.com/linguiben/da-elm#%E8%AE%B8%E5%8F%AF%E5%A3%B0%E6%98%8E" target="_blank" rel="noopener noreferrer" style="color: #fff; text-decoration: underline;">许可声明</a>
+        </p>
+    </div>
+</div>
+
+<script>
+
+// ========== 数据定义 (Generated Static) ==========
+
+// 核心指标
+const metricsData = {
+  "total_impressions_raw": 15491370,
+  "total_impressions": 15.49,
+  "total_impressions_unit": "M",
+  "total_clicks": 276011.0,
+  "total_clicks_unit": "",
+  "global_ctr": 1.78,
+  "global_cvr": 11.46,
+  "avg_price": 44.51,
+  "sum_avg_price": 689500486.27,
+  "total_orders_30": 151402214.0,
+  "total_clicks_30": 1321029600.0,
+  "active_users": 9.56,
+  "active_users_unit": "M"
+};
+
+// 用户分层数据
+const userSegmentData = [
+  {
+    "name": "💎 潜力优质用户",
+    "value": 46.93,
+    "color": "#1890ff"
+  },
+  {
+    "name": "💰 大众活跃用户",
+    "value": 35.01,
+    "color": "#52c41a"
+  },
+  {
+    "name": "👤 一般用户",
+    "value": 8.66,
+    "color": "#8c8c8c"
+  },
+  {
+    "name": "👑 超级VIP用户",
+    "value": 6.97,
+    "color": "#faad14"
+  },
+  {
+    "name": "🔄 流失风险用户",
+    "value": 2.43,
+    "color": "#f5222d"
+  }
+];
+const userValueData = {
+  "categories": [
+    "超级VIP用户",
+    "潜力优质用户",
+    "大众活跃用户",
+    "一般用户",
+    "流失风险用户"
+  ],
+  "values": [
+    1658.05,
+    668.85,
+    156.42,
+    75.93,
+    0.65
+  ]
+};
+const vipData = {
+  "categories": [
+    "点击率(%)",
+    "转化率(%)",
+    "平均客单价(元)",
+    "30天下单次数"
+  ],
+  "vip": [
+    100.0,
+    100.0,
+    962.67,
+    259.35
+  ],
+  "normal": [
+    93.91,
+    84.75,
+    52.43,
+    8.06
+  ],
+  "unknown": [
+    -0.0,
+    -0.0,
+    49.23,
+    0.0
+  ]
+};
+const cityData = [
+  {
+    "name": "City_0",
+    "value": 97823
+  },
+  {
+    "name": "深圳",
+    "value": 71651
+  },
+  {
+    "name": "北京",
+    "value": 57692
+  },
+  {
+    "name": "City_8",
+    "value": 36700
+  },
+  {
+    "name": "City_4",
+    "value": 36564
+  },
+  {
+    "name": "上海",
+    "value": 36160
+  },
+  {
+    "name": "杭州",
+    "value": 31239
+  },
+  {
+    "name": "City_16",
+    "value": 30815
+  },
+  {
+    "name": "City_30",
+    "value": 30308
+  },
+  {
+    "name": "City_11",
+    "value": 30261
+  },
+  {
+    "name": "City_21",
+    "value": 27922
+  },
+  {
+    "name": "City_5",
+    "value": 27855
+  },
+  {
+    "name": "City_14",
+    "value": 26012
+  },
+  {
+    "name": "City_13",
+    "value": 24443
+  },
+  {
+    "name": "武汉",
+    "value": 23646
+  },
+  {
+    "name": "City_9",
+    "value": 21870
+  },
+  {
+    "name": "City_44",
+    "value": 21860
+  },
+  {
+    "name": "City_18",
+    "value": 21479
+  },
+  {
+    "name": "City_28",
+    "value": 19400
+  },
+  {
+    "name": "City_102",
+    "value": 18627
+  }
+];
+const genderComparisonData = {
+  "categories": [
+    "超级VIP",
+    "潜力优质",
+    "大众活跃",
+    "一般用户",
+    "流失风险"
+  ],
+  "male": [
+    80.65,
+    48.12,
+    36.29,
+    29.71,
+    0.31
+  ],
+  "female": [
+    81.89,
+    49.3,
+    35.68,
+    28.35,
+    0.39
+  ],
+  "unknown": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ]
+};
+const segmentConversionData = {
+  "categories": [
+    "超级VIP",
+    "潜力优质",
+    "大众活跃",
+    "一般用户",
+    "流失风险"
+  ],
+  "click_rate": [
+    100.0,
+    99.95,
+    89.39,
+    74.34,
+    48.89
+  ],
+  "conversion_rate": [
+    100.0,
+    99.91,
+    82.8,
+    62.26,
+    0.0
+  ]
+};
+
+// 商品数据
+const productData = {
+  "items": [
+    "Item_319d98",
+    "Item_ad8ff6",
+    "Item_1af6b0",
+    "Item_aaedfa",
+    "Item_497dd9",
+    "Item_4d2c81",
+    "Item_6f4573",
+    "Item_f3534d",
+    "Item_06e53d",
+    "Item_38545c",
+    "Item_96fdda",
+    "Item_f85064",
+    "Item_b868f7",
+    "Item_f23b0f",
+    "Item_b4f6d1",
+    "Item_0a2617",
+    "Item_d56486",
+    "Item_7858f5",
+    "Item_b162a9",
+    "Item_b95fca",
+    "Item_322ee9",
+    "Item_aebce0",
+    "Item_ceb82b",
+    "Item_29706e",
+    "Item_3a00ef",
+    "Item_466e6a",
+    "Item_c574f4",
+    "Item_73f43e",
+    "Item_32dd8b",
+    "Item_236dab"
+  ],
+  "clicks": [
+    72,
+    64,
+    64,
+    64,
+    48,
+    36,
+    36,
+    36,
+    24,
+    22,
+    21,
+    21,
+    19,
+    17,
+    17,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    16,
+    15,
+    15,
+    15
+  ],
+  "ctr": [
+    2.38,
+    50.0,
+    14.29,
+    100.0,
+    1.4,
+    100.0,
+    20.0,
+    50.0,
+    2.26,
+    2.54,
+    3.67,
+    2.35,
+    2.0,
+    3.74,
+    4.63,
+    100.0,
+    50.0,
+    6.67,
+    33.33,
+    50.0,
+    9.09,
+    50.0,
+    25.0,
+    25.0,
+    100.0,
+    100.0,
+    100.0,
+    5.95,
+    3.31,
+    3.13
+  ]
+};
+const categoryData = [
+  {
+    "name": "快餐简餐",
+    "value": 16806
+  },
+  {
+    "name": "Cat_1210",
+    "value": 10525
+  },
+  {
+    "name": "Cat_1071",
+    "value": 4832
+  },
+  {
+    "name": "Cat_1106",
+    "value": 2128
+  },
+  {
+    "name": "地方菜系",
+    "value": 1626
+  },
+  {
+    "name": "甜品饮品",
+    "value": 1274
+  },
+  {
+    "name": "Cat_1087",
+    "value": 1121
+  }
+];
+const priceData = {
+  "ranges": [
+    "<20元",
+    "20-40元",
+    "40-60元",
+    "60-80元",
+    ">80元"
+  ],
+  "clicks": [
+    1.55,
+    1.84,
+    1.78,
+    1.64,
+    1.66
+  ],
+  "conversion": [
+    18.53,
+    17.79,
+    15.92,
+    17.66,
+    16.63
+  ]
+};
+const rankData = {
+  "positions": [
+    "TOP 1-5",
+    "TOP 6-10",
+    "TOP 11-20",
+    "TOP 21-50",
+    "TOP 51-100",
+    "100+"
+  ],
+  "ctr": [
+    1.82,
+    1.69,
+    1.62,
+    1.47,
+    1.69,
+    0.0
+  ],
+  "impressions": [
+    1.55,
+    0.23,
+    0.1,
+    0.03,
+    0.0,
+    0.0
+  ]
+};
+
+// 行为数据
+const hourlyData = {
+  "hours": [
+    "0:00",
+    "1:00",
+    "2:00",
+    "3:00",
+    "4:00",
+    "5:00",
+    "6:00",
+    "7:00",
+    "8:00",
+    "9:00",
+    "10:00",
+    "11:00",
+    "12:00",
+    "13:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00",
+    "18:00",
+    "19:00",
+    "20:00",
+    "21:00",
+    "22:00",
+    "23:00"
+  ],
+  "clicks": [
+    5972,
+    8230,
+    18920,
+    31886,
+    21235,
+    13470,
+    10417,
+    11878,
+    15673,
+    24075,
+    24179,
+    18144,
+    14594,
+    15773,
+    13408,
+    9601,
+    6037,
+    3340,
+    1993,
+    1212,
+    808,
+    897,
+    1431,
+    2838
+  ],
+  "orders": [
+    994,
+    1372,
+    3156,
+    5321,
+    3543,
+    2245,
+    1735,
+    1981,
+    2615,
+    4019,
+    4035,
+    3027,
+    2434,
+    2631,
+    2234,
+    1598,
+    1004,
+    553,
+    329,
+    200,
+    131,
+    145,
+    237,
+    471
+  ]
+};
+const weekdayData = {
+  "metrics": [
+    "点击数(千)",
+    "订单数(千)",
+    "平均客单价(元)",
+    "CTR(%)"
+  ],
+  "weekday": [
+    204.0,
+    34.1,
+    44.5,
+    1.8
+  ],
+  "weekend": [
+    72.1,
+    12.0,
+    44.5,
+    1.8
+  ]
+};
+const funnelData = [
+  {
+    "name": "曝光",
+    "value": 2170299
+  },
+  {
+    "name": "点击",
+    "value": 38582
+  },
+  {
+    "name": "加购",
+    "value": 15432
+  },
+  {
+    "name": "下单",
+    "value": 6587
+  }
+];
+const timeCategoryData = {
+  "times": [
+    "早餐(6-9)",
+    "午餐(11-13)",
+    "下午茶(14-16)",
+    "晚餐(17-20)",
+    "夜宵(21-24)"
+  ],
+  "categories": [
+    "快餐简餐",
+    "Cat_1210",
+    "Cat_1071",
+    "Cat_1106",
+    "地方菜系"
+  ],
+  "data": [
+    [
+      35.7,
+      25.4,
+      15.8,
+      9.8,
+      3.4
+    ],
+    [
+      38.1,
+      27.8,
+      15.1,
+      3.7,
+      6.9
+    ],
+    [
+      38.4,
+      22.3,
+      19.5,
+      1.6,
+      10.2
+    ],
+    [
+      39.6,
+      18.7,
+      22.1,
+      1.1,
+      12.9
+    ],
+    [
+      52.2,
+      26.2,
+      8.4,
+      4.8,
+      1.6
+    ]
+  ]
+};
+const hourlyBySegmentData = {
+  "active": {
+    "hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "clicks": [
+      2262,
+      3241,
+      7076,
+      11685,
+      8122,
+      5279,
+      4345,
+      4951,
+      6287,
+      8844,
+      8531,
+      6600,
+      5734,
+      6049,
+      5035,
+      3564,
+      2052,
+      1045,
+      578,
+      336,
+      218,
+      236,
+      441,
+      1002
+    ],
+    "orders": [
+      374,
+      539,
+      1178,
+      1948,
+      1354,
+      878,
+      723,
+      824,
+      1048,
+      1474,
+      1421,
+      1098,
+      955,
+      1007,
+      836,
+      591,
+      338,
+      171,
+      93,
+      51,
+      34,
+      36,
+      69,
+      163
+    ]
+  },
+  "potential": {
+    "hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "clicks": [
+      2746,
+      3791,
+      9448,
+      16258,
+      10407,
+      6370,
+      4445,
+      5018,
+      7030,
+      11749,
+      12173,
+      8893,
+      6584,
+      7206,
+      6336,
+      4588,
+      3045,
+      1789,
+      1079,
+      668,
+      450,
+      509,
+      766,
+      1357
+    ],
+    "orders": [
+      456,
+      631,
+      1575,
+      2714,
+      1734,
+      1060,
+      737,
+      835,
+      1171,
+      1957,
+      2030,
+      1482,
+      1096,
+      1200,
+      1053,
+      762,
+      506,
+      295,
+      177,
+      108,
+      72,
+      81,
+      125,
+      224
+    ]
+  },
+  "super_vip": {
+    "hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "clicks": [
+      464,
+      544,
+      1208,
+      1989,
+      1285,
+      815,
+      722,
+      860,
+      1121,
+      1889,
+      1914,
+      1402,
+      1019,
+      1183,
+      1062,
+      774,
+      512,
+      286,
+      226,
+      132,
+      100,
+      97,
+      141,
+      262
+    ],
+    "orders": [
+      74,
+      86,
+      198,
+      329,
+      211,
+      131,
+      116,
+      139,
+      184,
+      312,
+      315,
+      231,
+      167,
+      194,
+      173,
+      126,
+      83,
+      45,
+      35,
+      20,
+      14,
+      11,
+      19,
+      39
+    ]
+  },
+  "churn": {
+    "hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "clicks": [
+      97,
+      123,
+      239,
+      408,
+      275,
+      224,
+      191,
+      232,
+      221,
+      321,
+      324,
+      248,
+      258,
+      319,
+      220,
+      149,
+      125,
+      57,
+      30,
+      17,
+      8,
+      18,
+      20,
+      43
+    ],
+    "orders": [
+      12,
+      17,
+      36,
+      65,
+      42,
+      34,
+      29,
+      35,
+      34,
+      51,
+      51,
+      37,
+      38,
+      50,
+      33,
+      21,
+      18,
+      5,
+      2,
+      0,
+      0,
+      0,
+      0,
+      4
+    ]
+  },
+  "normal": {
+    "hours": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20,
+      21,
+      22,
+      23
+    ],
+    "clicks": [
+      403,
+      531,
+      949,
+      1546,
+      1146,
+      782,
+      714,
+      817,
+      1014,
+      1272,
+      1237,
+      1001,
+      999,
+      1016,
+      755,
+      526,
+      303,
+      163,
+      80,
+      59,
+      32,
+      37,
+      63,
+      174
+    ],
+    "orders": [
+      65,
+      86,
+      155,
+      254,
+      189,
+      127,
+      116,
+      133,
+      167,
+      209,
+      202,
+      164,
+      164,
+      166,
+      123,
+      86,
+      47,
+      23,
+      10,
+      6,
+      2,
+      3,
+      8,
+      25
+    ]
+  }
+};
+
+// 明细表数据
+const summaryTableData = [
+  {
+    "dimension": "用户分析",
+    "metric": "超级VIP用户占比",
+    "value": "46.93%",
+    "compare": "暂无可比基准",
+    "rating": "高"
+  },
+  {
+    "dimension": "用户分析",
+    "metric": "VIP用户平均客单价",
+    "value": "¥962.67",
+    "compare": "暂无可比基准",
+    "rating": "高"
+  },
+  {
+    "dimension": "行为分析",
+    "metric": "全局点击率(CTR)",
+    "value": "1.78%",
+    "compare": "暂无可比基准",
+    "rating": "中"
+  },
+  {
+    "dimension": "行为分析",
+    "metric": "点击转化率(CVR)",
+    "value": "11.46%",
+    "compare": "暂无可比基准",
+    "rating": "高"
+  },
+  {
+    "dimension": "商品分析",
+    "metric": "TOP30商品点击占比",
+    "value": "0.0%",
+    "compare": "暂无可比基准",
+    "rating": "中"
+  },
+  {
+    "dimension": "商品分析",
+    "metric": "快餐简餐类占比",
+    "value": "43.9%",
+    "compare": "暂无可比基准",
+    "rating": "高"
+  },
+  {
+    "dimension": "行为分析",
+    "metric": "午高峰(11-13点)",
+    "value": "17.58%",
+    "compare": "Top 8",
+    "rating": "低"
+  }
+];
+
+// 样例数据
+const sampleTableData = {
+  "headers": [
+    "label",
+    "user_id",
+    "gender",
+    "visit_city",
+    "avg_price",
+    "is_supervip",
+    "ctr_30",
+    "ord_30",
+    "total_amt_30",
+    "shop_id",
+    "item_id",
+    "city_id",
+    "district_id",
+    "shop_aoi_id",
+    "shop_geohash_6",
+    "shop_geohash_12",
+    "brand_id",
+    "category_1_id",
+    "merge_standard_food_id",
+    "rank_7",
+    "rank_30",
+    "rank_90",
+    "shop_id_list",
+    "item_id_list",
+    "category_1_id_list",
+    "merge_standard_food_id_list",
+    "brand_id_list",
+    "price_list",
+    "shop_aoi_id_list",
+    "shop_geohash6_list",
+    "timediff_list",
+    "hours_list",
+    "time_type_list",
+    "weekdays_list",
+    "times",
+    "hours",
+    "time_type",
+    "weekdays",
+    "geohash12"
+  ],
+  "rows": [
+    [
+      "0",
+      "b6861647595964d66397a0666f796368496a377c02df50386cad75e727d959c3",
+      "2",
+      "7",
+      "48.02761905",
+      "0",
+      "162",
+      "21",
+      "1008.58",
+      "0eea4bcc96b27c263db8ffda29e245d41664d6f67852285a9364bef93a06d59a",
+      "bcd72b848d1871c7a60e40d3ef166db20d1cb0b176d741ffab71a68019df21a9",
+      "7",
+      "5546",
+      "B001B1IEQ8",
+      "wt3nnu",
+      "wt3nnux9h9vr",
+      "0",
+      "1001",
+      "25516",
+      "1",
+      "1",
+      "1",
+      "3b7486a1ba83e7011cd13172b7c17a48fd141af675b9ac05ac2f4074bb44dd45;3e251a826fb7d9b0429db97486455f44b53311824aa5495783f94148ff520816;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;33221a35a3f048d9ffb635da89e4866822bd9616ae62c9e9253f799150838909;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;fcfaf8bd87f0bac4aaa00a4f6405beebe1d6a2523a12ef75aedc61251c98cc3d;3e251a826fb7d9b0429db97486455f44b53311824aa5495783f94148ff520816;3e251a826fb7d9b0429db97486455f44b53311824aa5495783f94148ff520816;3e251a826fb7d9b0429db97486455f44b53311824aa5495783f94148ff520816;031c840c05930c1c3af1ea9a403b16c4c00e346a855ed2cfe1518acd2ccf580a;031c840c05930c1c3af1ea9a403b16c4c00e346a855ed2cfe1518acd2ccf580a;031c840c05930c1c3af1ea9a403b16c4c00e346a855ed2cfe1518acd2ccf580a;031c840c05930c1c3af1ea9a403b16c4c00e346a855ed2cfe1518acd2ccf580a;031c840c05930c1c3af1ea9a403b16c4c00e346a855ed2cfe1518acd2ccf580a;86efff3a9a5fe5ec190b53d90889b70ce44a22f137649221814090af08e024fa;86efff3a9a5fe5ec190b53d90889b70ce44a22f137649221814090af08e024fa;86efff3a9a5fe5ec190b53d90889b70ce44a22f137649221814090af08e024fa;86efff3a9a5fe5ec190b53d90889b70ce44a22f137649221814090af08e024fa;099a0a2ee21a1515c51d5abd3c7e84bc5592e53e1d0faf4f9cc0a99f8a6d9567;099a0a2ee21a1515c51d5abd3c7e84bc5592e53e1d0faf4f9cc0a99f8a6d9567;afa868a288738561945b3fcaa2f085d030ec727118a830f4a5750a3f0952df72;afa868a288738561945b3fcaa2f085d030ec727118a830f4a5750a3f0952df72;afa868a288738561945b3fcaa2f085d030ec727118a830f4a5750a3f0952df72;afa868a288738561945b3fcaa2f085d030ec727118a830f4a5750a3f0952df72;84df7182f1cbf9079dbb0aa40944c32b78ac904698f2f9b97cedce4c3ae628a7;84df7182f1cbf9079dbb0aa40944c32b78ac904698f2f9b97cedce4c3ae628a7;84df7182f1cbf9079dbb0aa40944c32b78ac904698f2f9b97cedce4c3ae628a7;6467f755a2baf68eb3cb356b261eca5595f6cb353edd6b01927f3474fcbd9532;4bc54b7fe4271e1a80f1462fe6ee8231136551609b521da910b191eb9f542aa7;da7092619595537e5124895a865c0e64317b9591a3d781dc17460c8c3d836ae7;9af7c6a3f584388079cc7e66a707fcd8081232b45e93e37cec111a5d6ad457c0;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f;f58b9e2b9e501a464d8b59935c69b0e41182f995ca3909d991515ad6c05e6c2f",
+      "b0c6bb19ad2b73df93f242142ef494316334a41a12e58004ab1cccb26d6ce562;901e66f22235bc9b620c69351817bf007e4e9475b5f60cd6c4d8592eb2568c4b;b24ee919823e5a7833da5e2b0133556f34e3544f604cf86b5c33917e951a998f;11b00cc0a6298e858a7b618fbb5ac9faa1f026719e9d6f2510e29000d0d06abd;5505b853a1e4b1e72899b5b42598f62a72742c91fa39118ec033926b37793d33;0c5beb18b3bda7b5e2d6f78d4256cc04475b843fa31695012ff3b12f99a4efe3;ed34d94929687dcae06232361676b3dc7d8881bf5066f9bb9fe157d6c2746135;284cc4326cbd6c9e6a2f47dc8318936210fdb0e1b1ba59a38e97488351d72a61;977d20869e81ab820d370ed27644ec898e20cb768aebd47e3a8522c5e538f472;37a826ae124b0d9bf4e050d09357740c1d69ef73f04cf6eff296c086018fa61d;2b3a0685360ab3047286d711fa31972151f84aaabb4a4205a4f9e199b09e8a81;5faacadcaa786e98865da4c7fe977d8bbf3836cb5519b8bdb831ce034d712b21;688b8a79109eadcf8558224cd38ca4e54a4fbd98f005b9ec05389f5b5a24a64d;65818acf0c1d2ba167d720e4c5fb65bbc3b8ebc61421f6b6b91ea8525b392cdf;688b8a79109eadcf8558224cd38ca4e54a4fbd98f005b9ec05389f5b5a24a64d;5faacadcaa786e98865da4c7fe977d8bbf3836cb5519b8bdb831ce034d712b21;5faacadcaa786e98865da4c7fe977d8bbf3836cb5519b8bdb831ce034d712b21;6cfa7b2102b3ebc75b36321fa2a420fbd6e996c807293acef97a7827af4e41e6;901e66f22235bc9b620c69351817bf007e4e9475b5f60cd6c4d8592eb2568c4b;901e66f22235bc9b620c69351817bf007e4e9475b5f60cd6c4d8592eb2568c4b;c25f5aca7a405e73ff72330db6b4b576e0cfb381fe527e5f76b7aa18f037cbb1;7303860b76ead3afdf1151fec5b3c22b079bbf2b05e411e5b323dee617e613ee;8dab0fcdb590d8b6c00e7a211c640dd27603d7b7402c482770cc592dd8afd4c9;001525a128361488817704af58aa095b3f9b78386bda97fcbf9fbd2a096e20d2;cd22c5dbbdf44ecd3b18254d34727942ef6e3860b0a8ad16fd446e840ea70eca;d2d2c4b47377179bd4c0f802bda2b91b3819c174090add362db978f452a91663;9d357ff9139ea2e5854bdf22ca750a359cbd7ad1dbd1e65c11b40f173ebede64;caa67c276fa380c2d5f4c420ce83eb6086eb97ea41d371ee4754fbca4e105c67;c7dbe431e18fce4408a52f3ab18f22c20784cf0e0f4be768a7e131f05b592ce8;dd194fcab27e44cdd9f9834eb86fce6dc5048aa1729865bfd3bfea2a10e3edbc;dd194fcab27e44cdd9f9834eb86fce6dc5048aa1729865bfd3bfea2a10e3edbc;b3781578663a02b195e2c8ab5a8fd95122133a180e67ff7e3fb649263349d9cb;b3781578663a02b195e2c8ab5a8fd95122133a180e67ff7e3fb649263349d9cb;61e5e06feb9af9f150fe87f9fb4f2f031592f4251525ac73af86c4131bad75fe;87c7cd138a82e4b2891d2ab7a5641fd1908c0f900cc98fc4a2762d9f3d3f1d55;997796f972a532ee4a880066dc511db664f526dbaf5eff84f05fe1e67b5f5133;146768bf6e3ba82ff068dd802bc29ca9d21fa15b92a552543c5c6567ad7bec5f;146768bf6e3ba82ff068dd802bc29ca9d21fa15b92a552543c5c6567ad7bec5f;67e27233401214fde4e34dd5904d271e2b9caaab1ee81e99cb4665d7debda8d5;425eafe630665c3321925883456a99c16209cc6cc8931cc5a7ed12bb55b96cec;ad477288df9507f9ca66d229e60390639c285ed81eb28f1f3d77d75ce8b9739d;1b5faa5d967fd0673e8fb0082ff559ed4b3e318500d4b8ee33dee2aa57e080f8;59dba434bc8c8119591ec7fe4e74531cafacdaf80eb5e71c0bc8da77e6eae3a7;2caf34cd53635da7ae8d61d37e1b490043d3fa9dc4c36eff251fb76c0ef941e5;2caf34cd53635da7ae8d61d37e1b490043d3fa9dc4c36eff251fb76c0ef941e5;90345394920181352c7dc450f60c9c4973898db470352148becdc56e24ce7e35;30cdda4509d9f5caacd69823fcc8cd3b72210b5665c6d4e00702f67f925b878e;8762bf93f8a1b659ad5bf2fa279009109d5c1e1595115f863e3939ecb4f64e25;0ebc6ef2e10cbbe74a6acf8b590fb5b33781b8dd755ec0db0c83aa5dedc16e90;30198c14f5c498a0b8fb40bffeb7055c37936500167b52757dbae17a385da5d9",
+      "1106;1106;1071;1210;1099;1210;1099;1059;1059;1059;1059;1106;1099;1106;1099;1106;1106;1106;1106;1106;1210;1210;1210;1210;1210;1210;1001;1210;1210;1001;1001;1001;1001;1001;1001;1099;1071;1071;1001;1210;1071;1001;1066;1066;1066;1066;1066;1066;1066;1066",
+      "0;6068;19637;0;0;3659;0;0;0;0;4960;0;0;0;0;0;0;24432;6068;6068;8325;6634;11403;5319;0;5319;20422;0;23264;0;0;44673;44673;0;0;0;0;0;35070;21676;0;0;35710;14982;14982;4960;33219;0;14460;2439",
+      "539989;539989;0;0;0;0;0;0;0;0;0;535740;535740;535740;535740;535740;535740;539989;539989;539989;466318;466318;466318;466318;466318;614417;614417;614417;614417;523767;523767;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0",
+      "69.0;69.0;7.8;15.8;0.0;39.0;99.0;4.5;4.0;4.0;4.0;201.33333333333334;221.0;220.0;221.0;201.33333333333334;201.33333333333334;58.0;69.0;69.0;23.5;27.9;37.75;28.95;9.9;35.0;2.0;30.0;6.8;13.5;13.5;14.3;14.3;14.3;15.0;0.0;11.98;11.98;10.8;16.0;29.0;15.0;4.0;5.0;5.0;2.5;2.5;4.0;3.0;7.0",
+      "B001B0JGV9;B001B0JGV9;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;B001B0II1J;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1",
+      "wt3npn;wt3npn;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3mbp;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8;wt3cv8",
+      "27;84;64559;64567;64626;64640;64716;64729;64733;64751;64757;86051;86056;86075;86133;86165;86290;86498;86512;86520;431723;431782;431862;431874;431899;431942;432028;432034;432042;578678;578687;578827;578829;578845;578865;579815;579836;579842;579993;580277;580988;581207;581419;581429;581446;581454;581459;581478;581481;581489",
+      "11;11;17;17;17;17;17;17;17;17;17;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18;18",
+      "lunch;lunch;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner",
+      "4;4;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;6;6;6;6;6;6;6;6;6;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4",
+      "1648784156",
+      "11",
+      "lunch",
+      "4",
+      "wt3mbpp38cu2"
+    ],
+    [
+      "0",
+      "1eb69b9c433bbf656425aef96af127f6351fd584ae3e0f4d68739d3b84d4ddcc",
+      "2",
+      "2081",
+      "32.47266667",
+      "1",
+      "64",
+      "15",
+      "487.09",
+      "4f5ccdfade4d67d0148365ded6d4c32b5327e27979c7b62f8ddec555a198500c",
+      "a7fc56e1b925c21979bcf596c0c9b2e762f32be8c9b2da3df4daa8102c94b635",
+      "2081",
+      "1069",
+      "B036913X9V",
+      "wk1n7t",
+      "wk1n7tpc6gzs",
+      "0",
+      "1066",
+      "14482",
+      "3",
+      "3",
+      "2",
+      "54abfc7272a33e5671edadfa678df2e3e0b84d9c6606cb7de2d8031856a83aed;54abfc7272a33e5671edadfa678df2e3e0b84d9c6606cb7de2d8031856a83aed;9bd8927d92f164755f6615daba5c5517d7481ca19aff9737de287ab8e50784fa;9bd8927d92f164755f6615daba5c5517d7481ca19aff9737de287ab8e50784fa;9bd8927d92f164755f6615daba5c5517d7481ca19aff9737de287ab8e50784fa;9bd8927d92f164755f6615daba5c5517d7481ca19aff9737de287ab8e50784fa;4a108388d743645db2eb388ce7d534a0c78d6c0cb1fb1ba81082abc22f69dc26;4a108388d743645db2eb388ce7d534a0c78d6c0cb1fb1ba81082abc22f69dc26;9bd8927d92f164755f6615daba5c5517d7481ca19aff9737de287ab8e50784fa;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;a4bc9173f459c0f4656137b36d9cda2fb0b71ed22974bc7a70289d3ef846976e;a4bc9173f459c0f4656137b36d9cda2fb0b71ed22974bc7a70289d3ef846976e;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;ceb12d1b3dd94b422d5f07546e75376718d8b905d1cae614fbd11a3fbdc0647c;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;725bd6188457587de74e58c96d9f3924ec7610e4ba753b55d2b648a97febe6ca;ceb12d1b3dd94b422d5f07546e75376718d8b905d1cae614fbd11a3fbdc0647c;74d9e4ddc1bb2fcf355b7eeabf9be1bf5ea0758e1a90f2b147e4f99d755aabd4;74d9e4ddc1bb2fcf355b7eeabf9be1bf5ea0758e1a90f2b147e4f99d755aabd4;74d9e4ddc1bb2fcf355b7eeabf9be1bf5ea0758e1a90f2b147e4f99d755aabd4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;6e4c76fca6301acf647656c1419fe21e687dcd3ad751d44b002070051dce98f4;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28;36b605721b48e312ab58daaaedb2969934b2481ae7294b83aa02e2b674f13f28",
+      "551501a6d0333ecef017789599086641104517d95c391f4442dcaec7f73705b1;836cc7a4b566f03ce1ba8fd2ebd616420a5fae6961b1e3f4ef97fd3676250afa;a26de3704bc501364e98c3fddc443f8c16af34d2f2ef9a14471fe7a4a455b8f4;a875f2759f6c7abd1bfa7245d02d976e16df6fa671ca69bbd77151e0f60365ce;a26de3704bc501364e98c3fddc443f8c16af34d2f2ef9a14471fe7a4a455b8f4;023af65ede6d2614e355299afee846842ca32956bcdc7fe4a7c38ae5366e13ab;8ced9b771428a38b854b5ea4a0dc36619c919c9cb89d56cf338b66d63b27a1bb;8ced9b771428a38b854b5ea4a0dc36619c919c9cb89d56cf338b66d63b27a1bb;a26de3704bc501364e98c3fddc443f8c16af34d2f2ef9a14471fe7a4a455b8f4;368a7c8826ea82ecba7a091f8980e303709b9573fe115e1f0bbbbe4391c6f0f9;de794b77db036b333f024311f6653e1c17a8cff44d7cb71e91e5dcdf4579415a;1ae49126c1a8f6c2f3cc6b78b7820c0ccd3979da4b235d9c15a5b982cf8fbcbb;b96368c1a17a784c58ef4457934793bd2156d6fbbe2cbc14c0ef6435f00e1597;ffc03adf99b70ee043292623b3e560ce39da1044c2f842d13733ab563ec7e8fa;d91a68eac4b23368efcc614defdf1ce39c3d4a34bd7b3f23e47b0fadfb17e238;1e76d50f513279cf374e7544b062f360a218b28e7ad38f8344573307efc05a41;d58130fe8e921f4bc532ed9c320941719b888371349efc0975cd0e9bab9f7e25;f9a9eb95710f39674118628952687dc430b5305b047a1a2326e0f202828dd229;0276e19057c1d39e3e9842cc2c988dc50b48f4d5fe78e51846607ea731d16a02;e56b2f0db81e4b9805e7b770e9494656f214797929ffa1f3f848baa9db00e08a;fb5325ed63bc439aeaa7e92020f0032eadca2bdfcf275c8972126dfd79c13193;1d951b6e1e7d52953456a97db82244a2e5cab9cc938757e8f7b487ecb6ebe8a0;fb57c2534daebf869032563d1f939fabafd3b460748d2c1488f087de64dc200c;16985cbc0668cc0adbf21d192819d847348dffae6378877c5d18573237b6577b;5ba0b206e10b81b1fcf95ce92e3b3c68cbf1bc423378ae21823c7a6664d9115e;368a7c8826ea82ecba7a091f8980e303709b9573fe115e1f0bbbbe4391c6f0f9;c9dcb8eb486366fd02f074b7cf7ba56e5da07d838905469431b97888fbba9638;7b76077ff86049d23a4736192a6c31d8d80858e4125e0655dfcd303fcea04590;ffc03adf99b70ee043292623b3e560ce39da1044c2f842d13733ab563ec7e8fa;d91a68eac4b23368efcc614defdf1ce39c3d4a34bd7b3f23e47b0fadfb17e238;ba7a3793cd34dccb4da02b87936c620873fb202ae36fd76e22a3f065d62349ff;097d5d3a4bf60929680ca111c4a0c54aa11fedbaf9b6e10820d25a7317cae59f;fb5325ed63bc439aeaa7e92020f0032eadca2bdfcf275c8972126dfd79c13193;104fbb5748c92ff45856f45fec54e44afc0b518e19452d1334ce1fa8d185a6ee;104fbb5748c92ff45856f45fec54e44afc0b518e19452d1334ce1fa8d185a6ee;104fbb5748c92ff45856f45fec54e44afc0b518e19452d1334ce1fa8d185a6ee;33c3497c48be3feac4ede94bab1e352d4890c863adfe364f217dc6a8e264f05a;4b74a0923171432ca16d714d1f03cfa20f3609e5e4d880a38d86d005258509cf;4b74a0923171432ca16d714d1f03cfa20f3609e5e4d880a38d86d005258509cf;8bccee1c831a1d4d8d3b8d5f497fe6b8939d815b40a83d94cbf573482d455935;2935c3af38ffe9674ba85fa02b47d58f627689550ace3d666a8b3b7e8230e891;4b74a0923171432ca16d714d1f03cfa20f3609e5e4d880a38d86d005258509cf;68251b83bcd41d722f176d099402efdae5cd589b7feaa512a5df2cc22b0a0e10;b05c2056ad92bf02610f810d20f12da900b8d2f2b54a9f6e75d7ce64735f21a8;5255af149383fcf952d2c56b388700f0597dad9f7504c6656774f98662b43591;bf4475c93b7d34cdea6e4ad2537380f3a1206e95cfb094fc78feb33e5aad3e7a;8d09525d061f49fe45ec272e6208f9961373767a229458c795fc0d68fe37423b;547bd1de7114123d515eb217502daf84eb0a8892b607c0be25434ff4cf12eb57;83fd0e93b550621bd0b6f00abfd277c624a162132fdc687b82094cc772288226;3b5c7b2c4f6bb55111f7e528b0b75b38e6ed2440eb05d0bd283c4cbc085d3baf",
+      "1099;1106;1106;1106;1106;1071;1106;1106;1106;1066;1066;1066;1066;1066;1066;1066;1071;1071;1001;1001;1087;1066;1066;1066;1210;1066;1059;1066;1066;1066;1066;1066;1087;1210;1210;1210;1059;1001;1001;1059;1001;1001;1099;1210;1210;1001;1001;1001;1001;1001",
+      "36208;9861;33858;40020;33858;24331;33858;33858;33858;0;0;14335;2439;14611;0;14424;2443;13967;18686;0;11427;22614;14660;14292;21947;0;0;14746;14611;0;0;0;11427;0;0;0;3659;5449;5449;30253;44662;5449;0;0;36332;11324;0;0;0;0",
+      "0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1142819;0;0;0;0;0;0;0;0;0;0;0;1142819;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0",
+      "1.0;12.5;23.6;12.8;23.6;10.0;16.0;16.0;23.6;3.0;8.0;6.0;4.0;4.0;4.0;4.0;0.7;12.0;16.8;26.8;15.0;4.0;3.0;3.0;12.0;3.0;6.0;3.0;4.0;4.0;1.5;0.0;15.0;19.9;19.9;19.9;8.9;8.9;8.9;8.9;11.9;8.9;0.01;21.0;0.1;23.8;23.8;11.9;23.8;12.3",
+      "B0FFGG3R3X;B0FFGG3R3X;B0FFGG3R3X;B0FFGG3R3X;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFGG3R3X;B0FFGG3R3X;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFGG3R3X;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8;B0FFIRPJD8",
+      "-1;-1;-1;-1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1n7f;wk1n7f;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1n7f;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1;wk1nk1",
+      "39877;39918;39936;39954;99316;99322;187159;187176;187262;268042;268050;268056;268065;268069;268074;268076;268089;285767;285797;371607;392803;524927;524934;525009;525030;525065;525099;525101;525123;525127;525137;525143;557150;635280;635281;635506;635573;635584;635586;635607;635609;635655;635657;712397;712408;712426;712501;712522;712531;712565",
+      "13;13;13;13;20;20;20;20;20;22;22;22;22;22;22;22;22;17;17;17;11;22;22;22;22;22;22;22;22;22;22;22;13;16;16;15;15;15;15;15;15;15;15;18;18;18;18;18;18;18",
+      "lunch;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner;night;night;night;night;night;night;night;night;dinner;dinner;dinner;lunch;night;night;night;night;night;night;night;night;night;night;night;lunch;dinner;dinner;tea;tea;tea;tea;tea;tea;tea;tea;dinner;dinner;dinner;dinner;dinner;dinner;dinner",
+      "3;3;3;3;2;2;1;1;1;0;0;0;0;0;0;0;0;0;0;6;6;4;4;4;4;4;4;4;4;4;4;4;4;3;3;3;3;3;3;3;3;3;3;2;2;2;2;2;2;2",
+      "1648744268",
+      "0",
+      "night",
+      "4",
+      "wk1nk1k9berj"
+    ],
+    [
+      "0",
+      "05b2877e5c06d74f24c152ed120e66ad1f932ea90983488f18f48fca0061b000",
+      "1",
+      "2",
+      "54.73428571",
+      "1",
+      "152",
+      "7",
+      "383.14",
+      "b2304f7445ad28040ac9ba164fc07a134bb40f9fb6e1d03d28150662d38d4973",
+      "da4e7b2f25dac5ed93809d58c24939a382bc87b8504b104fdfcabfcd18dc66e3",
+      "2",
+      "8165",
+      "B0FFH18VSP",
+      "wtmsct",
+      "wtmsctdzfwf2",
+      "0",
+      "1001",
+      "21487",
+      "-1",
+      "14",
+      "35",
+      "ea357728548cadb305521616b7db4c662fa4abc285a8e2875e398b048dda5d6b;ea357728548cadb305521616b7db4c662fa4abc285a8e2875e398b048dda5d6b;9ef2415dd7ae4aa18e2cd4c3184f342efbfd493e217982986ee10c2587e8d2ad;88dfb258d8a864fa3d88f3c3707c05cf0edd21067d1c46813120c7d242ddbd3c;d9b9905e84b4a224f9d7afe61c48fde494545ed7beab622570cc3d7bd4342cad;9aafacaecfc6ccd9657b25d8470449afc6bdad3d7a682c6d86d887fe4043a90f;b1bf526e1a7d47c52e5987e670df22fc953850e0a2df3ca9c3f163c2a0bdee24;b1bf526e1a7d47c52e5987e670df22fc953850e0a2df3ca9c3f163c2a0bdee24;b1bf526e1a7d47c52e5987e670df22fc953850e0a2df3ca9c3f163c2a0bdee24;b1bf526e1a7d47c52e5987e670df22fc953850e0a2df3ca9c3f163c2a0bdee24;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;625f5a284a1033373a9e16bfcf8eea73c4331213574a62006802c14ce028f263;ea5461864a6b98bcbe43be6931f8c52aa7e3ad297f73e58b75660bc9226272e2;ea5461864a6b98bcbe43be6931f8c52aa7e3ad297f73e58b75660bc9226272e2;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;54cd2e42e14aebd9e0b9949074f22f4bd53ee2ccab1a85ba12d4f4ffe627b667;3de710d99c7f33fbbb863579c66b3147730bd4d58b202d0354a7ec258ebfcfb0;3de710d99c7f33fbbb863579c66b3147730bd4d58b202d0354a7ec258ebfcfb0;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;4051ff4dce4d901cedaee0f2d2f7788661e42850277995ff89fe0f2f00b4e5f2;2b3c4d16eadfdd6fd7058d796de5d5991538786075f4202b4726734cad7d13fc;2b3c4d16eadfdd6fd7058d796de5d5991538786075f4202b4726734cad7d13fc;6ff95af28fa868fb5bc7be2dd9a45e2aeef6c9d994b544fd270907bfdcfbb6d3;6ff95af28fa868fb5bc7be2dd9a45e2aeef6c9d994b544fd270907bfdcfbb6d3;6ff95af28fa868fb5bc7be2dd9a45e2aeef6c9d994b544fd270907bfdcfbb6d3;6ff95af28fa868fb5bc7be2dd9a45e2aeef6c9d994b544fd270907bfdcfbb6d3;ee2c19f512dced19f0b3a2ccd11641a6e313410ccd5d02487246200b1479bb6f;ee2c19f512dced19f0b3a2ccd11641a6e313410ccd5d02487246200b1479bb6f;ee2c19f512dced19f0b3a2ccd11641a6e313410ccd5d02487246200b1479bb6f",
+      "de80167cee56aede9540e7e2ef091600755077b26df3a90d6b763ab742ceb205;edf232bbe44206c788ac37a195a9da5c7fb1b6de07104947453b2aafaee0cfd1;cf13b7b5ca9776d1ba700fa3b272d650ac1699ed512dc29f7d8fc86b5e571625;6cea67d28e6cf92c67650ae81ac58e65766b1c545c51145de0727ac44a787cd1;4ecf6ea2ec868d5f016e62a85801ff66bf2c8c1b244e6d05b4b5b4b7530c5fe5;1795ab52a77c70fa2e6bd72628982ed484b854faa3f21ca08d19f82877a26f4d;a761243cc93fe144298daef9148226735c5f128a044013cc531ac7a771692b40;fa6fb0376a8fce2d903e881ffab07ceb406a100ed3fe0c846187362ef8889b55;06c713d37ef0a1db35bd4ca8b6cebcb321c088d3c3044cfd211e4c4c7792aa22;7cef8ef245cdfddfc284a741de3b062b6951e876b9bc75e633c58018847be943;ccb7f10bf79f4e8b0c67fd39432a888444545a0e250fb80c19296a887466585d;daec0672298188b24a988fef395479b2d5686b154120d1c88fcbca7750c08cbf;04f04fb261a67416e9aceb8138222a6a5f05d6c3fe34f722c95093a039982f7d;c637cdd990c6b689034172d33a4e8156002e5939562c879d2441e53558aa5d0b;04f04fb261a67416e9aceb8138222a6a5f05d6c3fe34f722c95093a039982f7d;b1594a9c245ab7b2bb1b2511af3044ae4f314fe6f56f8789606ba748862478c4;f79733d39aee8a58aa11162f01a3803eaf6a031cdb41becb4ed3ba77d58917f2;ab89290948162481a4cff3bb1a72aa059ae71a6696a398d4ad02bd2bfb627653;03e7170f8b98d60613c096ebd24158da5ebef3e73c59b4c1cfe139f55ea5d26a;27ec60fc140d918e9320b26c328672808e020ef9b51bc7cc76a262cacdc233a4;8b3b9288c85c61fc0c4e234644c6c5ab4f57facad7e266f4404d6d8e5d451b72;b4e191a4412943d6a376e5585a37e20f4b2a5add7ab7fd79b6779066b84edef0;c985942f48a1779bfc711aa34ce034232bfd4be3c6b1a2693a05e5baf9d80bc9;c985942f48a1779bfc711aa34ce034232bfd4be3c6b1a2693a05e5baf9d80bc9;70196bd7797c31bf6b7acf3767068948b7bafc107f41901f7ddfb33757a2cb0e;70cd2c43ce2a6928b6a9c4ccd53a4e0abd7789e2c8a809080e29ed6c73fb5a75;70196bd7797c31bf6b7acf3767068948b7bafc107f41901f7ddfb33757a2cb0e;4187efb7fb4c8ec42c9db407b8002fd85fc7c96477d0ae53131afedbbf9da9e8;206af77fe2ee66cbbdb4d0480998361335d54cbfa5e49bb5050df98eb0095c60;206af77fe2ee66cbbdb4d0480998361335d54cbfa5e49bb5050df98eb0095c60;4fa684a988452b7d998f41383b514b5b82830a4a328ac1e505605b4a2b4d410e;9c79172110634541cae440734d9287b35226c9d3ab9bb1d2766a1a9c13a3f248;3143624040fa9b036165207568d62c0c0524c2edd2a732120c699f9c328bc014;f5c5eb0558be1f9f6e93f4aef81d9c56a7891b2885edd59f613cf66bc63f8d29;1d70a488f4dc3ef277b22e19c4d9349ea892f5f1a647ac7ae028fd1d41d0f3c3;8ebf650790fd6fca14a9a2b1fade31f9edac95940e7bca06dcc8dc895f445cac;5768a1cad19c6f88392baab4637eb8e4e1f2d50441e7d908cdcee39bc5455710;998fa95430cac7c2c32df337344508155f1db77a9313ad7a8cf30d7cac3bcb6b;e149176041de4fb10e995b4a3558316ce3c0211ac3aafab14a46e16df6788233;3143624040fa9b036165207568d62c0c0524c2edd2a732120c699f9c328bc014;919ea09e683ceeb6b3a46b0696bb96654688b10e4e4b7b9f7ac9a820180f9a35;55585badd41bc54ca37fea4af6c286613f6b2f735b3a5efa325952595b7667b6;8883439c17999c1b0e982bb65f27b6513227042525d8a48028613c1c617df1b6;33f9a685a1c29d201d70cd0dc85279a8a87b6c5026b611bffc2fc24227fe4490;e997bd932a08dab9284901550782f8a3c4b9f37d5cb0a9a5c1a31be28f717c0d;6a5ae7ff9070bee74b9936e622e61f1ef9de59c4c431a21d914a73f498b22dc1;0d67e391538519b0f1488e79f2ce134ce1e85dda848709e31fece238e10c8091;53511c9e73975b3b3c7058ebd59b3860d7e20b649ee0b13801621b0e2857acfb;15008b9507cdc328967074beb0d23ae7d48ae34db6a6a75e9482b8cff38a31d5;8a1b7ccc0b96a4398039f8f87c6009ccbec6d700553c1629cbc9ab4ec69b39da",
+      "1001;1210;1001;1210;1066;1071;1106;1106;1071;1106;1059;1066;1001;1001;1001;1001;1001;1001;1001;1001;1071;1210;1071;1071;1001;1071;1001;1106;1071;1071;1059;1001;1001;1001;1001;1099;1210;1210;1210;1001;1071;1106;1001;1210;1001;1001;1001;1071;1210;1210",
+      "31582;17188;4312;0;0;0;0;0;19642;0;0;4328;24262;23513;24262;0;0;38069;0;38062;0;10728;0;0;0;14109;0;35318;28673;28673;0;2310;13233;13233;34260;0;0;0;21424;13233;4328;1003;1679;23027;16863;16973;0;0;36093;22164",
+      "0;0;0;6150;746954;0;796123;796123;796123;796123;0;0;0;0;0;0;0;0;0;0;9245;9245;1068451;1068451;1068451;1068451;1068451;1068451;1068451;1068451;579610;579610;542600;542600;542600;542600;542600;542600;542600;542600;542600;0;0;848915;848915;848915;848915;0;0;0",
+      "2.5;27.0;19.333333333333332;36.5;12.0;12.0;28.88;15.99;17.99;29.88;2.0;12.0;28.0;26.0;28.0;25.0;21.0;42.0;42.0;42.0;6.0;10.0;58.8;58.8;76.8;12.8;76.8;12.4;19.9;19.9;20.24;17.0;35.666666666666664;35.666666666666664;17.0;23.0;33.0;24.0;19.0;35.666666666666664;16.0;27.0;19.8;19.0;34.0;34.0;29.0;8.8;8.8;8.0",
+      "B0FFHEKD9R;B0FFHEKD9R;B0FFHEKD9R;B0FFHEKD9R;B0FFHEKD9R;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367;B0FFF75367",
+      "wtmt1t;wtmt1t;wtmt1t;wtmt1t;wtmt1t;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19;wtmt19",
+      "138871;138875;219082;219224;219296;267267;267308;267318;267352;267361;391973;392011;392027;392042;392050;392055;392060;392069;392194;392207;392272;392327;392389;392393;392432;392489;392514;392538;392543;392553;392609;392617;392922;392929;392932;392939;392951;392953;392965;392973;392982;393097;393105;393127;393138;393141;393198;393611;393617;393630",
+      "13;13;15;15;14;1;1;1;1;1;15;15;15;15;15;15;15;15;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14;14",
+      "lunch;lunch;tea;tea;tea;night;night;night;night;night;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea",
+      "2;2;1;1;1;1;1;1;1;1;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6;6",
+      "1648756485",
+      "3",
+      "night",
+      "4",
+      "wtmt19weqg0w"
+    ],
+    [
+      "0",
+      "5bc3a2ad4387c72b28e5f7407a7f28ee25ea2d9886ce7d73757b7f6dbab30b7b",
+      "2",
+      "2",
+      "39.73588235",
+      "1",
+      "221",
+      "34",
+      "1351.02",
+      "c99bb6616231147f3c161797dde3c34d12b31e7cc9cb60aaf8966eb6e1f66003",
+      "87d25ead28fa1f5d66220cce77b49ca26428d3a7352a7b86140dbe50bd72f396",
+      "2",
+      "5322",
+      "B023B06NN0",
+      "wtmkns",
+      "wtmknstxx3bs",
+      "546283",
+      "1001",
+      "19507",
+      "1",
+      "1",
+      "1",
+      "b39818ff89606c5381f593e0fd4a33da4611a425177af192c56f20d3db757f60;b39818ff89606c5381f593e0fd4a33da4611a425177af192c56f20d3db757f60;b39818ff89606c5381f593e0fd4a33da4611a425177af192c56f20d3db757f60;b39818ff89606c5381f593e0fd4a33da4611a425177af192c56f20d3db757f60;b39818ff89606c5381f593e0fd4a33da4611a425177af192c56f20d3db757f60;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;db6016f03290eafb9127df26745c79fe6d60106c21b8a21958343a491ce0c06e;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;2cd3c42a52253d3849fd9e1e9e72eb506dd95d84af8cc5465857914f168ee740;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;970d6aed1b55cc39362b64514736a36882b8f8c922e3d48a2dd5cc2f881eff3f;970d6aed1b55cc39362b64514736a36882b8f8c922e3d48a2dd5cc2f881eff3f;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;a4001304fc6fb8c1184101144d0561ffcbdb256cb3a38155f9a3271643963809;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;71b92422d959bd36b6883380d39b2b3128b2cf02cf6e8af280aa3f6f553a959d;66a95a13b329a5e68bcab764667e42065216f6fa3013c9995062f44c3703f248;66a95a13b329a5e68bcab764667e42065216f6fa3013c9995062f44c3703f248;93d1dbc85f49c56386cbe619d274176ab4940a159ab1e02c31bffe2b88ac544d;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465;b51f2ae93d1a0b74fc352b124ebe0be85ac10776951b303de8f1af372aa00465",
+      "7d1a5d87baae247cbc6e7879544953951cd838182785062f48a3a1942ed2004b;befd0b7c83f9b13b3b2eb7c74469ae208c19ca9432808321eafe8b95600b139c;eb174f89d4c0113a7ec6537c05e2a924e9a02f2414f18547e9c628075a01ed41;49ce5a711e02373dee9e48effbecfe2e13b7ee421e717f1ef16f4df33036f27a;4d8aec2dece2a5af19a586fb4c7c1bd565dc187db558575b8f6b4f1d83400778;f738623bef65ad98781bdc7ade078847115fb3a95acdf087cef01a9ea0b01bca;bf483816e44b7116941d846142dc7eadde22b6f4236e871a2eaefcaa4dff127f;bf483816e44b7116941d846142dc7eadde22b6f4236e871a2eaefcaa4dff127f;aa63351ab7bc07bb948aff9c8d06c1f5707b44c992b066398b55e06cda88b776;aa63351ab7bc07bb948aff9c8d06c1f5707b44c992b066398b55e06cda88b776;91450ffebab26e7e75d90b6eadd6cd22438160f7ce074c57b7a89da1ec451e14;a4dc3f0379025891ca8395e9b10d0fe037399c069a963bfe1c682194c6a43423;bf483816e44b7116941d846142dc7eadde22b6f4236e871a2eaefcaa4dff127f;b3518a4d93225335b14ec503830a7151a69dabf2e216c0b7fdff4e26e2da7674;b0152357912d9d1e56191cf7f1df3067fe7dc5d5103ec56239da8c358cf1790d;3e1ac20d508349ac6a61567eebbf5dd2055218e5f5723729a0c10129b4c3219d;8bd09e81b22f4a6acabbe08b9cc123756ac15a32d93d6d232b3c9a99d2404aa8;6138ed8b395d5306399d1fc7fec530b576c706714f13d20439e7bcdc283c50ae;224a2e05c171141a5f91c3388c2ac370204553278971913d386e6bd00aa02e4d;215ed07ac2adf69f64eab975baf497eaa26b059362cfcd280642392660e2b179;1327e0f9a44b0cffede5aeffbe51b5e0b184ce8ffc41a3cd9ab4c142c2aede07;693002b5c6a5a185586fb8604c54f60c8cc9176b260d9142502acbb5bb09bd0d;735f8fac2112e0f548160187e29755b8688c2129016ec41dc56bce5f8746a51c;a7c5c244520106493f5cc10377dc7f019eaa55802c575518aed95dc480f15f1e;03402af887be22d4d020c906c36c80a9714142956da9dcaa5235f8db7e1dd984;e97698212986a5907ab615ca0f688d42e407793776fdbfadd33bd801aefc116e;1eba5b328da47cf868dc512d8a400d0aa141e5b9c5755b949e2ea85363ce3cd4;1eba5b328da47cf868dc512d8a400d0aa141e5b9c5755b949e2ea85363ce3cd4;16ca1ab8ee5f343aa427fc0946e88084bf31b25f6c77faa2a31660f8d893018e;16ca1ab8ee5f343aa427fc0946e88084bf31b25f6c77faa2a31660f8d893018e;c8e03b5cd3214da82615c807f8170ecd1291ee065593a4398ecbbf7b148f72d5;c8e03b5cd3214da82615c807f8170ecd1291ee065593a4398ecbbf7b148f72d5;a7c5c244520106493f5cc10377dc7f019eaa55802c575518aed95dc480f15f1e;215ed07ac2adf69f64eab975baf497eaa26b059362cfcd280642392660e2b179;c8e03b5cd3214da82615c807f8170ecd1291ee065593a4398ecbbf7b148f72d5;d01d63b9cd6be1b1f5e7864e81da0045f22d1aafd7956e61e527dae0fcd6b2e6;735f8fac2112e0f548160187e29755b8688c2129016ec41dc56bce5f8746a51c;717611676367437f8d96f7f84cac2cef6d3ad0ff21c30d60f99c6b9fc12aca8b;2afe6b9664b6c9ee98433d6ac7babd16277ba0dd8524585f45ef6da4bdff1062;8bd09e81b22f4a6acabbe08b9cc123756ac15a32d93d6d232b3c9a99d2404aa8;affca957ee593378b6de5cb72acc01d51354d858b40b1a8838bec043debe8e67;7eccea990c404009047aeec678f4eae6ae20917fa5328dae8acc8898e2a8b036;c8e03b5cd3214da82615c807f8170ecd1291ee065593a4398ecbbf7b148f72d5;fef02379e777377d937935b07b9fb9e99f42ef1fddbb0cb3d55cf96131462190;735f8fac2112e0f548160187e29755b8688c2129016ec41dc56bce5f8746a51c;bfa81158b0cea1c5534fcf3160750f9c4d3b6adc45911bae328080fc63259776;896c8f7bd6955586a4aa11f5ca9ff59933941b18146ab7982f90222fee3bc25b;34f0177c3ffedece409e49bc5b3a53c52d36f96f1f4ced5c76d294e20702938b;8bd09e81b22f4a6acabbe08b9cc123756ac15a32d93d6d232b3c9a99d2404aa8;b0152357912d9d1e56191cf7f1df3067fe7dc5d5103ec56239da8c358cf1790d",
+      "1087;1087;1087;1087;1087;1099;1099;1099;1210;1210;1210;1106;1099;1210;1071;1001;1071;1210;1001;1087;1087;1106;1087;1087;1087;1106;1106;1106;1106;1106;1106;1106;1087;1087;1106;1087;1087;1001;1071;1071;1071;1087;1106;1087;1087;1059;1210;1210;1071;1071",
+      "8998;0;45364;0;45364;0;0;0;0;0;0;22074;0;0;0;0;0;0;0;7636;0;0;0;0;0;0;0;0;0;0;0;0;0;7636;0;0;0;25167;25213;0;0;43247;0;0;0;3659;0;0;0;0",
+      "424819;424819;424819;424819;424819;1199003;1199003;1199003;1199003;1199003;1199003;1199003;1199003;1199003;4230;9658;4230;7333;7333;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;755466;1125563;4230;4230;4230;755466;755466;755466;755466;0;0;5487;4230;4230",
+      "16.625;18.647058823529413;18.5;2.0;18.5;0.0;0.0;0.0;50.17999999999999;50.17999999999999;49.17999999999999;1.99;0.0;50.725;25.0;17.9;18.0;10.0;18.0;30.5;35.5;4.0;40.0;34.0;105.0;29.0;20.0;20.0;4.0;4.0;15.0;15.0;34.0;30.5;15.0;44.0;40.0;21.0;17.0;18.0;34.0;27.5;15.0;43.0;40.0;4.0;39.9;35.88;18.0;25.0",
+      "-1;-1;-1;-1;-1;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;-1;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B029AM;B023B029AM;B023B029AM;B023B029AM;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY;B023B1B6QY",
+      "wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkqm;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkqw;wtmkqw;wtmkqw;wtmkqw;wtmkn2;wtmkn2;wtmkn2;wtmkn2;wtmkn2",
+      "191093;191326;191594;191629;191684;439550;439553;439578;439652;439684;439690;439755;439763;439786;777176;996074;1052250;1160752;1160753;1242665;1242679;1250595;1250611;1250656;1307982;1308083;1308235;1308238;1308259;1308263;1308302;1308304;1336503;1336795;1336832;1336975;1337094;1651001;1651146;1651147;1651175;1676343;1676373;1676387;1676408;1731423;1731432;1731581;1731617;1732559",
+      "15;14;14;14;14;18;18;18;17;17;17;17;17;17;20;7;15;9;9;10;10;8;8;8;16;16;16;16;16;16;16;16;8;8;8;8;8;17;17;17;17;10;10;10;10;19;19;19;19;18",
+      "tea;tea;tea;tea;tea;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;breakfast;tea;breakfast;breakfast;lunch;lunch;breakfast;breakfast;breakfast;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;breakfast;breakfast;breakfast;breakfast;breakfast;dinner;dinner;dinner;dinner;lunch;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner",
+      "2;2;2;2;2;6;6;6;6;6;6;6;6;6;2;0;6;5;5;4;4;4;4;4;3;3;3;3;3;3;3;3;3;3;3;3;3;6;6;6;6;6;6;6;6;5;5;5;5;5",
+      "1648814851",
+      "20",
+      "dinner",
+      "4",
+      "wtmkn23pc199"
+    ],
+    [
+      "0",
+      "724d891dd83f06690ffcc3cd11b43b9b026891f96f3b3e0cc0522b1b93af1d44",
+      "1",
+      "15",
+      "74.70708333",
+      "0",
+      "99",
+      "24",
+      "1792.97",
+      "0409c8f35ba68f0987c37cfa1fc099b164afc8c6049d9b1fa4f9b9af9482da75",
+      "f9ac62cc8718f4fea77134535db4575471075d9587ff5c5bbcb110b44096a983",
+      "15",
+      "5828",
+      "B0FFGH0NGB",
+      "wqj6xw",
+      "wqj6xwwe67bx",
+      "0",
+      "1066",
+      "22614",
+      "3",
+      "3",
+      "3",
+      "d1094dc2ad9f1436210e91ac31538c08ac20a998328c76142a59d1c48a7cb1b7;d1094dc2ad9f1436210e91ac31538c08ac20a998328c76142a59d1c48a7cb1b7;d1094dc2ad9f1436210e91ac31538c08ac20a998328c76142a59d1c48a7cb1b7;d1094dc2ad9f1436210e91ac31538c08ac20a998328c76142a59d1c48a7cb1b7;b2a7a564194730be9b89af8ad02a4b891946de020025cbc55c0add75243c6367;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;78e3cdefdea3d5b9f2bb8c732ed87bc071209e070c13c500d40d025d65b73aed;78e3cdefdea3d5b9f2bb8c732ed87bc071209e070c13c500d40d025d65b73aed;78e3cdefdea3d5b9f2bb8c732ed87bc071209e070c13c500d40d025d65b73aed;3624c7939ad588f5a744aefe5e1bba75e310a391e95b5fedf6dd4f4ab3dca206;3624c7939ad588f5a744aefe5e1bba75e310a391e95b5fedf6dd4f4ab3dca206;3624c7939ad588f5a744aefe5e1bba75e310a391e95b5fedf6dd4f4ab3dca206;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;70dce7a8b6fd75e4c56ed5313d906d6f430a489c1b1c5e491c56002eb65cd921;cfec409a58afa990db24354c3ccead3133c3c2ad5d1c38b2c010d80ce5ff1043;cfec409a58afa990db24354c3ccead3133c3c2ad5d1c38b2c010d80ce5ff1043;cfec409a58afa990db24354c3ccead3133c3c2ad5d1c38b2c010d80ce5ff1043;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;241dd2cfcd67eaebb66fdd130280a1b7ade45563300396605fc1cf4efafcabef;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;f3cac112649ba5849115533399932732ef9be0036ac888ac19702192aba43d61;f3cac112649ba5849115533399932732ef9be0036ac888ac19702192aba43d61;f3cac112649ba5849115533399932732ef9be0036ac888ac19702192aba43d61;f3cac112649ba5849115533399932732ef9be0036ac888ac19702192aba43d61;f3cac112649ba5849115533399932732ef9be0036ac888ac19702192aba43d61;365955a330bacec44a636ed8abcc08bc7271d27b9807a60ed6a54391f4fadf2b;365955a330bacec44a636ed8abcc08bc7271d27b9807a60ed6a54391f4fadf2b;365955a330bacec44a636ed8abcc08bc7271d27b9807a60ed6a54391f4fadf2b;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;0e04285b7ba23b1f8a1c0e840098464bcc8f59a289bb42f1511e7782c541ed60;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;ccfefc3ba1f552c918bba0ff6347916ccd10c13fe7aff0de629f0564dc7d2ef7;522b5b82cd75f5a0aecb7b8ae13deef58ab8d07c5622cc326f339e908072c2e5",
+      "1c6a4aecfa9fc17c91ba585abfde79e9db939a154d085ae833ac5c943c1fb576;bf704a4406c6cfd3af7acdf44a15ebf6dbbe731f0c067b543fad61a037b70eb2;1c6a4aecfa9fc17c91ba585abfde79e9db939a154d085ae833ac5c943c1fb576;cfe352434b63419e3024ce20e480582477ae0b5c62b6fdb811b8aa8718bc29a1;f88b877e4a1cc4661525805b098102727ebea9770069e8b44d0390c477ad0a19;e280c04685da1128578134b1b82d1de52a1a3705e09baf0841fa1e6bc2a3d286;e886260c94753032448a20ae0d9f9e9e12fd6fc677567b2739779ca5f52bca30;e52bc9080fef6761056401638c096828bca82558f7207d2d123399f76d2a25c6;1877a8602276d371ddf6002a17200036f5f236361181243b00352b995bf1a8bf;e639b85c256b411d52160c127996dd0155b55217aee437186b97a3f3f23b33f3;c7ee030e47714bf745fd0dcde4f19b9fd2f54ae8fc43e16e609992e2d0a08d03;e639b85c256b411d52160c127996dd0155b55217aee437186b97a3f3f23b33f3;82a203de33398ac82aa7f319537ce95ecc8a924ae535f8553df670cc1f4685e4;183f0b97fb2d03c7dd9d5de792430f9be080142b2a87aebe36e39326d323f53d;2e58a74deeab35a0f4c60264abc1323c35a5a25fe43aa87a77e19197cfb0ac48;2e58a74deeab35a0f4c60264abc1323c35a5a25fe43aa87a77e19197cfb0ac48;2e58a74deeab35a0f4c60264abc1323c35a5a25fe43aa87a77e19197cfb0ac48;08f8c63912616371f259a6beb4b50711beb1f6fbab350c27ebf9bb65c813d375;24ac1eb79698b6036350006f3faf427aed06b6d46a341d765c1dc8c3fcb24f1b;66ab06b25778741b38e37a42da163cbd0284abe35de9a34c486b5bbcb7f3a738;d6111300e733144304684b447b6bfeabb97fd6c48b674ee1b84cc479b7c3e789;ff9018bf4c08511cdb5b0c0bf96808aa6be336cb278acf48e41307165b9e65c1;70ea212c8913b45a124f9e3767b24d934851db8ea867c32ffd8de2097623c7b4;47fb0074d74ead0d63678c16c0428877a3bf3648f40890ff10b6188df5df6b1d;708cde770c6f88f7c703be6b14b93950eb67ad55cd8e33680660a69f4b30ff5c;a19b33ff6108f7ee923bd5fc55e5c911ebf6678a3681f99aa35e3802fa65cf16;4e78d69d56126b1f38caa0e09144718bdd06256d68d9d8f376f6c01511ffd0b9;4e78d69d56126b1f38caa0e09144718bdd06256d68d9d8f376f6c01511ffd0b9;e280c04685da1128578134b1b82d1de52a1a3705e09baf0841fa1e6bc2a3d286;1d12c78207b19230921ee242925b9be84353248a434627c09ef5a91c33763fff;1d12c78207b19230921ee242925b9be84353248a434627c09ef5a91c33763fff;fcd1768f61feb90f5b9c73954c10dbb964d464504d57cc6c879fbc60e121e6b2;7d3c21d860fce2f5d3c6485c060c42cc175322759388f07253c97ae6ef985a1a;28b2b74c9c7ae468914c78b64c8af8d7ddabc9471c88a95eea11c30c4ff9b4ae;496b17a3868d91503fa0a340709c875aa29846ad0d0d73e3f072cc6b7db58c19;496b17a3868d91503fa0a340709c875aa29846ad0d0d73e3f072cc6b7db58c19;c827fe5722d2b6b6c466ef74177e28b4efc90f515b3bd4fbb7ffdf94c2f06c2f;0b86617788abb599f9f4bccf6dec6917a50172e67e596e31ddfc21f8a1940059;b3c3279bfb69de4490da4c857680f7c115aa2749803e128798c91b4025fc36f0;591f78bbc2fbb866620e38e137c53dc896967a9d37dd1059e52fb28015230f9f;f2cac2720e4bf358d652dff1c4162bf3639674f8bb26b4c536b72a8b539606cf;7ad29d83a69ec475cfde351c9a9df8f67f9f16a9b27965de63886d1386eb01f7;7d3c21d860fce2f5d3c6485c060c42cc175322759388f07253c97ae6ef985a1a;fcd1768f61feb90f5b9c73954c10dbb964d464504d57cc6c879fbc60e121e6b2;28b2b74c9c7ae468914c78b64c8af8d7ddabc9471c88a95eea11c30c4ff9b4ae;e9cb7b339ed28b304d709ccf634302d2879715d0d0ed073aefb9b49f11f5d50c;627e2edc80e7600c2b8ef2aa9cf7c7b0dc96b6529d7eb4cf15229f27cdbf09b3;5ee87442d430204e0eeecb24c913847d04c725664a0a16c6eaf8d92870f8dc81;708cde770c6f88f7c703be6b14b93950eb67ad55cd8e33680660a69f4b30ff5c;7ef811f22b9da71fe2d8371a60989b5200dc713a04401c97405f7a65725d09d8",
+      "1059;1071;1059;1071;1210;1210;1001;1001;1071;1001;1001;1001;1001;1001;1001;1001;1001;1001;1001;1001;1001;1001;1210;1099;1001;1210;1210;1210;1210;1001;1001;1071;1071;1001;1001;1001;1001;1001;1001;1099;1099;1001;1071;1071;1001;1099;1099;1059;1001;1071",
+      "0;0;0;0;0;21703;0;0;0;0;0;0;0;0;0;0;0;0;0;0;37782;0;31049;17208;30658;34193;28932;28932;21703;31718;31718;0;14090;0;0;0;0;0;0;38709;38709;17322;14090;0;0;15538;37378;3659;30658;35292",
+      "796715;796715;796715;796715;463685;470192;1201187;1201187;1201187;547947;547947;547947;0;0;0;0;0;0;0;0;0;0;0;0;0;470192;470192;470192;470192;470192;470192;0;0;0;529125;529125;529125;529125;529125;6098;6098;6098;0;0;0;0;0;0;0;0",
+      "23.0;25.0;23.0;6.0;22.0;18.0;49.88;48.88;8.0;52.0;58.0;52.0;3.0;21.0;108.0;108.0;108.0;95.0;58.0;29.9;49.9;31.9;5.0;7.0;14.88;22.0;26.0;26.0;18.0;18.0;18.0;5.0;3.0;25.8;45.0;45.0;31.4;55.6;26.1;11.0;6.0;39.0;3.0;5.0;25.8;3.0;4.99;5.0;14.88;20.0",
+      "B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D10VO7;B001D10VO7;B001D10VO7;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D09H1O;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D10VO7;B001D09H1O",
+      "wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqj6wy;wqj6wy;wqj6wy;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqjd84;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqj6wy;wqjd84",
+      "18800;18810;18835;18852;18944;19358;110595;110615;110632;110715;110719;110729;171484;171509;171523;171527;256368;256380;256407;256608;256618;256633;451802;451818;451841;690842;690847;690850;690862;690901;690906;713571;713573;713589;713917;713924;713933;713952;713969;1136827;1136839;1136878;1316972;1316976;1316983;1401815;1401842;1401858;1401868;1473719",
+      "13;13;13;13;13;13;11;11;11;11;11;11;18;18;18;18;19;19;19;19;19;19;13;13;13;18;18;18;18;18;18;12;12;12;12;12;12;12;12;14;14;14;12;12;12;13;13;13;13;17",
+      "lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner;dinner;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;tea;tea;tea;lunch;lunch;lunch;lunch;lunch;lunch;lunch;dinner",
+      "4;4;4;4;4;4;3;3;3;3;3;3;2;2;2;2;1;1;1;1;1;1;6;6;6;3;3;3;3;3;3;3;3;3;3;3;3;3;3;5;5;5;3;3;3;2;2;2;2;1",
+      "1648809244",
+      "18",
+      "dinner",
+      "4",
+      "wqjd84qw6w9e"
+    ],
+    [
+      "0",
+      "e644a7ec832f8a11d843d3003c7098edf4919e031bcf1db7b9087ff51409c2bd",
+      "2",
+      "6",
+      "62.7945",
+      "1",
+      "209",
+      "40",
+      "2511.78",
+      "e6f3e6ca33f3b71b492573687d5589fef50880b15593cb7adcafa9feab2ca916",
+      "d3efe2c59a4dced063c6f4f4cce6088cfe6315e3c86bd720408e90cdcac88670",
+      "6",
+      "5269",
+      "B00191437W",
+      "wtsqpj",
+      "wtsqpjdpsgye",
+      "0",
+      "1059",
+      "35318",
+      "1",
+      "1",
+      "1",
+      "8e3d255fe4a1352e51f4a545c20d6770481839aa3173aa560916dce6af1632f7;8e3d255fe4a1352e51f4a545c20d6770481839aa3173aa560916dce6af1632f7;0764d4da17864a172731a8ce6f5072e67196b2f5e1cd6668e7179a86799cfab1;0764d4da17864a172731a8ce6f5072e67196b2f5e1cd6668e7179a86799cfab1;0764d4da17864a172731a8ce6f5072e67196b2f5e1cd6668e7179a86799cfab1;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;cf9e13738109b915f80fc7e97b7de27873af323c75355e546925e7706ce4e2cb;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;b8fa9fcd0f56ff2cde0ba84f42d92be88740cf728359707f4b6ba09be4d61182;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;fcdd6303567e2cb2e5e8d398ba745051ce129722d96c67057623bf716a0e3234;b62a681ce064f184eac6a2103be7e2933adc02a0c5ae1bb658594c27895eb9f1;b62a681ce064f184eac6a2103be7e2933adc02a0c5ae1bb658594c27895eb9f1;ca930c6c726379cc988caa6cb46044014ff7f20f7df9f8d5dfdd0b27636638ef;a6e4de6e33504800a1f0643f9992160e6adb6fee10e36566ba03c0d5bfefa6a0;b62a681ce064f184eac6a2103be7e2933adc02a0c5ae1bb658594c27895eb9f1;b62a681ce064f184eac6a2103be7e2933adc02a0c5ae1bb658594c27895eb9f1;b62a681ce064f184eac6a2103be7e2933adc02a0c5ae1bb658594c27895eb9f1",
+      "050b1f66b14f8963ed5e00b95708eceaeec6b1fd4bc5348c60b02a47835d985e;c66a0ccd6664a9b74fe9717d098384256063b49fb23085394615b34c1b552994;1875f3c3fbaf8dd2c5cd9f98ec4f3088fbe62666b4cfe925d101be5e2bc0527b;d381847c33f863542f2d5a041597722d6983a20c9cad600f2acd443d6e5cf50a;2cb7b9399336c2e4b0d5ff92ef8405bcb2645f57b6cc2b26802b1ec1d65deb2c;11ef67f7de3bb5be028476e76227e93cd64b913cd6655c3235f43905a95860b9;11ef67f7de3bb5be028476e76227e93cd64b913cd6655c3235f43905a95860b9;5b3f4066c67dd350a783cce8674e1f5a543190fd82896e4749589d83229408b5;b6a9ee965724744b453d80e35a6b38bf56c51861918c8ffeee2dd66ec675d252;acbbdbf096c4a8e573d7cd9e7e6a081a7269b50eb65de9f31480065749e689ae;d59e2d9830a06ac3d626dbda651c73b8a7af0bbd25f84f0d1ebbfef814eee520;e14e2a19bffb1edf08b1423f909a4c3ecf16c944d39d7b4d288b26bdd4f5f615;fab0a6d7b343156170b3a41b38ffb34fafd28407a2e62391e4a8d8f6e0d94a43;63b3a0db11bae8a58314f5b5c25e081792383f6c8a0c106542a40ff5dfcc1b4f;5b3f4066c67dd350a783cce8674e1f5a543190fd82896e4749589d83229408b5;0339453d6ac1c8ce0008a569290370570444cb2d8dd7a1d96538346d8ec7c6ff;c4d16adbae95becc193ceb8effb8d8d2cd13f8b40b146000e63f1e3de7b758b4;9933addaf9a2781ebbfe0cde2498215d6848bb1d76cae71d646fc289a7485bd6;0339453d6ac1c8ce0008a569290370570444cb2d8dd7a1d96538346d8ec7c6ff;76629e800a61ddef922f2673972f545d452708aa861a40c8fcd223fcfa174655;fe8314eda140225d54e059cd0930fa5328cdbdba8156a75862e89a898cc9c3e5;93ce38ca4eb68812329575a0814ef8cfbd15de40b4d2a7787b167412fc65e872;b629aae8786a0c2803e6b37f81dc00717edaec8d882b41f1558b4172f2ce8469;27e44701785c314a83801aaf6fb72f0e523e36b1e3fc8fd2251787c2bf93350e;844e7c5c665fd93dda833f490ebba0396625f2154742a1c180c99d9962f90c4c;9cda887b5f8d5ae9576affe15c4910f8b60610ac66398a2116c238b1141d1874;9cda887b5f8d5ae9576affe15c4910f8b60610ac66398a2116c238b1141d1874;38a5e3862171c06e5fed2f54d67c13fb66e2b731e50a5e9bb5c439c9e70c128e;c7b7e1ff53e268bc49abb0fb21c8ab22397b3e124560e71c8352f3ea4d603022;f6556e0830f02ff7f30ab549cd28a27dd963cbcec9bfcaead77271dd0b6831bf;f797d1b0e87540c114883c6dc15e145a9784d8a0a170247f1a16f23277e65f86;0fb11b811e2476015b4fba5a4a4aa13d91894cee82e263fc4313e2351d57f3ed;122133c29948f653953f6f09d3c9ad8ef40dddefd293ec9ba16768f30ee79b2c;9933addaf9a2781ebbfe0cde2498215d6848bb1d76cae71d646fc289a7485bd6;0339453d6ac1c8ce0008a569290370570444cb2d8dd7a1d96538346d8ec7c6ff;9933addaf9a2781ebbfe0cde2498215d6848bb1d76cae71d646fc289a7485bd6;e73345458171d00b8f46f6b38295a3bdb6d257fa7b0e2706d0af5e4fbcda3f9c;0339453d6ac1c8ce0008a569290370570444cb2d8dd7a1d96538346d8ec7c6ff;b6a9ee965724744b453d80e35a6b38bf56c51861918c8ffeee2dd66ec675d252;d59e2d9830a06ac3d626dbda651c73b8a7af0bbd25f84f0d1ebbfef814eee520;fab0a6d7b343156170b3a41b38ffb34fafd28407a2e62391e4a8d8f6e0d94a43;5456a74f4ce2db645f79a8ff7a80fba07fb215ae8538dd670b28e3fc77a7220a;5456a74f4ce2db645f79a8ff7a80fba07fb215ae8538dd670b28e3fc77a7220a;b50333f842b7c3d0a1a4095b5e9daa8cf5c3d4ed3f231133a8c0546d2af5bbc3;4ae2ec840c87e456500dd5aeded249add21c023d1e6edc677161a770c4b3e26b;1638bc47b45e59c64eff062f46adfa0d75296ea85e043f755daec17c357eed14;8d2e51ca59f7e70094b32c17cce873a6270357950123b90b6a25827416367741;4ae2ec840c87e456500dd5aeded249add21c023d1e6edc677161a770c4b3e26b;626669bada4d9007a9959652ec16f84edb9e1f77b67f1643dc9b82efb27eb906;27c36d51fa805d8def97855e204dc5afe8064a3a5f668bc299b46e110ffebed5",
+      "1087;1087;1106;1106;1087;1001;1001;1106;1099;1099;1106;1001;1106;1099;1106;1106;1106;1106;1106;1099;1059;1059;1001;1059;1210;1059;1059;1059;1059;1059;1059;1099;1001;1106;1106;1106;1106;1106;1099;1106;1106;1106;1106;1059;1099;1106;1210;1099;1059;1059",
+      "7636;0;7378;0;7636;0;0;16359;0;0;11236;0;0;0;16359;6029;0;11236;6029;0;0;0;20422;0;4960;0;0;0;0;19324;24163;0;0;11236;6029;11236;7886;6029;0;0;0;7886;7886;39812;24163;18422;12999;24163;19324;0",
+      "0;0;0;0;0;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;0;0;0;0;0;0;0;0;0;0;0;0;0;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;858123;1112027;1112027;0;1208147;1112027;1112027;1112027",
+      "44.0;48.0;18.0;18.0;31.0;7.0;7.0;36.0;10.0;21.0;37.9;38.9;33.0;21.0;36.0;22.0;55.0;20.0;22.0;1.0;5.9;4.5;2.99;2.88;4.5;6.5;6.5;4.5;10.88;4.5;6.5;1.0;18.0;20.0;22.0;20.0;48.0;22.0;10.0;37.9;33.0;48.0;48.0;2.0;5.9;223.0;26.9;5.9;5.9;4.9",
+      "B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFHXLUWU;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;-1;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;-1;-1;-1;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;B0FFK2SOL7;-1;-1;-1;-1;-1",
+      "wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqjg;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2;wtsqn2",
+      "1453;1473;1553;1554;1566;2147;2150;2218;3962;3967;3974;3977;3979;4028;4038;4040;149105;149116;149119;158581;255621;255629;255671;256245;256252;256258;256262;256263;256265;256275;256277;256278;346364;346470;346477;445940;445942;445944;445978;445997;445999;446013;446015;531559;531575;534164;534219;534257;534267;534268",
+      "15;15;15;15;15;14;14;14;14;14;14;14;14;14;14;14;22;22;22;19;16;16;16;16;16;16;16;16;16;16;16;16;15;15;15;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11",
+      "tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;night;night;night;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;tea;tea;tea;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch",
+      "4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;4;2;2;2;2;1;1;1;1;1;1;1;1;1;1;1;1;0;0;0;6;6;6;6;6;6;6;6;5;5;5;5;5;5;5",
+      "1648798127",
+      "15",
+      "tea",
+      "4",
+      "wtsqjgk27fms"
+    ],
+    [
+      "0",
+      "e7e0ebd5288954f724cd31f57f4cc67af00b34a235908a3eb06aeaff31ba12e6",
+      "2",
+      "3",
+      "76.38571429",
+      "1",
+      "147",
+      "14",
+      "1069.4",
+      "9f5e22507cfd4bf68babc00f447833fd89e0bf0662915de41ca7be8d50d4efb9",
+      "4500c5d56238ee03c82345671571470a41bbb9c9ff7c6778dfd044fa22ddc32c",
+      "3",
+      "5003",
+      "B000A9N4R3",
+      "wx4g6y",
+      "wx4g6y0cehj2",
+      "0",
+      "1066",
+      "0",
+      "1",
+      "1",
+      "1",
+      "7fe052876d3c459d2bdc9dbf92ae8ffe632dcb8d80f847333e52fb2e64deae32;7fe052876d3c459d2bdc9dbf92ae8ffe632dcb8d80f847333e52fb2e64deae32;7fe052876d3c459d2bdc9dbf92ae8ffe632dcb8d80f847333e52fb2e64deae32;7fe052876d3c459d2bdc9dbf92ae8ffe632dcb8d80f847333e52fb2e64deae32;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;3f805ed0e58ee3dd2ffac7c24fe61fec02b055909f94262a921ca152bcf3ddc6;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;de9302d3a790662bc4b1a69d0cd739d9f730294acd4238677ed57d9af2356fa2;c319a40c1ba9c914b26e556873a25a4d16aa0fe472a4c59824f581428d929fcd;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c;b989dea936069d5ba372e9128ad8d85572b7dfca14e2f4c9c4aebd1ad3f3850c",
+      "be18dc34c1d647fdb0fda4eeae8b1df6d31b4b5935ad2c78abe4734d8f80ad6c;f678ff44042e423e4f21060afac3ad9c7b1e2cd8023a7a24d4ce4183327c653d;a0f8059fb0b26a45d5fd8a014947a985fbbed31c9621633161693db800f22ddd;6f4660f3fb76aea541b40cefbe24db175acb2301a2c0fba11d8c05317a057001;3ef89bbbf0a79113d6d8aa8be08428aee7cae20dd01e43af9ef56b523fef4608;022368f096dafb3fa0da0ef30eace69f8c8ebde44e8da563d079bc5fc4a5d18d;540c19ec7fa0f2e4f7a55503d42bf5b960702f2c79555c7e492a8010a19436d3;65d74981974d9a383e49d46854d5babbfec538af4ebb2e9f5c3b88643d19bdd5;5b52034bf939d48f98973030ffbcd5b171034f35f00a1a942d31004e87c6d911;5b52034bf939d48f98973030ffbcd5b171034f35f00a1a942d31004e87c6d911;b3747a8a620f7d9e576d7d7e34bd22c1d55caa36bb53de19f5561de39cdf4687;ceaad11f11987bfff33c6422873cbdbdff12b9902549be98336ac0343a48e3fb;ceaad11f11987bfff33c6422873cbdbdff12b9902549be98336ac0343a48e3fb;b34a35891cd7678298cd94bcafa18539c4537b46e044f794b7cfa95185841913;8257dc6420a63cd25742f377fa567c170427df101bdc55180c46b52a93c68147;66c990ccdee9386f3b3492f03deb7eaf6c6c2e94457812302ab8140d8b04d57d;66c990ccdee9386f3b3492f03deb7eaf6c6c2e94457812302ab8140d8b04d57d;8cd3771a886ea1e51ce6859a5760f4c431c95b1f4ec5eba0c97ed1f4566f867e;8e4348790a94a98a2b654e07f937a177c2ce71a94343dbd1263116d568416a5b;5d8a12b434e39b38e5c3483b9f48c95befa3f24e528f8a7efea512d3d1cf080b;ae7838d8895df3c0c28bf8e19473a66594b23b8276aebdde9b06beb471877048;11025188bc39075799ff6714567fa03ac4447204180240c0178111e0b7f2a531;a74f08c937d0c896c4e252d15d624e4295e42bd4043e34cb3f981486d9fbb519;d25195de2bf42a993a8674fac8586e7a5695646423b6455d631a1cfb280d0b26;b3747a8a620f7d9e576d7d7e34bd22c1d55caa36bb53de19f5561de39cdf4687;9067eef514ccf25f1a33d4e6e63886ca85d8adb9704e7bdf16077d8ced08b365;d34b085cf0e3a2554c896ec7319edf002735ac9dcb7246cb55ec1fc633d1c0db;d34b085cf0e3a2554c896ec7319edf002735ac9dcb7246cb55ec1fc633d1c0db;cbb9dd6e07ebb4fd87a419388bb157fe592731dc015d033057d7229e01a8074f;cbb9dd6e07ebb4fd87a419388bb157fe592731dc015d033057d7229e01a8074f;7ecf4271cfa08ea5f3c99d5f03d555781aa19048f16afdf8fcc4e6c0f1a6679d;f764dce86827884ef034b746c7dd496f3d3203da306e6c4b7d3103e3dde34dc0;f764dce86827884ef034b746c7dd496f3d3203da306e6c4b7d3103e3dde34dc0;12d6b5ac7cbe8cdb0ed4c760dc6383a57ba5caa4780998ec26770b22266e97a9;55127ab1532be2a68d3ece67aaeb6ba8832d75dc3d7935561f6f57d1b20d794d;eeff365e1a7e2e7059f05da1f388fff3aa283e378207fa5d68ca2ab28354ab63;2ab7ca6e840243b50860a804440fe8972ee6600fd62e3463affd3e588c7e3ef3;38aa9c36902dc6caa9ad5657c03758bb85573126b75aecc9052eba9193a08a54;4163043dbb5559e576ead8f135ec6aeb05fec62af6ea419c62ae35ec0741bb7c;7b8e37f43f41c24c54c07392fda98473830cc398ee83f5dd3193292d9acd2ebf;8404d246538af30326e2f501ca740313d48e9e57a04984844ac5abf8910b0b28;7daa8d186eae39da1c70e3cf2ec57aa2c24c2c3e04420d9a96f9c046a5a992ba;bfbabdca23b11429fc3f0e250b5ebce61d0ad9777165aabda475292e6f1da804;bfbabdca23b11429fc3f0e250b5ebce61d0ad9777165aabda475292e6f1da804;749542848ba05be54b699e5cc32f9eacf0fea328ec7f155abe81b754fdb03f39;ee2a075169cdfaec7de4e4942181eb40f3462542a1bee45ce78111c1bb24b223;be46e6f8144003d21124a5e09a851792676ce3f20685bb550274dabed844ca2d;21499bb4bcb9d51f16afd25215e5af913559c493c4c96b7e72b12a2fdcf8f2f0;0611fa9ecd130700b10676f7083885ec55241e968f79b2250d68045410d2f38a;1b8a23689296d1699df7da04cd79afc003c836914f1a91b090477ef5abc583f3",
+      "1099;1059;1080;1001;1099;1099;1087;1071;1210;1210;1059;1059;1059;1210;1059;1059;1059;1059;1210;1071;1059;1059;1210;1059;1059;1210;1210;1210;1059;1059;1099;1087;1087;1087;1087;1106;1087;1087;1087;1087;1066;1071;1001;1001;1087;1087;1071;1001;1001;1001",
+      "0;0;35260;0;0;0;45364;2405;0;0;0;0;0;11704;0;0;0;0;0;0;16653;14093;1630;2486;0;0;0;0;0;0;0;0;0;9733;16574;0;0;42016;42016;0;35318;2492;0;0;22416;22416;2281;11959;0;0",
+      "0;0;0;0;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;438790;1238523;1238523;1238523;1238523;1238523;1238523;1238523;1238523;1238523;1238523;676457;0;0;0;0;0;0;0;0;0",
+      "35.0;18.0;68.0;48.0;4.0;2.0;22.0;18.0;114.0;114.0;73.0;48.0;48.0;19.0;13.5;30.857142857142858;30.857142857142858;9.0;68.0;18.0;78.0;22.5;28.0;18.0;73.0;111.0;572.0;572.0;313.0;313.0;33.5;33.5;33.5;33.5;32.0;28.0;36.0;28.0;28.0;31.5;6.0;9.9;48.8;48.8;4.0;12.0;28.0;98.0;45.0;42.8",
+      "B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B0FFGFHLIU;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC;B000A844UC",
+      "wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4g6x;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd;wx4gdd",
+      "20;37;47;52;75018;75025;75052;75063;75517;75525;75544;75614;75619;75626;75643;75651;75667;75711;75715;75723;75735;75739;75743;75752;75763;75769;75795;75826;75845;75848;96677;96703;96708;96726;96942;97248;97268;97274;97517;97633;171300;453543;453597;453603;453634;453635;453648;453676;453692;453697",
+      "17;17;17;17;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;20;14;14;14;14;14;14;14;14;14;14;18;11;11;11;11;11;11;11;11;11",
+      "dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;tea;tea;tea;tea;tea;tea;tea;tea;tea;tea;dinner;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch",
+      "4;4;4;4;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;3;2;6;6;6;6;6;6;6;6;6",
+      "1648806467",
+      "17",
+      "dinner",
+      "4",
+      "wx4gdd29c461"
+    ],
+    [
+      "1",
+      "9f77719052c3efce7a347ff8a4252b77f06d39d1e05e81b3eda7844c6fe1cce8",
+      "2",
+      "3",
+      "53.20683544",
+      "1",
+      "359",
+      "79",
+      "4203.34",
+      "87d25789b27343d3d404fa33af81c62a7b67eb30f6164c564b21c9407b38c0cb",
+      "ae93192f6898d621a97b16aaa7083952d3d89fc46f9c072852dad0aae114391a",
+      "3",
+      "5003",
+      "B000A87M2X",
+      "wx4g62",
+      "wx4g62tgehdd",
+      "706826",
+      "1210",
+      "0",
+      "2",
+      "3",
+      "2",
+      "209edf38d57aadbe050ba4f915d38081dcff7e5c75e9d181928cce256d838498;209edf38d57aadbe050ba4f915d38081dcff7e5c75e9d181928cce256d838498;209edf38d57aadbe050ba4f915d38081dcff7e5c75e9d181928cce256d838498;209edf38d57aadbe050ba4f915d38081dcff7e5c75e9d181928cce256d838498;90269bd3b74ffa31789c1362edde0709a89c27b737ae904377e19ac7a3ea9bfa;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;64dc07ff0a0923e24e91ee837580cfcff972607a976d9d602adee864f2b0a682;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;b3ed5b0b61d2d148cc3de8f35138acb3fe6b30d83f870574dcf6957a72e0c9f3;90269bd3b74ffa31789c1362edde0709a89c27b737ae904377e19ac7a3ea9bfa;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;9f29afb64f9c634c88357127f58a1ca1daee72ea8dde5a7ad57332620d6fbe4a;fafb6919e2e15436458c2c1496cb27b1abcc02b67004a5ecd9c6cdb0f78d68fc;313c5c35573564309d9f737d608ab5ae54853f0aa5d175d2e57992fbe8477e4f;313c5c35573564309d9f737d608ab5ae54853f0aa5d175d2e57992fbe8477e4f;313c5c35573564309d9f737d608ab5ae54853f0aa5d175d2e57992fbe8477e4f;313c5c35573564309d9f737d608ab5ae54853f0aa5d175d2e57992fbe8477e4f;313c5c35573564309d9f737d608ab5ae54853f0aa5d175d2e57992fbe8477e4f;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;99c9f85069e13920a3ad80bd9441b03f5ba4d2388e7151d742eec2ee0fc9e00e;99c9f85069e13920a3ad80bd9441b03f5ba4d2388e7151d742eec2ee0fc9e00e;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;1f4f75708eedb6ede820aeb9e1560f8fad7c936b6d52fd0ca7415ffe7f39c1ae;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;90269bd3b74ffa31789c1362edde0709a89c27b737ae904377e19ac7a3ea9bfa;90269bd3b74ffa31789c1362edde0709a89c27b737ae904377e19ac7a3ea9bfa;99c9f85069e13920a3ad80bd9441b03f5ba4d2388e7151d742eec2ee0fc9e00e;dd6d718b52a440cfd8bbe87fe853c2d1c19f9802cd7d824b4669ea3b210155c0;dd6d718b52a440cfd8bbe87fe853c2d1c19f9802cd7d824b4669ea3b210155c0;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97;997ac699b01a6b5240db57f94fbdd68104ce42f7df74bee900236a69c1010d97",
+      "9ae474b854dfe868819490ef1929224159813df107520ed4d53e1a0b9eab65ec;d4dea7cd8ac965b97fa319a647e66808918f263527d18430b1806bdfdc4673fd;081faf975ba219c90f81fa3c6cce98541ee33741a37409416111996bb3ceaec0;d4dea7cd8ac965b97fa319a647e66808918f263527d18430b1806bdfdc4673fd;c1d2734cb1fa0bb98043b0cc1c9315af146a0946d4d51ba92fb109eaca5dfda8;554e006cdf28fafc44b1768f0f9a7c99b6124101dfc6c7b51875174921a92fd3;495777e76d47bbd7708679b5a9265ab6f507ecbf293aa41782590e961c00c88c;6f1ce8aba1728caaf80f6e10850f123e22db07c66eac04f427f99390518b6aa7;5636ff5de235e120ce73b02ac99982c13afe8bd25190f1259044a8ac6e2f920a;495777e76d47bbd7708679b5a9265ab6f507ecbf293aa41782590e961c00c88c;22083aa1d83a65c6f460bd36ed8cc392c8c87f9941b3aba03391251eb77fdb8f;532f9055104e42c203c93f7f92b082dd409b317fb31d412eec63e1ccaeb7834f;1f77e99f7ec561e918422e88595cd27d2a0a3f43ff69e0b5103e508b93c0adff;1f77e99f7ec561e918422e88595cd27d2a0a3f43ff69e0b5103e508b93c0adff;b07bf0789dd789ab79f5ef601f7d81c916c145798e5f95c3382b7ee0383956ee;69a3e9781509b76b38be597a70ab800bcf986721623a73d04f01fb1b9f689bfb;9af36f7c1a7be18f9cbdf515d9d765dde2e59e019af1a7221ee586baf71fd678;9af36f7c1a7be18f9cbdf515d9d765dde2e59e019af1a7221ee586baf71fd678;29b50e155b495df704d62badfdc9ba84d82a640b6ae3297b02affb482f33b7e9;ca28ee08425314c0172d93b6425354fbbd2d06a50d4010539ed76248d44cfbb5;28d534863be5a3f801506f623a7cf2bc23c7c6d678efb891e7ca79609fab1f89;eae636bd336e8c128e895bd74708627e376da9f252353d1e29f88ec059118b4a;973191012e9e8a429183420394583294f50d33878dca93c7d3ff540b9e90d463;325de8c339864f1349754426cfe4a0f480f42e1ac3e8fbcbe3aae7bc148c3984;f1be974714d4399c190c1774ee0962d4647819cd9f7f2812b5e59032aee12ce4;973191012e9e8a429183420394583294f50d33878dca93c7d3ff540b9e90d463;d1396267016dc91ba463e10ce0e1db259bf2059adb2e4d2dd6333544b8e64f96;5050d5bb0d9d40db2015bf89c2dc6dd5f6ec8290aaca87c9e59be399aa4e77f6;3d96264c128a067068c08a9f5f4472bf03023fd1cf136544a24978268939d3c3;ef14b96ca971673a69d01addbfbf539b9647b5b13f0aa383ad3c9625c53c95db;3d96264c128a067068c08a9f5f4472bf03023fd1cf136544a24978268939d3c3;3d96264c128a067068c08a9f5f4472bf03023fd1cf136544a24978268939d3c3;8653bbcf494e85e8cd14443cab95c2bde54bd377244288ad3917bdcf8264bba1;495777e76d47bbd7708679b5a9265ab6f507ecbf293aa41782590e961c00c88c;d540d42e6958cc44e1c0da770b255694a62bd2e233230e53b8906603e7a94564;ea15946996cad5b458010c096fe3abe738d4c3fc30e0598a64ab695632a38aa3;5636ff5de235e120ce73b02ac99982c13afe8bd25190f1259044a8ac6e2f920a;dee435f25b2ec3fe34ebd412729bf4edd57589b3f18cc7fa782a67c42f971ccb;495777e76d47bbd7708679b5a9265ab6f507ecbf293aa41782590e961c00c88c;28d534863be5a3f801506f623a7cf2bc23c7c6d678efb891e7ca79609fab1f89;cf86ab6bae506f2a4fcaf82a6ca80ba3105753cb896c8ecc92cedd661b4c059a;938f184019d7bfa019266b26885ef3250288e2385ea3066aae27859169a10c77;a549a31131b651db8ad61bba60c21f9ec654c3fd95101d95f2472f232f61e5d5;8b81c461744e564a55504fbce18c074f704ffa1d640c48c1c72e29e11a9fa846;4175e0447e7a80598d36ee91ca73c50d032089b61dd0176c45345705a104dc0e;6f1ce8aba1728caaf80f6e10850f123e22db07c66eac04f427f99390518b6aa7;b4698b472a63f04f72868aa9d7c8d77c1e53639163c3ca0f3c0d4e01e1a6e96d;495777e76d47bbd7708679b5a9265ab6f507ecbf293aa41782590e961c00c88c;c20cae6001b6a028f857a1033b1f0383c29e81e2c4b79a2d27a9b623ae21972a;e3afcb6d4618d00cf7d49484b0d4026868fd6f4223eb73a5fc58cd1225f55149",
+      "1099;1210;1066;1210;1080;1087;1087;1001;1106;1087;1087;1087;1087;1087;1087;1087;1099;1099;1099;1087;1106;1071;1210;1059;1059;1210;1210;1087;1210;1059;1210;1210;1001;1087;1059;1210;1106;1106;1087;1106;1106;1080;1059;1001;1001;1001;1106;1087;1087;1106",
+      "0;28409;0;28409;0;2153;43247;0;0;43247;0;0;0;0;0;0;0;0;0;24991;0;36887;0;0;4960;0;0;0;39624;0;39624;39624;0;43247;0;0;0;9353;43247;0;0;0;0;0;29330;0;0;43247;0;5976",
+      "435889;435889;435889;435889;703802;974667;974667;974667;974667;974667;6020;414603;414603;414603;414603;414603;414603;414603;414603;414603;703802;0;0;0;0;0;0;1127099;1141347;1141347;1141347;1141347;1141347;974667;554344;554344;974667;876027;974667;703802;703802;554344;1050931;1050931;974667;974667;974667;974667;974667;974667",
+      "0.0;14.0;10.0;14.0;73.6;25.5;22.5;23.0;37.0;22.5;35.0;22.5;26.5;26.5;24.666666666666668;2.5;2.0;2.0;0.28;16.0;71.8;6.6;39.0;7.0;3.98;39.0;2.0;42.23333333333333;42.88;18.88;42.88;42.88;41.88;22.5;52.95333333333334;54.38;37.0;33.0;22.5;71.8;73.8;54.88;7.9;48.99;22.0;23.0;23.0;22.5;24.0;7.0",
+      "B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0;B0FFL5WHV0",
+      "wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds;wx4gds",
+      "61;87;113;164;775;37006;37013;37020;37049;37061;37090;87625;87631;87680;87691;87712;87727;87732;87733;88200;179301;201560;201599;201630;201635;201640;201648;201682;201731;201945;201960;201967;201987;202081;202743;202746;210061;278850;294869;354272;354276;354301;372353;372357;382852;382857;382861;382875;382878;382882",
+      "19;19;19;19;19;9;9;9;9;9;9;19;19;19;19;19;19;19;19;19;18;11;11;11;11;11;11;11;11;11;11;11;11;11;11;11;9;14;10;17;17;17;12;12;9;9;9;9;9;9",
+      "dinner;dinner;dinner;dinner;dinner;breakfast;breakfast;breakfast;breakfast;breakfast;breakfast;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;breakfast;tea;lunch;dinner;dinner;dinner;lunch;lunch;breakfast;breakfast;breakfast;breakfast;breakfast;breakfast",
+      "4;4;4;4;4;4;4;4;4;4;4;3;3;3;3;3;3;3;3;3;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;1;1;0;0;0;0;0;0;0;0;0;0;0",
+      "1648814154",
+      "19",
+      "dinner",
+      "4",
+      "wx4gds1suedk"
+    ],
+    [
+      "0",
+      "6ff37cc50fecf47d7d41e8af802fa071d487baf0f35506e8c8f9d0ea7aba4cf7",
+      "1",
+      "66",
+      "18.61333333",
+      "1",
+      "9",
+      "3",
+      "55.84",
+      "5d5355fa97581a2d02f6a906e685f20d829a106b4a2cdd9da880642fed41954f",
+      "e68be069f8d5ebe6e0530ed5ed23f1efbae6916ce30c15defe782c8cc7cb7f66",
+      "66",
+      "1171",
+      "B031800026",
+      "wt62b4",
+      "wt62b41mzv25",
+      "7087",
+      "1071",
+      "38006",
+      "-1",
+      "6",
+      "11",
+      "f1c621e0f37262c75f6325c9f38548c5b988fab0550332793810e950313f95af",
+      "6255c68cc6e3de9e2c2f49d80f7de06393f2fac95a9fc8945040a8d21f763003",
+      "1001",
+      "0",
+      "0",
+      "19.8",
+      "B0FFMEZ2M4",
+      "wt62bq",
+      "3889111",
+      "17",
+      "dinner",
+      "1",
+      "1648804963",
+      "17",
+      "dinner",
+      "4",
+      "wt62bqv5z73n"
+    ],
+    [
+      "0",
+      "f76b696128244b78205a2b0c767038607c398b35977b2705e1078d5d69e80c48",
+      "2",
+      "35",
+      "29.66",
+      "1",
+      "30",
+      "3",
+      "88.98",
+      "aa96c268e14a3d5afbd4270889ed4d4c89d6fa15a6d9b89e153c38e84f35880c",
+      "27bfaf2f26e2615436db16bc14b657739e92f7d984389ba5f2fe47951604a0dd",
+      "35",
+      "5900",
+      "B0FFHF5JKN",
+      "wtte97",
+      "wtte97z2qwd6",
+      "552663",
+      "1001",
+      "0",
+      "1",
+      "1",
+      "1",
+      "cba83a9e1fb9188fdd8e5e21c5b4682c06ef2aae54f547b4d20477af063a6dbe;5fdcbaec40bfd6ca11c5e41942cc897292a0689773300a2186cb1ccc5c3b6d1d;5fdcbaec40bfd6ca11c5e41942cc897292a0689773300a2186cb1ccc5c3b6d1d;00832600e7045893fdaf85e0672b33f46477241b84c04a3af50c96571c59a4be;ead6549a4015338fd2b7fe4d69e8b6c76bc82a950517fcc27587e71b394821fd;ead6549a4015338fd2b7fe4d69e8b6c76bc82a950517fcc27587e71b394821fd;b6e9e6f4d146b775ac89b2e5a9fd2793e5f1af53dba5a86b68e76a8c26e3932e;b6e9e6f4d146b775ac89b2e5a9fd2793e5f1af53dba5a86b68e76a8c26e3932e;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;5d5d1d96c6193a1d4b23bb8ca38eab19e64305c089c224534e791c6a3ccf7a08;c3f2989a13bc15bee86a35d95b2c8ce9461033ea3c6825cb1295803cd26f6baf;c3f2989a13bc15bee86a35d95b2c8ce9461033ea3c6825cb1295803cd26f6baf;c3f2989a13bc15bee86a35d95b2c8ce9461033ea3c6825cb1295803cd26f6baf;0617e45d535279ab4795aa1f0a99aedaf64edcf7fa2eff39508ec39fc9027c17;8129ddb2f200c03eeb405248a49d7f2e59d9734ad1d39c68748328258c867cd8;6af245b07dcd0c30ae69411c556b60d8833ecd0c530a73d33014d9406c95a5b7;6af245b07dcd0c30ae69411c556b60d8833ecd0c530a73d33014d9406c95a5b7;6af245b07dcd0c30ae69411c556b60d8833ecd0c530a73d33014d9406c95a5b7;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;613bf0b4db976f75bdb3ebb2d28b639c943f317a6d0892c92f4daa5644c4fdf9;613bf0b4db976f75bdb3ebb2d28b639c943f317a6d0892c92f4daa5644c4fdf9;4941a8cc247875dc87a76930a120fc164832062d59d2404a2504be44bf67fa2e;4941a8cc247875dc87a76930a120fc164832062d59d2404a2504be44bf67fa2e;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;bc0bb29edcbbaade99e7972923ca7e7a384292dde83553f776cf0d9b808d761a;bc0bb29edcbbaade99e7972923ca7e7a384292dde83553f776cf0d9b808d761a;bc0bb29edcbbaade99e7972923ca7e7a384292dde83553f776cf0d9b808d761a;a36762798f07cf33e29bf8fc330e427b80e82b24316b3be2af96474bb9c7f722;4941a8cc247875dc87a76930a120fc164832062d59d2404a2504be44bf67fa2e",
+      "9a2742e2b5bdba1e7f8a31d8a7610ca1232e719a6e137da8ae41e96a6d1295b6;a360b0ffd35543fec835e6f3ddcf0ad052db307f890ca8076afda47eb4f29fb2;a360b0ffd35543fec835e6f3ddcf0ad052db307f890ca8076afda47eb4f29fb2;4ba473fd538ec00f2568b1f7f1d5e6eb0838d99356c0cfb8f6540e51e00629e1;ae09820643cc1989fadcf49cfa03792029fea4de6d21c44166195a1bef750ba8;8aae56b6bd3478321cc1b2bb0e24eeb904e08343655e8df24e1017e65e1b4247;05e63b31f626dca58b0198545bb8cd1c64748fd1bede627cd040f23060660082;5d844b8a99c5805b0e3e0b1b847c59d04de10d23d2f68e02e91970e554cda9b4;a233e297dab1e360462843a18674197785ef4b19695e3b06546e94628d42632f;b946b936ad829fccda22730fd3754e12d9cbae75d133a34715e6aeead1751389;281cda7e8f9b3f2bb463a2f268ee70943aab099b59aa00e21a3c1067c5fea873;056590452a5937a9bcfa385a24efa15a67feca9908608f623145aa00a469dc54;c91486aa893aee7d9fd2a468e539128c644df375114831693ef1809454896fc1;e7f70619a12f5dec8fea81fbd6ef998ff626de03c9048fc3f99a9c40d36290b4;908552f36b9fe65254651843e40c9c54aeeb9dc82b5c59affcf404956fc9f3c3;bf0a93043c3cd4b3167f811a6fae351e48edf93656ef8a4e391dc939fbf802e3;c1c5e74473756519515504c66fbb397f0f4e4e2ea62b3f735e1b51ac5717ae3e;384ea353280f286c39e8e6416bee42e9413fb1c8ad5f8e3bf30c286711240cda;e922ca436e42c1880c50d4addb4bc0b2c570c576334cf5b5b98595e7a476f205;32b9943ff4311d990da99acae555963514ab55a8d4dfa8ed4f4201a519c765c6;eca35bbd28c619f9901e6c28b31ee8169ab30ce2c2c8233c47a3e17cfbf5d21b;c772c0ad0c860380bfa990afb6d62aec2077d757d1d9d646b979fcd7064d50a2;926fe14822f7410d3b3224f6b7e48fe3bc82e1fa7e35291c5d12beb5d8a57fa6;4c683cd4bc1e7f6d89cb3fd6a05617db6b52279cfcda2589e0290f03d3d5c0d7;f989669841977ec83805953ba80590b7ec947a1739e104a017000ab152f299a2;5e74d26ea85d9b47d4977d363dab783da7e023f0a97e4e2155a52cb560b3f0b6;441c837eff6c5e49646298ba8f39be993d6cf0d6f69f9da815e7fef0bbb17b29;13d53ff8193773cd89966f626a88899f2c50184578fd347275e9df4897e9aca5;4bab415146a8d01bd43161f924e11f1a1e4b0208b19c4dcfe46e2d379c90fb65;273fddbe8e9253b6476c7b68e843a36ce7a81cd51b1568899d1525495413a993;113e1c3b68a6a7f1e3ca09cf603e06e5f36107f491a0468025fcae606c4f5a1d;113e1c3b68a6a7f1e3ca09cf603e06e5f36107f491a0468025fcae606c4f5a1d;1a3daed81ba12a20a8a2c3f1eab5b3ada160b51ed8a33bfbfd4aa9e2a18df74a;dc9fd60f17525c0704d2f36026cdb6101e624047b43aae04a7377cfa1569b864;0a5ea9f7e4cf7f21ee883eb49b6325158c8bf73cf7218978ceb0596862613999;ccf4ebb6e1621532ec1248472515014ff732172bafa7065dc07d4d52e069aefc;113e1c3b68a6a7f1e3ca09cf603e06e5f36107f491a0468025fcae606c4f5a1d;c9a340bf0d56eabc3e8227ef3d85ed53fc2b4f17f2e3e64f0a972f042d64da26;eaad3b2d0fa4f69f201a915924b9f9136d10844a68b0e46f7224fa6d0e3ace5c;eaad3b2d0fa4f69f201a915924b9f9136d10844a68b0e46f7224fa6d0e3ace5c;185f995dae53d3ca8daaa583050ade53d6c94d6cbabc95b915d219d5c3dd7f72;3ca2a7f0f217367b74313f2be4a4a5d68b1dabd9201e24b6c0dbcb0afc56494a;e39fb381ab7584e6fb462f621977f6618ea1f76bee7d5fff36e01e752686a22e;dcc09ade32b93b758dd3854373e4794d68e523da9d7312258a1dc105bd9316b5;89aedafed024300cb950e5bee43eb2cdbe97d1182b6596190b997651e130881e;e977917aa39887a274007884db36b7fad40f6651731216fd650a3316bf88514b;6f70ab15368f9e67d3dc4357c1f81f4af3aa07704609e5963d4ed1285cbd1b73;6f70ab15368f9e67d3dc4357c1f81f4af3aa07704609e5963d4ed1285cbd1b73;113e1c3b68a6a7f1e3ca09cf603e06e5f36107f491a0468025fcae606c4f5a1d;afd4be7f2d25c62e6b83d5f022a00bc5e8d77f86dcc20a7bffe56282bba11f10",
+      "1210;1210;1210;1210;1087;1001;1087;1001;1066;1066;1066;1066;1066;1106;1099;1066;1066;1066;1066;1066;1066;1066;1087;1099;1087;1087;1087;1001;1001;1210;1106;1106;1106;1106;1106;1106;1106;1106;1099;1099;1106;1106;1106;1106;1106;1106;1106;1106;1106;1106",
+      "0;0;0;0;10228;23454;2809;10793;14424;14252;14787;0;14746;29211;0;44759;0;0;0;14631;0;14833;0;0;0;0;19444;28469;0;23690;0;0;18422;0;0;0;0;0;0;0;18422;0;0;0;0;18422;0;0;0;0",
+      "1080739;0;0;0;0;0;1255227;1255227;486062;486062;486062;486062;486062;486062;486062;486062;486062;486062;486062;486062;486062;486062;410509;410509;410509;410509;424819;453683;453683;453683;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0",
+      "45.88;34.0;34.0;40.88;4.0;18.0;5.0;16.88;4.5;3.0;2.5;2.5;1.88;2.0;0.0;4.0;4.5;4.0;2.5;4.0;9.9;5.0;3.0;1.5;8.0;24.0;13.0;13.4;14.4;4.88;99.0;99.0;284.6666666666667;281.6666666666667;138.0;136.0;99.0;128.0;3.0;3.0;138.0;243.0;248.0;223.0;193.0;12.4;65.0;65.0;99.0;312.6666666666667",
+      "B01FE0K7M5;B01FE0K7M5;B01FE0K7M5;B01FE0K7M5;B01FE0K7M5;B01FE0K7M5;B01FE18VKO;B01FE18VKO;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B0015071B9;B0015071B9;B0015071B9;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV;B01FE0IQEV",
+      "wtte98;wtte98;wtte98;wtte98;wtte98;wtte98;wtte3w;wtte3w;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wtw308;wtw308;wtw308;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj;wttedj",
+      "140;83074;83080;83111;83496;83522;602524;602540;831339;831374;831377;831507;831546;831609;831929;831932;831964;831978;831997;832001;832016;832018;1196016;1196049;1196068;1286121;1286175;1286417;1286420;1286434;3172215;3173230;3186561;3186582;3186870;3186884;3186981;3186985;3187001;3187005;3187016;3187047;3187073;3187080;3187087;3188268;3188276;3188296;3188313;3188323",
+      "10;11;11;11;11;11;11;11;19;19;19;19;19;19;19;19;19;19;19;19;19;19;14;14;14;13;13;13;13;13;17;16;13;13;13;13;13;13;13;13;13;13;13;13;13;12;12;12;12;12",
+      "lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;dinner;tea;tea;tea;lunch;lunch;lunch;lunch;lunch;dinner;dinner;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch;lunch",
+      "4;3;3;3;3;3;4;4;1;1;1;1;1;1;1;1;1;1;1;1;1;1;4;4;4;3;3;3;3;3;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2;2",
+      "1648780013",
+      "10",
+      "lunch",
+      "4",
+      "wtte984n5ky9"
+    ]
+  ]
+};
+
+// Update Metrics on Page
+function updateMetrics() {
+    const m = metricsData;
+    if (!m) return;
+
+    const formatMetricWithUnit = (value, unit) => {
+        const num = Number(value);
+        if (!Number.isFinite(num)) return value ?? '--';
+        if (!unit) return num;
+        if (unit === 'M') {
+            // 兼容历史错误数据：total_impressions 可能是原始值+M单位
+            const normalized = num >= 1000 ? (num / 1000000) : num;
+            return `${normalized.toFixed(2)}${unit}`;
+        }
+        return `${num}${unit}`;
+    };
+
+    const getImpressionRaw = () => {
+        const raw = Number(m.total_impressions_raw);
+        if (Number.isFinite(raw)) return raw;
+        const num = Number(m.total_impressions);
+        if (!Number.isFinite(num)) return 0;
+        if (m.total_impressions_unit === 'M') {
+            return num >= 1000 ? num : num * 1000000;
+        }
+        return num;
+    };
+
+    const cards = document.querySelectorAll('.metric-card');
+    cards.forEach(card => {
+        const label = card.querySelector('.metric-label').textContent;
+        const valueEl = card.querySelector('.metric-value');
+
+        if (label.includes('总曝光量')) valueEl.textContent = formatMetricWithUnit(m.total_impressions, m.total_impressions_unit);
+        if (label.includes('总点击量')) valueEl.textContent = formatMetricWithUnit(m.total_clicks, m.total_clicks_unit);
+        if (label.includes('全局点击率')) valueEl.textContent = m.global_ctr + '%';
+        if (label.includes('转化率')) valueEl.textContent = m.global_cvr + '%';
+        if (label.includes('平均客单价')) valueEl.textContent = '¥' + m.avg_price;
+        if (label.includes('活跃用户数')) valueEl.textContent = formatMetricWithUnit(m.active_users, m.active_users_unit);
+    });
+
+    const headerP = document.querySelector('.header p:last-child');
+    if (headerP) {
+        const impressionRaw = getImpressionRaw();
+        headerP.textContent = `分析时段: 20220401~20220407 | 数据规模: ${Math.round(impressionRaw).toLocaleString('zh-CN')}条记录`;
+    }
+}
+
+window.__DASHBOARD_BOOTSTRAP__ = () => {
+    updateMetrics();
+    initCharts();
+    initTabSwitching();
+    renderTable();
+    renderSampleData();
+};
+
+
+// ========== 图表渲染函数 ==========
+
+function initCharts() {
+    const globalMetrics = (typeof metricsData !== 'undefined' && metricsData) ? metricsData : {};
+    const toNumberOrNull = (v) => {
+        const n = Number(v);
+        return Number.isFinite(n) ? n : null;
+    };
+
+    const ctrValueEl = document.getElementById('globalCtrValue');
+    const cvrValueEl = document.getElementById('globalCvrValue');
+    if (ctrValueEl) {
+        const ctr = toNumberOrNull(globalMetrics.global_ctr);
+        ctrValueEl.textContent = ctr === null ? '--' : `${ctr.toFixed(2)}%`;
+    }
+    if (cvrValueEl) {
+        const cvr = toNumberOrNull(globalMetrics.global_cvr);
+        cvrValueEl.textContent = cvr === null ? '--' : `${cvr.toFixed(2)}%`;
+    }
+
+    // 1. 用户分层饼图
+    const segmentChart = echarts.init(document.getElementById('userSegmentPie'));
+    segmentChart.setOption({
+        tooltip: { trigger: 'item', formatter: '{b}: {c}%<br/>占比: {d}%' },
+        legend: { bottom: 0, data: userSegmentData.map(d => d.name) },
+        series: [{
+            type: 'pie',
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: true,
+            itemStyle: { borderRadius: 8, borderColor: '#fff', borderWidth: 2 },
+            label: { show: true, formatter: '{b}\n{c}%' },
+            data: userSegmentData.map(d => ({ 
+                name: d.name, 
+                value: d.value,
+                itemStyle: { color: d.color }
+            }))
+        }]
+    });
+    
+    // 2. 用户价值柱状图
+    const valueChart = echarts.init(document.getElementById('userValueBar'));
+    valueChart.setOption({
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        xAxis: { type: 'category', data: userValueData.categories },
+        yAxis: { type: 'value', name: '平均消费(元)' },
+        series: [{
+            type: 'bar',
+            data: userValueData.values,
+            itemStyle: {
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: '#83bff6' },
+                    { offset: 1, color: '#188df0' }
+                ]),
+                borderRadius: [6, 6, 0, 0]
+            },
+            label: { show: true, position: 'top', formatter: '¥{c}' }
+        }]
+    });
+    
+    // 3. VIP价值对比图（仅消费类指标）
+    const vipCategories = ['平均客单价(元)', '30天下单次数'];
+    const vipValueData = {
+        vip: [
+            toNumberOrNull(vipData?.vip?.[2]),
+            toNumberOrNull(vipData?.vip?.[3])
+        ],
+        normal: [
+            toNumberOrNull(vipData?.normal?.[2]),
+            toNumberOrNull(vipData?.normal?.[3])
+        ],
+        unknown: [
+            toNumberOrNull(vipData?.unknown?.[2]),
+            toNumberOrNull(vipData?.unknown?.[3])
+        ]
+    };
+    const vipChart = echarts.init(document.getElementById('vipComparison'));
+    vipChart.setOption({
+        tooltip: {
+            trigger: 'axis',
+            formatter: (params) => {
+                if (!params || params.length === 0) return '';
+                const category = params[0].axisValue;
+                const unit = category === '平均客单价(元)' ? '元' : '次';
+                const lines = params.map((p) => {
+                    const val = p.value === null || p.value === undefined ? '-' : `${p.value}${unit}`;
+                    return `${p.marker}${p.seriesName}: ${val}`;
+                });
+                return `${category}<br/>${lines.join('<br/>')}`;
+            }
+        },
+        legend: { data: ['VIP用户', '非VIP用户', '未知'], top: 0 },
+        xAxis: { type: 'category', data: vipCategories },
+        yAxis: { type: 'value', name: '指标值' },
+        series: [
+            {
+                name: 'VIP用户',
+                type: 'bar',
+                data: vipValueData.vip,
+                itemStyle: { color: '#faad14', borderRadius: [6, 6, 0, 0] },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: (p) => {
+                        if (p.value === null || p.value === undefined) return '-';
+                        return p.dataIndex === 0 ? `¥${p.value}` : `${p.value}`;
+                    }
+                }
+            },
+            {
+                name: '非VIP用户',
+                type: 'bar',
+                data: vipValueData.normal,
+                itemStyle: { color: '#8c8c8c', borderRadius: [6, 6, 0, 0] },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: (p) => {
+                        if (p.value === null || p.value === undefined) return '-';
+                        return p.dataIndex === 0 ? `¥${p.value}` : `${p.value}`;
+                    }
+                }
+            },
+            {
+                name: '未知',
+                type: 'bar',
+                data: vipValueData.unknown,
+                itemStyle: { color: '#d9d9d9', borderRadius: [6, 6, 0, 0] },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: (p) => {
+                        if (p.value === null || p.value === undefined) return '-';
+                        return p.dataIndex === 0 ? `¥${p.value}` : `${p.value}`;
+                    }
+                }
+            }
+        ]
+    });
+    
+    // 4. 性别对比图（平均客单价对比 - 基于性别）
+    const genderChart = echarts.init(document.getElementById('genderComparison'));
+    genderChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['男性', '女性', '未知'], top: 0 },
+        xAxis: { type: 'category', data: genderComparisonData.categories },
+        yAxis: { type: 'value', name: '平均消费金额(元)' },
+        series: [
+            {
+                name: '男性',
+                type: 'bar',
+                data: genderComparisonData.male,
+                itemStyle: { color: '#1890ff', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top', formatter: '¥{c}' }
+            },
+            {
+                name: '女性',
+                type: 'bar',
+                data: genderComparisonData.female,
+                itemStyle: { color: '#eb2f96', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top', formatter: '¥{c}' }
+            },
+            {
+                name: '未知',
+                type: 'bar',
+                data: genderComparisonData.unknown,
+                itemStyle: { color: '#d9d9d9', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top', formatter: '¥{c}' }
+            }
+        ]
+    });
+    
+    // 5. 各层用户行为覆盖率（用户口径）
+    const clickCoverageName = '30天有点击用户占比(%)';
+    const orderCoverageName = '30天有下单用户占比(%)';
+    const conversionChart = echarts.init(document.getElementById('segmentConversion'));
+    conversionChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: [clickCoverageName, orderCoverageName], top: 0 },
+        xAxis: { type: 'category', data: segmentConversionData.categories },
+        yAxis: { type: 'value', name: '百分比(%)', max: 100 },
+        series: [
+            {
+                name: clickCoverageName,
+                type: 'bar',
+                data: segmentConversionData.click_rate,
+                itemStyle: { color: '#1890ff', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top', formatter: '{c}%' }
+            },
+            {
+                name: orderCoverageName,
+                type: 'bar',
+                data: segmentConversionData.conversion_rate,
+                itemStyle: { color: '#52c41a', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top', formatter: '{c}%' }
+            }
+        ]
+    });
+    
+    // 6. 24小时趋势图（5个用户等级）
+    const segmentNames = {
+        super_vip: '👑 超级VIP用户',
+        potential: '⭐ 潜力优质用户',
+        active: '🔥 大众活跃用户',
+        normal: '📦 一般用户',
+        churn: '⚠️ 流失风险用户'
+    };
+    
+    const hourlyCharts = {};
+    ['super_vip', 'potential', 'active', 'normal', 'churn'].forEach(segment => {
+        const chartEl = document.getElementById('hourlyTrend_' + segment);
+        if (!chartEl) return;
+        
+        const data = hourlyBySegmentData[segment] || { hours: [], clicks: [], orders: [] };
+        const chart = echarts.init(chartEl);
+        hourlyCharts[segment] = chart;
+        
+        chart.setOption({
+            title: { text: segmentNames[segment] + ' - 24小时趋势', left: 'center', top: 0, textStyle: { fontSize: 14, color: '#666' } },
+            tooltip: { trigger: 'axis' },
+            legend: { data: ['点击量', '下单量'], top: 25 },
+            grid: { left: 60, right: 60, bottom: 30, top: 70 },
+            xAxis: { 
+                type: 'category', 
+                data: data.hours.map(h => h + ':00'),
+                axisLabel: { fontSize: 10 }
+            },
+            yAxis: { type: 'value', name: '数量' },
+            series: [
+                {
+                    name: '点击量',
+                    type: 'line',
+                    data: data.clicks,
+                    smooth: true,
+                    lineStyle: { width: 3, color: '#1890ff' },
+                    areaStyle: { 
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(24,144,255,0.4)' },
+                            { offset: 1, color: 'rgba(24,144,255,0.1)' }
+                        ])
+                    }
+                },
+                {
+                    name: '下单量',
+                    type: 'line',
+                    data: data.orders,
+                    smooth: true,
+                    lineStyle: { width: 3, color: '#52c41a' },
+                    areaStyle: { 
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(82,196,26,0.4)' },
+                            { offset: 1, color: 'rgba(82,196,26,0.1)' }
+                        ])
+                    }
+                }
+            ]
+        });
+    });
+    
+    // 7. 工作日非工作日对比
+    const weekChart = echarts.init(document.getElementById('weekdayComparison'));
+    weekChart.setOption({
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['工作日', '非工作日'], top: 0 },
+        xAxis: { type: 'category', data: weekdayData.metrics },
+        yAxis: { type: 'value', name: '数量' },
+        series: [
+            {
+                name: '工作日',
+                type: 'bar',
+                data: weekdayData.weekday,
+                itemStyle: { color: '#1890ff', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            },
+            {
+                name: '非工作日',
+                type: 'bar',
+                data: weekdayData.weekend,
+                itemStyle: { color: '#52c41a', borderRadius: [6, 6, 0, 0] },
+                label: { show: true, position: 'top' }
+            }
+        ]
+    });
+    
+    // Store charts for resize
+    window.allCharts = [segmentChart, valueChart, vipChart, genderChart, conversionChart, weekChart, ...Object.values(hourlyCharts)];
+    
+    window.addEventListener('resize', () => {
+        window.allCharts.forEach(chart => chart && chart.resize());
+    });
+}
+
+// Tab switching for hourly segment charts
+function initTabSwitching() {
+    const tabs = document.querySelectorAll('.segment-tab');
+    const charts = document.querySelectorAll('.hourly-segment-chart');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const segment = tab.dataset.segment;
+            
+            // Update tab styles
+            tabs.forEach(t => {
+                t.style.background = 'white';
+                t.style.color = 'var(--primary-color)';
+                t.classList.remove('active');
+            });
+            tab.style.background = 'var(--primary-color)';
+            tab.style.color = 'white';
+            tab.classList.add('active');
+            
+            // Show/hide charts
+            charts.forEach(c => {
+                c.style.display = 'none';
+            });
+            const activeChart = document.getElementById('hourlyTrend_' + segment);
+            if (activeChart) {
+                activeChart.style.display = 'block';
+                // Trigger resize to fix chart rendering
+                const chartInstance = echarts.getInstanceByDom(activeChart);
+                if (chartInstance) chartInstance.resize();
+            }
+        });
+    });
+}
+
+// ========== 明细表渲染 ==========
+function renderTable() {
+    const tbody = document.getElementById('tableBody');
+    tbody.innerHTML = '';
+    summaryTableData.forEach(row => {
+        if (!row || typeof row !== 'object') return;
+
+        const dimension = String(
+            row.dimension ?? row['维度'] ?? row.analysis_dimension ?? ''
+        ).trim();
+        const metric = String(
+            row.metric ?? row['指标名称'] ?? row.name ?? ''
+        ).trim();
+        const value = row.value ?? row['数值'] ?? '--';
+        const compare = row.compare ?? row['对比基准'] ?? row['占比同比'] ?? row.compare_label ?? '暂无可比基准';
+        const rating = String(row.rating ?? row.level ?? '').trim();
+
+        // 删除“商品分析”维度，兼容旧数据可能缺少dimension的情况
+        if (dimension === '商品分析') return;
+        if (metric === 'TOP30商品点击占比' || metric === '快餐简餐类占比') return;
+
+        const tr = document.createElement('tr');
+        
+        let ratingTag = '-';
+        if (rating === '高') ratingTag = '<span class="tag tag-high">优秀</span>';
+        else if (rating === '中') ratingTag = '<span class="tag tag-medium">良好</span>';
+        else if (rating === '低') ratingTag = '<span class="tag tag-low">待优化</span>';
+        
+        tr.innerHTML = `
+            <td>${dimension || '-'}</td>
+            <td style="text-align: left; padding-left: 1.5rem;">${metric || '-'}</td>
+            <td><strong>${value}</strong></td>
+            <td>${compare || '暂无可比基准'}</td>
+            <td>${ratingTag}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ========== 样例数据渲染 ==========
+function renderSampleData() {
+    const headRow = document.getElementById('sampleDataHeadRow');
+    const tbody = document.getElementById('sampleDataBody');
+    headRow.innerHTML = '';
+    tbody.innerHTML = '';
+
+    const headers = Array.isArray(sampleTableData.headers) ? sampleTableData.headers : [];
+    const rows = Array.isArray(sampleTableData.rows) ? sampleTableData.rows : [];
+
+    if (headers.length === 0 || rows.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 1;
+        td.textContent = '暂无样例数据';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+    }
+
+    headers.forEach((header) => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headRow.appendChild(th);
+    });
+
+    rows.forEach((row) => {
+        const tr = document.createElement('tr');
+
+        headers.forEach((_, idx) => {
+            const td = document.createElement('td');
+            const value = Array.isArray(row) ? row[idx] : '';
+            const text = value === null || value === undefined ? '' : String(value);
+            td.textContent = text;
+            if (text.length > 120) {
+                td.title = text;
+            }
+            tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+    });
+}
+
+// ========== 初始化 ==========
+window.addEventListener('DOMContentLoaded', () => {
+    const bootstrap = window.__DASHBOARD_BOOTSTRAP__;
+    if (typeof bootstrap === 'function') {
+        bootstrap();
+        return;
+    }
+
+    initCharts();
+    initTabSwitching();
+    renderTable();
+    renderSampleData();
+});
+</script>
+
+</body>
+</html>
