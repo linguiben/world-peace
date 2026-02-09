@@ -1,0 +1,22 @@
+# Startup a minimal nginx for ACME HTTP-01 challenges (used only during cert issuance).
+# NOTE: We use a distinct container name to avoid clashing with the main nginx.
+services:
+  nginx:
+    image: nginx:latest
+    container_name: certbot-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      # Host-persistent webroot for ACME HTTP-01 challenges
+      - /opt/docker/nginx/certbot/www:/var/www/certbot
+      # Store certs/keys in the standard LetsEncrypt directory
+      - /etc/letsencrypt:/etc/letsencrypt
+    networks:
+      - wp-net
+
+networks:
+  wp-net:
+    external: true
+    name: wp-net

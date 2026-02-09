@@ -5,7 +5,8 @@ networks:
 
 services:
   wpadmin:
-    image: ${REPO_URL}/world-peace-admin:2.0
+    # Prefer local build; override with WPADMIN_IMAGE if you want to pull from a registry.
+    image: ${WPADMIN_IMAGE:-world-peace-admin:2.0}
     user: "0:0" #run with root user (UID:GID)
     mem_limit: 512m
     cpus: 1
