@@ -34,8 +34,14 @@ fi
 docker exec -it "$2" /bin/bash
 
 # If you want to use a different shell, replace /bin/bash with /bin/sh or another shell of your choice.
-# This script should cooperate with _to_docker_container.sh
+# This script should cooperate with _complete_to.sh
 
+########## copy to ~/.bashrc ###############
+# source the completion script if it exists
+#if [ -f /opt/repo/world-peace/docker/script/_completion* ]; then
+#    . /opt/repo/world-peace/docker/script/_completion*
+#fi
+########## copy to ~/.bashrc ###############
 
 ########## copy to ~/.ssh/config ###############
 #Host *

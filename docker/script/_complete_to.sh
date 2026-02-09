@@ -30,7 +30,8 @@ _to_container() {
     if [ -z "$(ps aux | grep dockerd | grep -v grep | awk '{print $2}')" ]; then
         echo "$opts DOCKER IS NOT RUNNING"
     else
-      _opts=`docker ps | grep -v "^CONTAINER" | awk '{print $NF}'` # 定义可选的补全选项，这些选项是 test.sh 可接受的参数
+      #_opts=`docker ps | grep -v "^CONTAINER" | awk '{print $NF}'` # 定义可选的补全选项，这些选项是 test.sh 可接受的参数
+      _opts="$(docker ps --format '{{.Names}}')"
       opts="$opts $_opts"
     fi
   fi
