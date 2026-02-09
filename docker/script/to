@@ -38,8 +38,8 @@ docker exec -it "$2" /bin/bash
 
 ########## copy to ~/.bashrc ###############
 # source the completion script if it exists
-#if [ -f /opt/repo/world-peace/docker/script/_completion* ]; then
-#    . /opt/repo/world-peace/docker/script/_completion*
+#if [ -f /opt/repo/world-peace/docker/script/_complete* ]; then
+#    . /opt/repo/world-peace/docker/script/_complete*
 #fi
 ########## copy to ~/.bashrc ###############
 
