@@ -3,28 +3,28 @@
     {
       "dimension": "用户分析",
       "metric": "超级VIP用户占比",
-      "value": "33.33%",
+      "value": "31.75%",
       "compare": "同比+2.3%",
       "rating": "高"
     },
     {
       "dimension": "用户分析",
       "metric": "VIP用户平均客单价",
-      "value": "¥43.6",
+      "value": "¥45.6",
       "compare": "环比+5.2%",
       "rating": "高"
     },
     {
       "dimension": "行为分析",
       "metric": "全局点击率(CTR)",
-      "value": "0.0%",
+      "value": "1.81%",
       "compare": "行业中位",
       "rating": "中"
     },
     {
       "dimension": "行为分析",
       "metric": "点击转化率(CVR)",
-      "value": "13.67%",
+      "value": "17.15%",
       "compare": "行业优秀",
       "rating": "高"
     },
