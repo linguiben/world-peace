@@ -1,12 +1,17 @@
-FROM openjdk:21-jdk-slim
+FROM eclipse-temurin:21-jre
+
 ENV APPS_HOME=/apps
-RUN mkdir -p $APPS_HOME
+RUN mkdir -p "$APPS_HOME"
+
 USER root
 WORKDIR $APPS_HOME
 VOLUME $APPS_HOME
+
 ADD ./target/world-peace-admin-2.0.jar $APPS_HOME/world-peace-admin.jar
+
 EXPOSE 8090
 ENTRYPOINT ["java","-jar","/apps/world-peace-admin.jar"]
+
 MAINTAINER Jupiter
 
 #docker run -d --name wpadmin --hostname wpadmin -p 8090:8090 --network=data_default -v /data/logs/wpadmin:/data/logs/wpadmin --restart=always world-peace-admin:1.0
