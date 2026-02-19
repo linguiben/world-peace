@@ -1,37 +1,85 @@
 #!/bin/bash
-# This script is used to enter a running Docker container.
-# Usage: ./to <container_name_or_id>
+# This script is used to enter a remote server via ssh or a running Docker container.
+#
+# Usage:
+#   to <remote_server>
+#   to <remote_server> <command...>
+#   to docker <container_name_or_id>
+#   to docker <container_name_or_id> <command...>
+#
+# Notes:
+# - When <command...> is provided, it will be executed and the script will exit.
+# - When no command is provided, an interactive shell session is opened.
 
-if [ -z "$1" ]; then
-  echo "Usage: $0 <remote_server>"
-  echo "Usage: $0 docker <container_name_or_id>"
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage:
+  to <remote_server>
+  to <remote_server> <command...>
+  to docker <container_name_or_id>
+  to docker <container_name_or_id> <command...>
+
+Examples:
+  to us.joveso.com
+  to us.joveso.com 'docker ps'
+  to docker playwright-mcp
+  to docker playwright-mcp 'ls -la /'
+EOF
+}
+
+if [ "${1-}" = "" ]; then
+  usage
   exit 1
 fi
 
 # If the first argument is not "docker", treat it as a remote server and use ssh to connect
 # optional: change the default login user in ~/.ssh/config
 if [ "$1" != "docker" ]; then
-  ssh -t "$1"
-  exit 0
+  host="$1"
+  shift
+
+  if [ "$#" -eq 0 ]; then
+    # Interactive SSH
+    exec ssh -t "$host"
+  fi
+
+  # Run a command on the remote host, then exit.
+  # Use bash -lc so pipes / redirects work as expected.
+  cmd="$*"
+  exec ssh -t "$host" -- bash -lc "$cmd"
 fi
 
-if [ -z "$2" ]; then
-  echo "Usage: $0 docker <container_name_or_id>"
+# Docker mode
+if [ "${2-}" = "" ]; then
+  usage
   exit 1
 fi
 
+container="$2"
+shift 2
+
 # Check if the Docker is running
-if [ -z `ps -elf | grep dockerd | grep -v grep | awk '{print $4}'` ]; then
+if ! pgrep -x dockerd >/dev/null 2>&1; then
   echo "Docker is not running."
   exit 1
 fi
+
 # Check if the container is running
-if ! docker ps -q --filter "name=$2" | grep -q .; then
-  echo "Container '$2' is not running or does not exist."
+if ! docker ps -q --filter "name=$container" | grep -q .; then
+  echo "Container '$container' is not running or does not exist."
   exit 1
 fi
-# Enter the specified Docker container
-docker exec -it "$2" /bin/bash
+
+if [ "$#" -eq 0 ]; then
+  # Interactive shell in container
+  exec docker exec -it "$container" /bin/bash
+fi
+
+# Run a command in the container, then exit.
+cmd="$*"
+exec docker exec -it "$container" bash -lc "$cmd"
 
 # If you want to use a different shell, replace /bin/bash with /bin/sh or another shell of your choice.
 # This script should cooperate with _complete_to.sh
