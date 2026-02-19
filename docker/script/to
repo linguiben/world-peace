@@ -11,7 +11,7 @@ fi
 # If the first argument is not "docker", treat it as a remote server and use ssh to connect
 # optional: change the default login user in ~/.ssh/config
 if [ "$1" != "docker" ]; then
-  ssh "$1"
+  ssh -t "$1"
   exit 0
 fi
 

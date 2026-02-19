@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# ====== 基本配置（修改这里） ======
+cd "$(dirname "$0")"
+. .env
+# 本地 SOCKS 端口
+LOCAL_PORT=1080
+
+# 是否自动设置 Mac 系统代理（true/false）
+ENABLE_SYSTEM_PROXY=true
+
+# Wi-Fi 名称（Mac 一般是 Wi-Fi，如是 Ethernet 请改）
+NETWORK_SERVICE="Wi-Fi"
+
+# alias proxy-on="~/scripts/ecs-proxy.sh on"
+# alias proxy-off="~/scripts/ecs-proxy.sh off"
+# alias proxy-status="~/scripts/ecs-proxy.sh status"
+# alias proxy-restart="~/scripts/ecs-proxy.sh restart"
+
+# ssh -D 1080 sg.joveso.com
+# [root@iZt4n3oaftioxvvbmvy9v7Z ~]# # proxy openned
+
+# export ALL_PROXY=socks5://127.0.0.1:1080
+# export ALL_PROXY=socks5h://127.0.0.1:1080 # support DNS 
+# export HTTP_PROXY=http://127.0.0.1:1080
+# export HTTPS_PROXY=https://127.0.0.1:1080
+# echo "当前出口IP: $(curl -s --max-time 1 ifconfig.me)"
+# curl https://ifconfig.me #45.77.249.90
+# curl -v --socks5-hostname 127.0.0.1:1080 https://api.openai.com
+
+# ==================================
+
+PID_FILE="/tmp/ecs_socks_proxy.pid"
+
+status_proxy() {
+    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
+        echo "🟢 代理正在运行 (127.0.0.1:${LOCAL_PORT})"
+        echo "当前出口IP: $(curl -s --max-time 1 ifconfig.me)"
+    else
+        echo "🔴 代理未运行"
+    fi
+}
+
+start_proxy() {
+    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
+        echo "⚠️  端口 ${LOCAL_PORT} 已被占用，可能代理已在运行"
+        return
+    fi
+
+    echo "🚀 启动 SSH SOCKS 代理..."
+
+    ssh -D ${LOCAL_PORT} \
+        -C -N \
+        -p ${SSH_PORT} \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=3 \
+        ${ECS_USER}@${ECS_HOST} &
+
+    SSH_PID=$!
+    echo $SSH_PID > "${PID_FILE}"
+
+    sleep 1
+
+    if ps -p $SSH_PID > /dev/null; then
+        echo "✅ 代理已启动 (PID: $SSH_PID)"
+    else
+        echo "❌ 代理启动失败"
+        return
+    fi
+
+    if [ "$ENABLE_SYSTEM_PROXY" = true ]; then
+        echo "🔧 设置系统 SOCKS 代理..."
+        networksetup -setsocksfirewallproxy "${NETWORK_SERVICE}" 127.0.0.1 ${LOCAL_PORT}
+        networksetup -setsocksfirewallproxystate "${NETWORK_SERVICE}" on
+        echo "✅ 系统设置: 使用代理"
+        status_proxy
+    fi
+}
+
+stop_proxy() {
+    if [ -f "${PID_FILE}" ]; then
+        PID=$(cat "${PID_FILE}")
+        if ps -p $PID > /dev/null 2>&1; then
+            kill $PID
+            echo "🛑 已停止代理 (PID: $PID)"
+        fi
+        rm -f "${PID_FILE}"
+    else
+        pkill -f "ssh -D ${LOCAL_PORT}"
+        echo "🛑 已尝试关闭所有 SOCKS 代理进程"
+    fi
+
+    if [ "$ENABLE_SYSTEM_PROXY" = true ]; then
+        echo "🔧 关闭系统 SOCKS 代理..."
+        networksetup -setsocksfirewallproxystate "${NETWORK_SERVICE}" off
+        echo "✅ 系统设置: 已取消"
+    fi
+}
+
+case "$1" in
+    on)
+        start_proxy
+        ;;
+    off)
+        stop_proxy
+        ;;
+    status)
+        status_proxy
+        ;;
+    restart)
+        stop_proxy
+        sleep 1
+        start_proxy
+        ;;
+    *)
+        echo "Usage: $0 {on|off|status|restart}"
+        ;;
+esac
