@@ -48,7 +48,7 @@ if [ "$1" != "docker" ]; then
   # Run a command on the remote host, then exit.
   # Use bash -lc so pipes / redirects work as expected.
   cmd="$*"
-  exec ssh -t "$host" -- bash -lc "$cmd"
+  exec ssh -qt "$host" -- bash -lc "$cmd"
 fi
 
 # Docker mode
