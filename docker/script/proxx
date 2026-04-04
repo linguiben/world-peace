@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # ====== 基本配置（修改这里） ======
-cd "$(dirname "$0")"
+#cd "$(dirname "$0")"
+cd "$(dirname "$(readlink -f "$0")")"
 . .env
 # 本地 SOCKS 端口
-LOCAL_PORT=1080
+LOCAL_PORT=10800
+if [ "$2" != "" ]; then
+  LOCAL_PORT=$2
+fi
 
 # 是否自动设置 Mac 系统代理（true/false）
 ENABLE_SYSTEM_PROXY=true
@@ -32,12 +36,19 @@ NETWORK_SERVICE="Wi-Fi"
 PID_FILE="/tmp/ecs_socks_proxy.pid"
 
 status_proxy() {
-    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
-        echo "🟢 代理正在运行 (127.0.0.1:${LOCAL_PORT})"
-        echo "当前出口IP: $(curl -s --max-time 1 ifconfig.me)"
+    xxnet_pid=`ps aux | grep -i python3 | grep start.py | awk {'print $2'}`
+    if [ -n "$xxnet_pid" ]; then
+        echo "🟢 xxnet is running at PID: $xxnet_pid"
+        #echo "当前出口IP: `curl -s --max-time 1 ifconfig.me`"
     else
-        echo "🔴 代理未运行"
+        echo "xxnet is not running"
     fi
+    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
+        echo "🟢 自定义代理正在运行 (127.0.0.1:${LOCAL_PORT})"
+    else
+        echo "🔴 自定义代理未运行"
+    fi
+    echo "当前出口`curl -s http://ip-api.com/json/ | jq -r '"IP: \(.query)\n归属地: \(.country), \(.regionName), \(.city)"'`"
 }
 
 start_proxy() {
@@ -96,6 +107,12 @@ stop_proxy() {
     fi
 }
 
+start_xxnet() {
+  sudo /Users/jupiter/19.git-repo/xx-net/XX-Net-5.16.6/start
+  xxnet_pid=`ps aux | grep -i python3 | grep start.py | awk {'print $2'}`
+  echo "started on PID: $xxnet_pid"
+}
+
 case "$1" in
     on)
         start_proxy
@@ -111,7 +128,10 @@ case "$1" in
         sleep 1
         start_proxy
         ;;
+    xxnet)
+        start_xxnet
+        ;;
     *)
-        echo "Usage: $0 {on|off|status|restart}"
+        echo "Usage: $0 {xxnet|on|off|status|restart} [port:10800]"
         ;;
 esac

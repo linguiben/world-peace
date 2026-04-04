@@ -40,5 +40,22 @@ _to_container() {
   return 0
 }
 
+# proxx Usage: $0 {xxnet|on|off|status|restart}
+_proxx(){
+  local cur prev opts
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  opts="xxnet on off status restart"
+
+  if [[ ${cur} == -* ]] ; then
+    return 0
+  fi
+
+  COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+  return 0
+}
+
 complete -F _to_container to # 注册
 complete -F _to_container to_container # 注册
+complete -F _proxx proxx
