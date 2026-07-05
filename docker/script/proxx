@@ -4,7 +4,7 @@
 cd "$(dirname "$(readlink -f "$0")")"
 . .env
 # 本地 SOCKS 端口
-LOCAL_PORT=10800
+LOCAL_PORT=16800
 if [ "$2" != "" ]; then
   LOCAL_PORT=$2
 fi
@@ -41,30 +41,48 @@ status_proxy() {
         echo "🟢 xxnet is running at PID: $xxnet_pid"
         #echo "当前出口IP: `curl -s --max-time 1 ifconfig.me`"
     else
-        echo "xxnet is not running"
+        echo "🔴 xxnet is NOT running"
     fi
-    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
-        echo "🟢 自定义代理正在运行 (127.0.0.1:${LOCAL_PORT})"
+
+    self_proxx=`lsof -nP -i TCP:${LOCAL_PORT} -sTCP:LISTEN` >/dev/null 2>&1
+    if [ -z self_proxx ]; then
+        echo -e "🟢 self-proxx is running at:\n${self_proxx}"
     else
-        echo "🔴 自定义代理未运行"
+        echo "🔴 self-proxx is NOT running"
     fi
-    echo "当前出口`curl -s http://ip-api.com/json/ | jq -r '"IP: \(.query)\n归属地: \(.country), \(.regionName), \(.city)"'`"
+
+    expressvpn_proxy=`ps aux | grep ExpressVPN.app/Contents/MacOS/ExpressVPN | grep -v grep` >/dev/null 2>&1
+    if [ -n "$expressvpn_proxy" ]; then
+        echo -e "🟢 ExpressVPN is running at:\n${expressvpn_proxy}"
+    else
+        echo "🔴 ExpressVPN is NOT running"
+    fi
+
+    clash_verge_proxy=`netstat -anv | grep verge-mihomo: | grep LISTEN | awk '{print $1,$4,$5,$6,$11}'` >/dev/null 2>&1
+    if [ -n "$clash_verge_proxy" ]; then
+        echo -e "🟢 Clash Verge is running at:\n${clash_verge_proxy}"
+    else
+        echo "🔴 Clash Verge is NOT running"
+    fi
+
+    echo "本机出口`curl -s --proxy '' http://ip-api.com/json/ | jq -r '"IP: \(.query); 归属地: \(.country), \(.regionName), \(.city)"'`"
+    echo "代理出口`curl -s -x http://127.0.0.1:8086 http://ip-api.com/json/ | jq -r '"IP: \(.query); 归属地: \(.country), \(.regionName), \(.city)"'`"
 }
 
 start_proxy() {
-    if lsof -i TCP:${LOCAL_PORT} >/dev/null 2>&1; then
+    if lsof -nP -i TCP:${LOCAL_PORT} -sTCP:LISTEN >/dev/null 2>&1; then
         echo "⚠️  端口 ${LOCAL_PORT} 已被占用，可能代理已在运行"
         return
     fi
 
-    echo "🚀 启动 SSH SOCKS 代理..."
-
-    ssh -D ${LOCAL_PORT} \
+    proxx_cmd="ssh -D ${LOCAL_PORT} \
         -C -N \
         -p ${SSH_PORT} \
         -o ServerAliveInterval=60 \
         -o ServerAliveCountMax=3 \
-        ${ECS_USER}@${ECS_HOST} &
+        ${ECS_USER}@${ECS_HOST}"
+    echo "🚀 startup SSH SOCKS @${SSH_PORT} ..."
+    $proxx_cmd
 
     SSH_PID=$!
     echo $SSH_PID > "${PID_FILE}"
@@ -132,6 +150,6 @@ case "$1" in
         start_xxnet
         ;;
     *)
-        echo "Usage: $0 {xxnet|on|off|status|restart} [port:10800]"
+        echo "Usage: $0 {xxnet|on|off|status|restart} [port:16800]"
         ;;
 esac
