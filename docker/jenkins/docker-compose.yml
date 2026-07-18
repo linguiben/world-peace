@@ -6,8 +6,10 @@ services:
     mem_limit: 1280m
     container_name: jenkins
     hostname: jenkins
+    environment:
+      - JENKINS_OPTS=--prefix=/jenkins # 设置访问路径前缀为/jenkins，以便配合nginx反向代理
     ports:
-      - "58080:8080" #login port
+      - "8989:8080" #login port
       - "50000:50000"
     restart: always
     volumes:

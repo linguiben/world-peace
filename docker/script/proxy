@@ -1,0 +1,49 @@
+# !/opt/homebrew/bin/bash
+# Author: Jupiter
+# Description: check if env proxy is set and print how to set it if not.
+
+cd "$(dirname "$(readlink -f "$0")")"
+. .env
+DEFAULT_HTTP_PORT=8086 # 默认 HTTP 代理端口,如果你使用了其他端口，请在运行脚本时传入第二个参数指定端口号，例如：proxy.sh on 8087
+if [ "$2" != "" ]; then
+  DEFAULT_HTTP_PORT="$2"
+fi
+
+# check if proxy env is set
+status_proxy() {
+  run=$(env|grep -i proxy); 
+  if [ -z "$run" ]; then 
+    echo -e "proxy is not set yet.";
+    start_proxy;
+  else 
+    echo -e "proxy is set: \n$run"; 
+  fi
+}
+
+# config default proxy
+start_proxy() {
+  echo "run: "
+  echo "  export http_proxy=\"http://localhost:${DEFAULT_HTTP_PORT}\" && export https_proxy=\${http_proxy}"
+}
+
+reset_proxy(){
+  echo "run:"
+  echo "  unset http_proxy && unset https_proxy"
+}
+
+case "$1" in
+    on)
+        start_proxy
+        ;;
+    off)
+        reset_proxy
+        ;;
+    *)
+        status_proxy
+        echo -e "Usage:\n  proxy {on|off} [port]"
+        exit 1
+        ;;
+esac
+
+# alias proxy='run=$(env|grep -i proxy); if [ -z "$run" ]; then echo -e "start proxy:\n . ~/.ssh/http_proxy.sh"; else echo -e "proxy is running: \n$run"; fi'
+

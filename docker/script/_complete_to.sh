@@ -21,7 +21,7 @@ _to_container() {
   fi
 
   if [ "${prev}" != "docker" ]; then
-    opts="$(grep -v "^#" /etc/hosts | grep -v -e 127.0.0.1 -e localhost -e broadcasthost | awk '{print $2}') docker"
+    opts="$(grep -v "^#" /etc/hosts | grep -v -e 127.0.0.1 -e localhost -e broadcasthost | awk '{for(i=2;i<=NF;i++) print $i}') docker"
     if [ -a ~/.ssh/config ]; then
       _opts=`cat ~/.ssh/config | grep HostName | awk '{print $2}'`
       opts="$opts $_opts"

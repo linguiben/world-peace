@@ -16,15 +16,11 @@ set -euo pipefail
 usage() {
   cat <<'EOF'
 Usage:
-  to <remote_server>
-  to <remote_server> <command...>
-  to docker <container_name_or_id>
-  to docker <container_name_or_id> <command...>
+  to <remote_server> [command...]
+  to docker <container_name_or_id> [command...]
 
 Examples:
-  to us.joveso.com
   to us.joveso.com 'docker ps'
-  to docker playwright-mcp
   to docker playwright-mcp 'ls -la /'
 EOF
 }
@@ -40,15 +36,23 @@ if [ "$1" != "docker" ]; then
   host="$1"
   shift
 
+  # check if host contains ":" (indicating a custom port)
+  if [[ "$host" == *:* ]]; then
+    # Extract the hostname and port
+    hostname=$(grep "$host" /etc/hosts | cut -w -f1)
+    port="${host##*:}"
+    host="$hostname -p $port"
+  fi
+  
   if [ "$#" -eq 0 ]; then
     # Interactive SSH
-    exec ssh -t "$host"
+    exec ssh -t $host # host = hostname + port if specified
   fi
 
   # Run a command on the remote host, then exit.
   # Use bash -lc so pipes / redirects work as expected.
   cmd="$*"
-  exec ssh -qt "$host" -- bash -lc "$cmd"
+  exec ssh -qt $host -- bash -lc "$cmd"
 fi
 
 # Docker mode
